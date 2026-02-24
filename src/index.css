@@ -1,0 +1,181 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------
+   Flip countdown (cartelli)
+   ------------------------------ */
+
+.flip-card {
+  width: 92px;
+  height: 64px;
+  perspective: 800px;
+}
+
+@media (min-width: 768px) {
+  .flip-card {
+    width: 110px;
+    height: 74px;
+  }
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+/* linea centrale + “perni” laterali (stile come screenshot) */
+.flip-card-inner::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 50%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.14);
+  transform: translateY(-0.5px);
+  z-index: 6;
+}
+
+/* perni */
+.flip-pin {
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9;
+  pointer-events: none;
+}
+
+.flip-pin-left {
+  left: -3px;
+}
+
+.flip-pin-right {
+  right: -3px;
+}
+
+.flip-card-top,
+.flip-card-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  display: block;
+  overflow: hidden;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  font-size: 40px;
+  line-height: 1;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.55);
+  background: linear-gradient(to bottom, rgba(255,255,255,0.06), rgba(0,0,0,0.25));
+}
+
+
+/*
+  Importante: il numero NON deve comparire “due volte”.
+  Ogni metà (top/bottom) deve mostrare SOLO la rispettiva metà del numero,
+  come nei cartellini flip classici: stesso testo, ma posizionato diversamente
+  e “clippato” dal contenitore (overflow:hidden).
+*/
+.flip-value {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+/* Top: mostra la metà superiore (centro del numero sulla linea di taglio) */
+.flip-card-top .flip-value {
+  top: 100%;
+  transform: translateY(-50%);
+}
+
+/* Bottom: mostra la metà inferiore */
+.flip-card-bottom .flip-value {
+  top: 0%;
+  transform: translateY(-50%);
+}
+
+@media (min-width: 768px) {
+  .flip-card-top,
+  .flip-card-bottom {
+    font-size: 46px;
+  }
+}
+
+.flip-card-top {
+  top: 0;
+  border-bottom: none;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  transform-origin: bottom;
+  overflow: hidden;
+}
+
+.flip-card-bottom {
+  bottom: 0;
+  border-top: none;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  transform-origin: top;
+  overflow: hidden;
+}
+
+.flip-label {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+}
+
+.flip-animate-top {
+  animation: flipTop 0.65s ease-in forwards;
+  z-index: 5;
+}
+
+.flip-animate-bottom {
+  animation: flipBottom 0.65s ease-out forwards;
+  z-index: 4;
+}
+
+@keyframes flipTop {
+  0% {
+    transform: rotateX(0deg);
+  }
+  100% {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes flipBottom {
+  0% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
