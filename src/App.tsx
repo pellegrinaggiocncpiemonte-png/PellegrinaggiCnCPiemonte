@@ -88,13 +88,29 @@ function App() {
         >
           <div className="absolute inset-0 bg-black/60"></div>
         </div>
-        <div className="relative z-10 text-center px-4">
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <h2 className="text-5xl md:text-6xl font-serif text-white font-bold tracking-wider">
             Estate 2026
           </h2>
           <p className="text-2xl md:text-3xl text-white/90 mt-6 font-light tracking-wide">
-            in Programmazione
+            Iscrizioni aperte dall'area riservata
           </p>
+          <p className="text-lg md:text-xl text-white/85 mt-8 leading-relaxed">
+            Per i pellegrinaggi Estate 2026 occorre registrarsi nell'area riservata,
+            inserire tutti i dati richiesti e iscriversi nella sezione dedicata scegliendo
+            il pellegrinaggio di interesse.
+          </p>
+          <p className="text-base md:text-lg text-white/80 mt-5 leading-relaxed">
+            Le quote dei pellegrinaggi non sono ancora impostate.
+          </p>
+          <a
+            href="https://script.google.com/macros/s/AKfycbwPOc4xdrCreKDBfdnNPVXw0mS-GfGS3RcrFpBVSSc-5Rpi5eq55FJkXcoYaWn-u2XV/exec"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center mt-8 bg-white text-black px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+          >
+            Vai all'area riservata
+          </a>
         </div>
       </section>
 
@@ -105,7 +121,8 @@ function App() {
             <h2 className="text-4xl md:text-5xl font-serif text-white font-bold tracking-wider mb-4">
               Giorni alla partenza
             </h2>
-            <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
+            <p className="text-white/80 mt-4 text-lg md:text-xl">La partenza a cui si riferisce il conto alla rovescia è quella per la GMG di Seoul 2027.</p>
+            <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
           </div>
 
           <div className="flex justify-center">
@@ -182,7 +199,7 @@ function App() {
               <div className="max-w-4xl mx-auto">
                 <div className="relative h-64 md:h-96 rounded-lg overflow-hidden shadow-2xl mb-8">
                   <img
-                    src="https://img.youtube.com/vi/IGXzw3-fY0o/hqdefault.jpg"
+                    src="https://img.youtube.com/vi/BMbkoZwqRtI/hqdefault.jpg"
                     alt="Anteprima Video 1"
                     className="w-full h-full object-cover"
                   />
@@ -190,7 +207,7 @@ function App() {
                 </div>
                 <div className="text-center">
                   <a
-                    href="https://www.youtube.com/watch?v=IGXzw3-fY0o"
+                    href="https://www.youtube.com/watch?v=BMbkoZwqRtI"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-transparent text-white border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-all shadow-lg"
@@ -261,10 +278,82 @@ function App() {
             </h2>
             <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
           </div>
-          <div className="max-w-3xl mx-auto text-center">
-            <p className="text-xl text-gray-700">
-              Pre-iscrizioni GmG 2027: Prossimamente
-            </p>
+          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6">
+            <div className="bg-gray-50 rounded-2xl shadow-sm border border-gray-200 p-8 text-left">
+              <h3 className="text-2xl font-serif font-bold text-black mb-4">Estate 2026</h3>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                Anche per Estate 2026 l'iscrizione reale va effettuata passando dall'area riservata
+                e scegliendo il pellegrinaggio di interesse nella sezione dedicata.
+              </p>
+              <p className="text-gray-700 leading-relaxed font-semibold">
+                Le quote dei pellegrinaggi non sono ancora impostate.
+              </p>
+            </div>
+            <div className="bg-gray-50 rounded-2xl shadow-sm border border-gray-200 p-8 text-left">
+              <h3 className="text-2xl font-serif font-bold text-black mb-4">GMG Seoul 2027</h3>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                La preiscrizione serve solo all'organizzazione per avere un'idea indicativa dei numeri dei partecipanti.
+                Non equivale all'iscrizione reale.
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                Dopo la preiscrizione verrà comunque richiesto di completare l'iscrizione dall'area riservata,
+                inserendo quanto prima tutti i dati richiesti.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="gmg-2027-iscrizione" className="py-20 bg-stone-100">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider mb-4">
+                ISCRIZIONE GMG 2027
+              </h2>
+              <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 md:p-12 space-y-6">
+              <p className="text-lg text-gray-700 leading-relaxed">
+                Per la GMG 2027 è possibile fare una preiscrizione tramite il modulo dedicato.
+                La preiscrizione non significa iscrizione reale: serve soltanto all'organizzazione,
+                soprattutto per avere una prima idea dei numeri dei partecipanti.
+              </p>
+
+              <p className="text-lg text-gray-700 leading-relaxed">
+                L'iscrizione reale va fatta dall'area riservata, nella sezione dedicata,
+                scegliendo il pellegrinaggio di interesse e inserendo prima possibile tutti i dati richiesti.
+              </p>
+
+              <p className="text-lg text-gray-700 leading-relaxed">
+                Se una persona effettua la preiscrizione, le verrà comunque richiesto di iscriversi successivamente
+                dall'area riservata per completare correttamente la procedura.
+              </p>
+
+              <p className="text-lg text-gray-700 leading-relaxed font-semibold">
+                Le quote dei pellegrinaggi non sono ancora impostate.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <a
+                  href="https://pellegrinaggiocncpiemonte.fillout.com/t/gTrbdqkQ9Jus"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                >
+                  Preiscrizione Seoul 2027
+                </a>
+                <a
+                  href="https://script.google.com/macros/s/AKfycbwPOc4xdrCreKDBfdnNPVXw0mS-GfGS3RcrFpBVSSc-5Rpi5eq55FJkXcoYaWn-u2XV/exec"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center bg-amber-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-amber-700 transition-colors"
+                >
+                  Iscrizione reale da area riservata
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -275,7 +364,7 @@ function App() {
         <div className="container mx-auto px-4">
           <div className="text-center space-y-8">
             <div className="max-w-md mx-auto">
-              <a href="https://script.google.com/macros/s/AKfycbwfcxLkimZF8gPJggncy6cFWBc1OWAnnIzfeDE2-vLpImRZmdh4BoXcBCjPagVoDF-P/exec" target="_blank" rel="noopener noreferrer" title="Apri area riservata" className="inline-block hover:opacity-90 transition-opacity">
+              <a href="https://script.google.com/macros/s/AKfycbwPOc4xdrCreKDBfdnNPVXw0mS-GfGS3RcrFpBVSSc-5Rpi5eq55FJkXcoYaWn-u2XV/exec" target="_blank" rel="noopener noreferrer" title="Apri area riservata" className="inline-block hover:opacity-90 transition-opacity">
                 <img
                   src="/images/area riservata.png"
                   alt="Area Riservata"
@@ -287,13 +376,17 @@ function App() {
               AREA RISERVATA
             </h2>
             <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
-            <p className="text-2xl md:text-3xl text-white/90 font-light tracking-widest">
-              PROSSIMAMENTE
+            <p className="text-lg md:text-xl text-white/90 font-light tracking-wide max-w-3xl mx-auto leading-relaxed">
+              Accedi all'area riservata per registrarti, completare i dati richiesti e iscriverti
+              nella sezione dedicata al pellegrinaggio di tuo interesse, sia per Estate 2026 sia per la GMG Seoul 2027.
+            </p>
+            <p className="text-base md:text-lg text-white/75 max-w-3xl mx-auto leading-relaxed">
+              Le quote dei pellegrinaggi non sono ancora impostate.
             </p>
 
             {/* ✅ Pulsante (ora attivo) */}
             <a
-              href="https://script.google.com/macros/s/AKfycbwfcxLkimZF8gPJggncy6cFWBc1OWAnnIzfeDE2-vLpImRZmdh4BoXcBCjPagVoDF-P/exec"
+              href="https://script.google.com/macros/s/AKfycbwPOc4xdrCreKDBfdnNPVXw0mS-GfGS3RcrFpBVSSc-5Rpi5eq55FJkXcoYaWn-u2XV/exec"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center bg-white text-black px-10 py-4 rounded-lg font-semibold border border-white/30 hover:bg-gray-100 transition-colors"
@@ -330,6 +423,7 @@ function App() {
             <a href="#home" className="hover:text-amber-500 transition-colors">Home Page</a>
             <a href="#prossimi-eventi" className="hover:text-amber-500 transition-colors">Prossimi eventi</a>
             <a href="#wyd-seul" className="hover:text-amber-500 transition-colors">WYD Seul 2027</a>
+            <a href="#gmg-2027-iscrizione" className="hover:text-amber-500 transition-colors">Iscrizione GMG 2027</a>
             <a href="#donazioni" className="hover:text-amber-500 transition-colors">Versamenti e Donazioni</a>
           </div>
 

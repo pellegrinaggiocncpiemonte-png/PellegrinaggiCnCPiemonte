@@ -11,7 +11,7 @@ type NavGroup = {
 
 // 🔗 In futuro incolla qui il link (script esterno) dell’Area Riservata.
 // Lasciando vuoto, l’icona resta visibile ma non cliccabile.
-const RESERVED_AREA_URL = 'https://script.google.com/macros/s/AKfycbwfcxLkimZF8gPJggncy6cFWBc1OWAnnIzfeDE2-vLpImRZmdh4BoXcBCjPagVoDF-P/exec';
+const RESERVED_AREA_URL = 'https://script.google.com/macros/s/AKfycbwPOc4xdrCreKDBfdnNPVXw0mS-GfGS3RcrFpBVSSc-5Rpi5eq55FJkXcoYaWn-u2XV/exec';
 
 const Navigation = () => {
   const [activeSection, setActiveSection] = useState('home');
@@ -46,6 +46,7 @@ const Navigation = () => {
               { id: 'giorni-alla-partenza', label: 'Giorni alla partenza' },
               { id: 'wyd-seul', label: 'WYD Seul 2027' },
               { id: 'sezione-video', label: 'Video promo GMG 2027' },
+              { id: 'gmg-2027-iscrizione', label: 'Iscrizione GMG 2027' },
               {
                 id: 'info-korea',
                 label: 'Info Korea',
@@ -566,9 +567,16 @@ const Navigation = () => {
                 <a href="mailto:pellegrinaggio.cnc.piemonte@gmail.com" className="text-black hover:text-amber-700 transition-colors">
                   <Mail size={20} />
                 </a>
-                <span className="opacity-80" title="Area riservata (prossimamente)">
+                <a
+                  href={RESERVED_AREA_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-opacity hover:opacity-80"
+                  aria-label="Apri area riservata"
+                  title="Area riservata"
+                >
                   <img src="/images/login.png" alt="Area riservata" className="w-5 h-5 brightness-0" />
-                </span>
+                </a>
                 <a
                   href="https://tawk.to/chat/65fdae1ba0c6737bd123b4bd/1hpjf07eo"
                   target="_blank"
