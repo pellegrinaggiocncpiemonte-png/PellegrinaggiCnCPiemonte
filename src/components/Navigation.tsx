@@ -1,5 +1,6 @@
 import { Mail, Phone, Menu, X, MessageCircle, ExternalLink, ChevronDown } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { QUICK_ACTIONS, SITE_CONFIG } from '../config/siteConfig';
 
 type NavItem = { id: string; label: string; href?: string; children?: NavItem[] };
 type NavGroup = {
@@ -8,10 +9,6 @@ type NavGroup = {
   type: 'link' | 'dropdown';
   items: NavItem[];
 };
-
-// 🔗 In futuro incolla qui il link (script esterno) dell’Area Riservata.
-// Lasciando vuoto, l’icona resta visibile ma non cliccabile.
-const RESERVED_AREA_URL = 'https://script.google.com/macros/s/AKfycbwPOc4xdrCreKDBfdnNPVXw0mS-GfGS3RcrFpBVSSc-5Rpi5eq55FJkXcoYaWn-u2XV/exec';
 
 const Navigation = () => {
   const [activeSection, setActiveSection] = useState('home');
@@ -22,17 +19,14 @@ const Navigation = () => {
   const [isInteracting, setIsInteracting] = useState(false);
   const [isTop, setIsTop] = useState(true);
 
-  // ✅ Menu raggruppato (stile “mega menu” come screenshot)
   const navGroups: NavGroup[] = useMemo(
     () => [
-      // ✅ Home (da sola)
       {
         id: 'home',
         label: 'Home',
         type: 'link',
         items: [{ id: 'home', label: 'Home' }],
       },
-      // ✅ Eventi (dropdown con sottomenu su WYD)
       {
         id: 'eventi',
         label: 'Eventi',
@@ -57,14 +51,12 @@ const Navigation = () => {
           },
         ],
       },
-      // ✅ Comunicazioni (sezione da sola)
       {
         id: 'comunicazioni',
         label: 'Comunicazioni',
         type: 'link',
         items: [{ id: 'comunicazioni', label: 'Comunicazioni' }],
       },
-      // ✅ Versamenti e donazioni (sezione da sola)
       {
         id: 'donazioni',
         label: 'Versamenti e donazioni',
@@ -75,16 +67,12 @@ const Navigation = () => {
     []
   );
 
-  // ✅ Target reali (sezioni + link esterni) escludendo i “trigger” del sottomenu
   const navTargets = useMemo(() => {
     const out: NavItem[] = [];
-    for (const g of navGroups) {
-      for (const it of g.items) {
-        if (it.children?.length) {
-          out.push(...it.children);
-        } else {
-          out.push(it);
-        }
+    for (const group of navGroups) {
+      for (const item of group.items) {
+        if (item.children?.length) out.push(...item.children);
+        else out.push(item);
       }
     }
     return out;
@@ -92,11 +80,10 @@ const Navigation = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sectionTargets = navTargets.filter((i) => !i.href);
+      const sectionTargets = navTargets.filter((item) => !item.href);
       const sections = sectionTargets.map((item) => document.getElementById(item.id));
       const scrollPosition = window.scrollY + 120;
 
-      // ✅ In cima (hero): menu trasparente. Appena scorri: menu bianco così le scritte restano leggibili
       setIsTop(window.scrollY < 10);
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -116,27 +103,98 @@ const Navigation = () => {
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
-    const offset = 88;
-    window.scrollTo({ top: el.offsetTop - offset, behavior: 'smooth' });
+    window.scrollTo({ top: el.offsetTop - 88, behavior: 'smooth' });
     setMobileMenuOpen(false);
     setOpenDropdown(null);
+    setOpenSubmenu(null);
   };
 
   const isGroupActive = (groupId: string) => {
     const group = navGroups.find((g) => g.id === groupId);
     if (!group) return false;
-    return group.items.some((i) => i.id === activeSection || i.children?.some((c) => c.id === activeSection));
+    return group.items.some((item) => item.id === activeSection || item.children?.some((child) => child.id === activeSection));
   };
 
-  // ✅ Trasparente solo in cima; bianco quando scorri o interagisci
   const headerIsWhite = !isTop || isInteracting || !!openDropdown || mobileMenuOpen;
   const baseText = headerIsWhite ? 'text-black' : 'text-white';
+  const quickActionIconClass = headerIsWhite ? 'text-black hover:text-amber-700' : 'text-white hover:text-amber-200';
+  const quickActionLabelClass = headerIsWhite ? 'text-black/70' : 'text-white/80';
+
+  const renderQuickAction = (action: (typeof QUICK_ACTIONS)[number], mobile = false) => {
+    const wrapperClass = mobile
+      ? 'flex min-w-[54px] max-w-[58px] flex-col items-center justify-center gap-1 text-center'
+      : 'flex min-w-[68px] flex-col items-center justify-center gap-1 text-center';
+    const labelClass = mobile ? 'text-[10px] leading-tight font-medium' : 'text-[11px] leading-tight font-medium';
+    const iconClass = `transition-colors ${mobile ? 'text-black hover:text-amber-700' : quickActionIconClass}`;
+    const captionClass = `${mobile ? 'text-black/70' : quickActionLabelClass} ${labelClass}`;
+
+    if (action.type === 'reserved-area') {
+      const content = (
+        <>
+          <img
+            src="/images/login.png"
+            alt={action.label}
+            className={`w-5 h-5 ${mobile || headerIsWhite ? 'brightness-0' : 'brightness-0 invert'}`}
+          />
+          <span className={captionClass}>{action.label}</span>
+        </>
+      );
+
+      return action.href ? (
+        <a
+          key={action.id}
+          href={action.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`${wrapperClass} transition-opacity hover:opacity-80`}
+          aria-label={`Apri ${action.label.toLowerCase()}`}
+          title={action.label}
+        >
+          {content}
+        </a>
+      ) : (
+        <span key={action.id} className={`${wrapperClass} opacity-70`} title={`${action.label} (prossimamente)`}>
+          {content}
+        </span>
+      );
+    }
+
+    if (action.type === 'modal') {
+      return (
+        <button
+          key={action.id}
+          onClick={() => setPhoneModalOpen(true)}
+          className={wrapperClass}
+          aria-label="Apri contatto telefonico"
+          title={action.label}
+        >
+          <Phone size={20} className={iconClass} />
+          <span className={captionClass}>{action.label}</span>
+        </button>
+      );
+    }
+
+    const icon = action.id === 'email' ? <Mail size={20} className={iconClass} /> : <MessageCircle size={20} className={iconClass} />;
+
+    return (
+      <a
+        key={action.id}
+        href={action.href}
+        target={action.external ? '_blank' : undefined}
+        rel={action.external ? 'noopener noreferrer' : undefined}
+        className={wrapperClass}
+        aria-label={action.id === 'email' ? 'Invia una email' : 'Apri assistenza online'}
+        title={action.label}
+      >
+        {icon}
+        <span className={captionClass}>{action.label}</span>
+      </a>
+    );
+  };
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
-        headerIsWhite ? 'bg-white shadow-md' : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${headerIsWhite ? 'bg-white shadow-md' : 'bg-transparent'}`}
       onMouseEnter={() => setIsInteracting(true)}
       onMouseLeave={() => {
         setIsInteracting(false);
@@ -145,9 +203,8 @@ const Navigation = () => {
       }}
     >
       <nav className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          {/* ✅ Logo CnC (hover + link esterno) */}
-          <div className="flex items-center">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center shrink-0">
             <a
               href="https://neocatechumenaleiter.org/it/"
               target="_blank"
@@ -157,9 +214,7 @@ const Navigation = () => {
               aria-label="Apri il sito neocatechumenaleiter.org (si apre in una nuova scheda)"
             >
               <div
-                className={`relative w-12 h-12 bg-gradient-to-br from-amber-600 to-amber-800 rounded-full flex items-center justify-center text-white font-bold text-xl cursor-pointer transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg group-hover:ring-2 group-hover:ring-amber-400 group-hover:ring-offset-2 ${
-                  headerIsWhite ? 'ring-offset-white' : 'ring-offset-transparent'
-                }`}
+                className={`relative w-12 h-12 bg-gradient-to-br from-amber-600 to-amber-800 rounded-full flex items-center justify-center text-white font-bold text-xl cursor-pointer transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg group-hover:ring-2 group-hover:ring-amber-400 group-hover:ring-offset-2 ${headerIsWhite ? 'ring-offset-white' : 'ring-offset-transparent'}`}
               >
                 CnC
                 <span className="absolute -right-1 -bottom-1 opacity-0 scale-90 transition-all duration-200 group-hover:opacity-100 group-hover:scale-100">
@@ -171,23 +226,12 @@ const Navigation = () => {
             </a>
           </div>
 
-          {/* Mobile toggle */}
-          <button
-            className={`lg:hidden transition-colors ${baseText}`}
-            onClick={() => setMobileMenuOpen((v) => !v)}
-            aria-label={mobileMenuOpen ? 'Chiudi menu' : 'Apri menu'}
-          >
-            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
-
-          {/* ✅ Desktop: menu raggruppato */}
-          <div className="hidden lg:flex items-center gap-10">
+          <div className="hidden lg:flex flex-1 items-center justify-center gap-10">
             {navGroups.map((group) => {
               const active = isGroupActive(group.id);
               const isOpen = openDropdown === group.id;
               const underline = active || isOpen;
 
-              // ✅ LINK: nessuna tendina, click va alla sezione
               if (group.type === 'link') {
                 return (
                   <button
@@ -198,15 +242,12 @@ const Navigation = () => {
                   >
                     <span className={active ? 'font-semibold' : ''}>{group.label}</span>
                     <span
-                      className={`absolute left-0 right-0 -bottom-1 h-[2px] transition-all duration-200 ${
-                        underline ? 'bg-blue-600 opacity-100' : 'bg-transparent opacity-0'
-                      }`}
+                      className={`absolute left-0 right-0 -bottom-1 h-[2px] transition-all duration-200 ${underline ? 'bg-blue-600 opacity-100' : 'bg-transparent opacity-0'}`}
                     />
                   </button>
                 );
               }
 
-              // ✅ DROPDOWN
               return (
                 <div key={group.id} className="relative">
                   <button
@@ -220,9 +261,7 @@ const Navigation = () => {
                     <span className={active ? 'font-semibold' : ''}>{group.label}</span>
                     <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                     <span
-                      className={`absolute left-0 right-0 -bottom-1 h-[2px] transition-all duration-200 ${
-                        underline ? 'bg-blue-600 opacity-100' : 'bg-transparent opacity-0'
-                      }`}
+                      className={`absolute left-0 right-0 -bottom-1 h-[2px] transition-all duration-200 ${underline ? 'bg-blue-600 opacity-100' : 'bg-transparent opacity-0'}`}
                     />
                   </button>
 
@@ -243,17 +282,13 @@ const Navigation = () => {
                           </button>
                         </div>
 
-                        {/* ✅ Layout speciale per Eventi: sottomenu a destra su WYD */}
                         {group.id === 'eventi' ? (
                           <div className="grid grid-cols-2 gap-3">
-                            {/* Colonna sinistra */}
                             <div className="space-y-1">
                               {group.items.map((item) => {
                                 const isTrigger = !!item.children?.length;
                                 const isSelected = !item.href && !isTrigger && activeSection === item.id;
-                                const cls = `w-full text-left px-3 py-3 rounded-lg transition-colors flex items-center justify-between ${
-                                  isSelected ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-black hover:bg-gray-50'
-                                }`;
+                                const cls = `w-full text-left px-3 py-3 rounded-lg transition-colors flex items-center justify-between ${isSelected ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-black hover:bg-gray-50'}`;
 
                                 if (isTrigger) {
                                   const open = openSubmenu === item.id;
@@ -263,9 +298,7 @@ const Navigation = () => {
                                       onMouseEnter={() => setOpenSubmenu(item.id)}
                                       onFocus={() => setOpenSubmenu(item.id)}
                                       onClick={() => setOpenSubmenu(open ? null : item.id)}
-                                      className={`w-full text-left px-3 py-3 rounded-lg transition-colors flex items-center justify-between ${
-                                        open ? 'bg-gray-50 font-semibold' : 'text-black hover:bg-gray-50'
-                                      }`}
+                                      className={`w-full text-left px-3 py-3 rounded-lg transition-colors flex items-center justify-between ${open ? 'bg-gray-50 font-semibold' : 'text-black hover:bg-gray-50'}`}
                                       aria-haspopup="menu"
                                       aria-expanded={open}
                                     >
@@ -295,12 +328,7 @@ const Navigation = () => {
                                 }
 
                                 return (
-                                  <button
-                                    key={item.id}
-                                    onMouseEnter={() => setOpenSubmenu(null)}
-                                    onClick={() => scrollToSection(item.id)}
-                                    className={cls}
-                                  >
+                                  <button key={item.id} onMouseEnter={() => setOpenSubmenu(null)} onClick={() => scrollToSection(item.id)} className={cls}>
                                     <span className="font-serif">{item.label}</span>
                                     <span className="text-gray-400">›</span>
                                   </button>
@@ -308,24 +336,22 @@ const Navigation = () => {
                               })}
                             </div>
 
-                            {/* Colonna destra: sottomenu */}
                             <div className="space-y-1">
                               {(() => {
-                                const trigger = group.items.find((it) => it.id === openSubmenu && it.children?.length);
+                                const trigger = group.items.find((item) => item.id === openSubmenu && item.children?.length);
                                 const children = trigger?.children ?? [];
+
                                 if (!children.length) {
                                   return (
                                     <div className="h-full rounded-lg border border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-sm">
-                                      Seleziona “WYD Seul 2027”
+                                      Iscrizioni aperte
                                     </div>
                                   );
                                 }
 
                                 return children.map((child) => {
                                   const isSelected = !child.href && activeSection === child.id;
-                                  const cls = `w-full text-left px-3 py-3 rounded-lg transition-colors flex items-center justify-between ${
-                                    isSelected ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-black hover:bg-gray-50'
-                                  }`;
+                                  const cls = `w-full text-left px-3 py-3 rounded-lg transition-colors flex items-center justify-between ${isSelected ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-black hover:bg-gray-50'}`;
 
                                   if (child.href) {
                                     return (
@@ -347,11 +373,7 @@ const Navigation = () => {
                                   }
 
                                   return (
-                                    <button
-                                      key={child.id}
-                                      onClick={() => scrollToSection(child.id)}
-                                      className={cls}
-                                    >
+                                    <button key={child.id} onClick={() => scrollToSection(child.id)} className={cls}>
                                       <span className="font-serif">{child.label}</span>
                                       <span className="text-gray-400">›</span>
                                     </button>
@@ -363,11 +385,7 @@ const Navigation = () => {
                         ) : (
                           <div className="space-y-1">
                             {group.items.map((item) => {
-                              const cls = `w-full text-left px-3 py-3 rounded-lg transition-colors flex items-center justify-between ${
-                                !item.href && activeSection === item.id
-                                  ? 'bg-blue-50 text-blue-700 font-semibold'
-                                  : 'text-black hover:bg-gray-50'
-                              }`;
+                              const cls = `w-full text-left px-3 py-3 rounded-lg transition-colors flex items-center justify-between ${!item.href && activeSection === item.id ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-black hover:bg-gray-50'}`;
 
                               if (item.href) {
                                 return (
@@ -386,11 +404,7 @@ const Navigation = () => {
                               }
 
                               return (
-                                <button
-                                  key={item.id}
-                                  onClick={() => scrollToSection(item.id)}
-                                  className={cls}
-                                >
+                                <button key={item.id} onClick={() => scrollToSection(item.id)} className={cls}>
                                   <span className="font-serif">{item.label}</span>
                                   <span className="text-gray-400">›</span>
                                 </button>
@@ -406,89 +420,41 @@ const Navigation = () => {
             })}
           </div>
 
-          {/* Icone a destra (mail + login + telefono) */}
-          <div className="hidden lg:flex items-center gap-4">
-            <a
-              href="mailto:pellegrinaggio.cnc.piemonte@gmail.com"
-              className={`transition-colors ${headerIsWhite ? 'text-black hover:text-amber-700' : 'text-white hover:text-amber-200'}`}
-              aria-label="Invia una email"
-              title="Email"
-            >
-              <Mail size={20} />
-            </a>
+          <div className="hidden lg:flex items-start gap-4 shrink-0">
+            {QUICK_ACTIONS.map((action) => renderQuickAction(action))}
+          </div>
 
-            {/* ✅ Icona Area riservata (sempre visibile; link pronto ma non attivo se URL vuoto) */}
-            {RESERVED_AREA_URL ? (
-              <a
-                href={RESERVED_AREA_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-opacity hover:opacity-80"
-                aria-label="Apri area riservata"
-                title="Area riservata"
-              >
-                <img
-                  src="/images/login.png"
-                  alt="Area riservata"
-                  className={`w-5 h-5 ${headerIsWhite ? 'brightness-0' : 'brightness-0 invert'}`}
-                />
-              </a>
-            ) : (
-              <span className="opacity-80" title="Area riservata (prossimamente)">
-                <img
-                  src="/images/login.png"
-                  alt="Area riservata"
-                  className={`w-5 h-5 ${headerIsWhite ? 'brightness-0' : 'brightness-0 invert'}`}
-                />
-              </span>
-            )}
-
-            {/* ✅ Assistenza (apre link chat esterno) */}
-            <a
-              href="https://tawk.to/chat/65fdae1ba0c6737bd123b4bd/1hpjf07eo"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`transition-colors ${headerIsWhite ? 'text-black hover:text-amber-700' : 'text-white hover:text-amber-200'}`}
-              aria-label="Apri assistenza online"
-              title="Assistenza online"
-            >
-              <MessageCircle size={20} />
-            </a>
-
+          <div className="flex items-start gap-3 lg:hidden shrink-0">
+            <div className="flex items-start gap-3">
+              {QUICK_ACTIONS.map((action) => renderQuickAction(action, true))}
+            </div>
             <button
-              onClick={() => setPhoneModalOpen(true)}
-              className={`transition-colors ${headerIsWhite ? 'text-black hover:text-amber-700' : 'text-white hover:text-amber-200'}`}
-              aria-label="Apri contatto telefonico"
-              title="Telefono / WhatsApp"
+              className={`pt-1 transition-colors ${baseText}`}
+              onClick={() => setMobileMenuOpen((value) => !value)}
+              aria-label={mobileMenuOpen ? 'Chiudi menu' : 'Apri menu'}
             >
-              <Phone size={20} />
+              {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
         </div>
 
-        {/* ✅ Mobile menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-4 pb-4 border-t pt-4">
+          <div className="lg:hidden mt-4 pb-4 border-t pt-4 bg-white">
             <div className="flex flex-col space-y-3">
               {navGroups.map((group) => (
                 <div key={group.id} className="px-2">
                   <div className="text-xs uppercase tracking-wider text-gray-500 px-2 py-2">{group.label}</div>
                   <div className="flex flex-col gap-1">
                     {group.items.map((item) => {
-                      const cls = `px-4 py-2 text-sm font-serif tracking-wider text-left transition-all rounded-full ${
-                        !item.href && activeSection === item.id ? 'bg-black text-white' : 'text-black hover:bg-gray-100'
-                      }`;
+                      const cls = `px-4 py-2 text-sm font-serif tracking-wider text-left transition-all rounded-full ${!item.href && activeSection === item.id ? 'bg-black text-white' : 'text-black hover:bg-gray-100'}`;
 
-                      // ✅ Mobile: sottomenu (Eventi > WYD)
                       if (group.id === 'eventi' && item.children?.length) {
                         const open = openSubmenu === item.id;
                         return (
                           <div key={item.id} className="flex flex-col gap-1">
                             <button
                               onClick={() => setOpenSubmenu(open ? null : item.id)}
-                              className={`px-4 py-2 text-sm font-serif tracking-wider text-left transition-all rounded-full flex items-center justify-between ${
-                                open ? 'bg-gray-100 text-black' : 'text-black hover:bg-gray-100'
-                              }`}
+                              className={`px-4 py-2 text-sm font-serif tracking-wider text-left transition-all rounded-full flex items-center justify-between ${open ? 'bg-gray-100 text-black' : 'text-black hover:bg-gray-100'}`}
                             >
                               <span>{item.label}</span>
                               <span className="text-gray-500">{open ? '˄' : '˅'}</span>
@@ -496,11 +462,7 @@ const Navigation = () => {
                             {open && (
                               <div className="pl-4 flex flex-col gap-1">
                                 {item.children.map((child) => {
-                                  const ccls = `px-4 py-2 text-sm font-serif tracking-wider text-left transition-all rounded-full ${
-                                    !child.href && activeSection === child.id
-                                      ? 'bg-black text-white'
-                                      : 'text-black hover:bg-gray-100'
-                                  }`;
+                                  const childClass = `px-4 py-2 text-sm font-serif tracking-wider text-left transition-all rounded-full ${!child.href && activeSection === child.id ? 'bg-black text-white' : 'text-black hover:bg-gray-100'}`;
                                   if (child.href) {
                                     return (
                                       <a
@@ -513,18 +475,14 @@ const Navigation = () => {
                                           setOpenDropdown(null);
                                           setOpenSubmenu(null);
                                         }}
-                                        className={ccls}
+                                        className={childClass}
                                       >
                                         {child.label}
                                       </a>
                                     );
                                   }
                                   return (
-                                    <button
-                                      key={child.id}
-                                      onClick={() => scrollToSection(child.id)}
-                                      className={ccls}
-                                    >
+                                    <button key={child.id} onClick={() => scrollToSection(child.id)} className={childClass}>
                                       {child.label}
                                     </button>
                                   );
@@ -562,40 +520,10 @@ const Navigation = () => {
                   </div>
                 </div>
               ))}
-
-              <div className="flex items-center gap-4 px-4 pt-2">
-                <a href="mailto:pellegrinaggio.cnc.piemonte@gmail.com" className="text-black hover:text-amber-700 transition-colors">
-                  <Mail size={20} />
-                </a>
-                <a
-                  href={RESERVED_AREA_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-opacity hover:opacity-80"
-                  aria-label="Apri area riservata"
-                  title="Area riservata"
-                >
-                  <img src="/images/login.png" alt="Area riservata" className="w-5 h-5 brightness-0" />
-                </a>
-                <a
-                  href="https://tawk.to/chat/65fdae1ba0c6737bd123b4bd/1hpjf07eo"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-black hover:text-amber-700 transition-colors"
-                  aria-label="Apri assistenza online"
-                  title="Assistenza online"
-                >
-                  <MessageCircle size={20} />
-                </a>
-                <button onClick={() => setPhoneModalOpen(true)} className="text-black hover:text-amber-700 transition-colors">
-                  <Phone size={20} />
-                </button>
-              </div>
             </div>
           </div>
         )}
 
-        {/* Modal telefono */}
         {phoneModalOpen && (
           <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" onClick={() => setPhoneModalOpen(false)}>
             <div className="bg-white rounded-lg p-8 max-w-sm w-full mx-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
@@ -604,19 +532,27 @@ const Navigation = () => {
                   <Phone size={32} />
                 </div>
                 <h2 className="text-2xl font-serif font-bold text-black">Contattaci</h2>
-                <p className="text-gray-600 text-sm">Connettiti con noi tramite WhatsApp</p>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-2xl font-bold text-black">+39 347 465 9282</p>
+                <p className="text-gray-600 text-sm">Contatti rapidi disponibili via WhatsApp</p>
+                <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-1">
+                  {SITE_CONFIG.contactPeople.map((contact) => (
+                    <div key={contact.phonePlain} className="bg-gray-50 rounded-lg p-4 text-left space-y-3">
+                      <div>
+                        <p className="text-lg font-bold text-black">{contact.name}</p>
+                        <p className="text-sm text-gray-500">{contact.role}</p>
+                      </div>
+                      <p className="text-xl font-bold text-black">{contact.phoneDisplay}</p>
+                      <a
+                        href={`https://wa.me/${contact.phonePlain}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 w-full justify-center bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
+                      >
+                        <MessageCircle size={20} />
+                        Apri WhatsApp
+                      </a>
+                    </div>
+                  ))}
                 </div>
-                <a
-                  href="https://wa.me/393474659282"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 w-full justify-center bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
-                >
-                  <MessageCircle size={20} />
-                  Apri WhatsApp
-                </a>
                 <button
                   onClick={() => setPhoneModalOpen(false)}
                   className="w-full text-black px-6 py-2 rounded-lg border-2 border-gray-300 hover:border-black transition-colors"

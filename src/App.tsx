@@ -2,10 +2,14 @@ import Navigation from './components/Navigation';
 import { Play } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import FlipCountdown from './components/FlipCountdown';
-
+import { SITE_CONFIG } from './config/siteConfig';
 
 function App() {
   const [pageViews, setPageViews] = useState<number | null>(null);
+
+  useEffect(() => {
+    document.title = SITE_CONFIG.browserTitle;
+  }, []);
 
   useEffect(() => {
     // Prova conteggio globale (CountAPI). Se bloccato da privacy/adblock,
@@ -66,16 +70,18 @@ function App() {
         >
           <div className="absolute inset-0 bg-black/40"></div>
         </div>
-        <div className="relative z-10 text-center">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif text-white font-bold tracking-wider lg:whitespace-nowrap break-normal" style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}>
-            Pellegrinaggi
-          </h1>
-          <h1 className="text-6xl md:text-8xl font-serif text-white font-bold tracking-wider mt-4" style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}>
-            CnC
-          </h1>
-          <h1 className="text-6xl md:text-8xl font-serif text-white font-bold tracking-wider mt-4" style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}>
-            Piemonte
-          </h1>
+        <div className="relative z-10 text-center px-4 max-w-[94vw] mx-auto pt-24 sm:pt-16">
+          <div className="space-y-2 sm:space-y-3">
+            {SITE_CONFIG.heroTitleLines.map((line, index) => (
+              <h1
+                key={`${line}-${index}`}
+                className={`font-serif text-white font-bold leading-none tracking-tight ${index === 0 ? 'text-[clamp(2.7rem,14vw,6.5rem)]' : 'text-[clamp(3rem,16vw,7.5rem)]'}`}
+                style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}
+              >
+                {line}
+              </h1>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -104,7 +110,7 @@ function App() {
             Le quote dei pellegrinaggi non sono ancora impostate.
           </p>
           <a
-            href="https://script.google.com/macros/s/AKfycbwPOc4xdrCreKDBfdnNPVXw0mS-GfGS3RcrFpBVSSc-5Rpi5eq55FJkXcoYaWn-u2XV/exec"
+            href={SITE_CONFIG.reservedAreaUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center mt-8 bg-white text-black px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
@@ -345,7 +351,7 @@ function App() {
                   Preiscrizione Seoul 2027
                 </a>
                 <a
-                  href="https://script.google.com/macros/s/AKfycbwPOc4xdrCreKDBfdnNPVXw0mS-GfGS3RcrFpBVSSc-5Rpi5eq55FJkXcoYaWn-u2XV/exec"
+                  href={SITE_CONFIG.reservedAreaUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center bg-amber-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-amber-700 transition-colors"
@@ -364,7 +370,7 @@ function App() {
         <div className="container mx-auto px-4">
           <div className="text-center space-y-8">
             <div className="max-w-md mx-auto">
-              <a href="https://script.google.com/macros/s/AKfycbwPOc4xdrCreKDBfdnNPVXw0mS-GfGS3RcrFpBVSSc-5Rpi5eq55FJkXcoYaWn-u2XV/exec" target="_blank" rel="noopener noreferrer" title="Apri area riservata" className="inline-block hover:opacity-90 transition-opacity">
+              <a href={SITE_CONFIG.reservedAreaUrl} target="_blank" rel="noopener noreferrer" title="Apri area riservata" className="inline-block hover:opacity-90 transition-opacity">
                 <img
                   src="/images/area riservata.png"
                   alt="Area Riservata"
@@ -386,7 +392,7 @@ function App() {
 
             {/* ✅ Pulsante (ora attivo) */}
             <a
-              href="https://script.google.com/macros/s/AKfycbwPOc4xdrCreKDBfdnNPVXw0mS-GfGS3RcrFpBVSSc-5Rpi5eq55FJkXcoYaWn-u2XV/exec"
+              href={SITE_CONFIG.reservedAreaUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center bg-white text-black px-10 py-4 rounded-lg font-semibold border border-white/30 hover:bg-gray-100 transition-colors"
