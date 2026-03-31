@@ -122,9 +122,9 @@ const Navigation = () => {
 
   const renderQuickAction = (action: (typeof QUICK_ACTIONS)[number], mobile = false) => {
     const wrapperClass = mobile
-      ? 'flex min-w-[54px] max-w-[58px] flex-col items-center justify-center gap-1 text-center'
+      ? 'flex w-full min-w-0 flex-col items-center justify-center gap-0.5 text-center px-0.5'
       : 'flex min-w-[68px] flex-col items-center justify-center gap-1 text-center';
-    const labelClass = mobile ? 'text-[10px] leading-tight font-medium' : 'text-[11px] leading-tight font-medium';
+    const labelClass = mobile ? 'text-[8px] leading-[1] font-medium tracking-tight' : 'text-[11px] leading-tight font-medium';
     const iconClass = `transition-colors ${mobile ? 'text-black hover:text-amber-700' : quickActionIconClass}`;
     const captionClass = `${mobile ? 'text-black/70' : quickActionLabelClass} ${labelClass}`;
 
@@ -134,7 +134,7 @@ const Navigation = () => {
           <img
             src="/images/login.png"
             alt={action.label}
-            className={`w-5 h-5 ${mobile || headerIsWhite ? 'brightness-0' : 'brightness-0 invert'}`}
+            className={`${mobile ? 'w-[18px] h-[18px]' : 'w-5 h-5'} ${mobile || headerIsWhite ? 'brightness-0' : 'brightness-0 invert'}`}
           />
           <span className={captionClass}>{action.label}</span>
         </>
@@ -168,13 +168,13 @@ const Navigation = () => {
           aria-label="Apri contatto telefonico"
           title={action.label}
         >
-          <Phone size={20} className={iconClass} />
+          <Phone size={mobile ? 18 : 20} className={iconClass} />
           <span className={captionClass}>{action.label}</span>
         </button>
       );
     }
 
-    const icon = action.id === 'email' ? <Mail size={20} className={iconClass} /> : <MessageCircle size={20} className={iconClass} />;
+    const icon = action.id === 'email' ? <Mail size={mobile ? 18 : 20} className={iconClass} /> : <MessageCircle size={mobile ? 18 : 20} className={iconClass} />;
 
     return (
       <a
@@ -202,8 +202,8 @@ const Navigation = () => {
         setOpenSubmenu(null);
       }}
     >
-      <nav className="container mx-auto px-4 py-4">
-        <div className="flex items-start justify-between gap-4">
+      <nav className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
+        <div className="flex items-start justify-between gap-2 sm:gap-4">
           <div className="flex items-center shrink-0">
             <a
               href="https://neocatechumenaleiter.org/it/"
@@ -214,7 +214,7 @@ const Navigation = () => {
               aria-label="Apri il sito neocatechumenaleiter.org (si apre in una nuova scheda)"
             >
               <div
-                className={`relative w-12 h-12 bg-gradient-to-br from-amber-600 to-amber-800 rounded-full flex items-center justify-center text-white font-bold text-xl cursor-pointer transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg group-hover:ring-2 group-hover:ring-amber-400 group-hover:ring-offset-2 ${headerIsWhite ? 'ring-offset-white' : 'ring-offset-transparent'}`}
+                className={`relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-amber-600 to-amber-800 rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-xl cursor-pointer transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg group-hover:ring-2 group-hover:ring-amber-400 group-hover:ring-offset-2 ${headerIsWhite ? 'ring-offset-white' : 'ring-offset-transparent'}`}
               >
                 CnC
                 <span className="absolute -right-1 -bottom-1 opacity-0 scale-90 transition-all duration-200 group-hover:opacity-100 group-hover:scale-100">
@@ -424,12 +424,12 @@ const Navigation = () => {
             {QUICK_ACTIONS.map((action) => renderQuickAction(action))}
           </div>
 
-          <div className="flex items-start gap-3 lg:hidden shrink-0">
-            <div className="flex items-start gap-3">
+          <div className="flex flex-1 min-w-0 items-start justify-end gap-1 lg:hidden">
+            <div className="grid flex-1 min-w-0 grid-cols-4 gap-x-0.5 gap-y-0.5">
               {QUICK_ACTIONS.map((action) => renderQuickAction(action, true))}
             </div>
             <button
-              className={`pt-1 transition-colors ${baseText}`}
+              className={`shrink-0 pt-0.5 transition-colors ${baseText}`}
               onClick={() => setMobileMenuOpen((value) => !value)}
               aria-label={mobileMenuOpen ? 'Chiudi menu' : 'Apri menu'}
             >

@@ -72,15 +72,43 @@ function App() {
         </div>
         <div className="relative z-10 text-center px-4 max-w-[94vw] mx-auto pt-24 sm:pt-16">
           <div className="space-y-2 sm:space-y-3">
-            {SITE_CONFIG.heroTitleLines.map((line, index) => (
-              <h1
-                key={`${line}-${index}`}
-                className={`font-serif text-white font-bold leading-none tracking-tight ${index === 0 ? 'text-[clamp(2.7rem,14vw,6.5rem)]' : 'text-[clamp(3rem,16vw,7.5rem)]'}`}
-                style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}
-              >
-                {line}
-              </h1>
-            ))}
+            {SITE_CONFIG.heroTitleLines.map((line, index) => {
+              const isFirst = index === 0;
+              const isLast = index === SITE_CONFIG.heroTitleLines.length - 1;
+              const titleClass = isFirst
+                ? 'text-[clamp(2rem,9.8vw,6.2rem)] sm:text-[clamp(2.7rem,14vw,6.5rem)]'
+                : isLast
+                  ? 'text-[clamp(2.15rem,10.4vw,6.2rem)] sm:text-[clamp(3rem,16vw,7.5rem)]'
+                  : 'text-[clamp(2.45rem,11.6vw,7rem)] sm:text-[clamp(3rem,16vw,7.5rem)]';
+
+              if (isLast && line.includes(' - ')) {
+                const [left, right] = line.split(' - ');
+                return (
+                  <div
+                    key={`${line}-${index}`}
+                    className={`font-serif text-white font-bold leading-none tracking-tight ${titleClass}`}
+                    style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}
+                  >
+                    <span className="hidden min-[560px]:inline">{left} - {right}</span>
+                    <span className="inline min-[560px]:hidden">
+                      <span className="block">{left}</span>
+                      <span className="block">-</span>
+                      <span className="block">{right}</span>
+                    </span>
+                  </div>
+                );
+              }
+
+              return (
+                <h1
+                  key={`${line}-${index}`}
+                  className={`font-serif text-white font-bold leading-none tracking-tight ${titleClass}`}
+                  style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}
+                >
+                  {line}
+                </h1>
+              );
+            })}
           </div>
         </div>
       </section>
