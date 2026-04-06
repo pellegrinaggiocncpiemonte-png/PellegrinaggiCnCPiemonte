@@ -8,6 +8,7 @@ import { RESERVED_AREA_GUIDE_ITEMS, RESERVED_AREA_GUIDE_SUBTITLE, RESERVED_AREA_
 function App() {
   const [pageViews, setPageViews] = useState<number | null>(null);
   const [isReservedGuideOpen, setIsReservedGuideOpen] = useState(false);
+  const [openVideoId, setOpenVideoId] = useState<number | null>(1);
 
   useEffect(() => {
     document.title = SITE_CONFIG.browserTitle;
@@ -111,6 +112,12 @@ function App() {
                 </h1>
               );
             })}
+            <p
+              className="text-white/95 text-[clamp(1rem,4.6vw,1.65rem)] sm:text-[clamp(1.1rem,3.2vw,1.85rem)] font-medium tracking-[0.18em] uppercase pt-3"
+              style={{ textShadow: '3px 3px 6px rgba(0,0,0,0.75)' }}
+            >
+              Cammino Neocatecumenale
+            </p>
           </div>
         </div>
       </section>
@@ -244,83 +251,75 @@ function App() {
             <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
           </div>
 
-          <div className="space-y-16">
-            <div className="text-center space-y-4">
-              <h3 className="text-3xl md:text-4xl font-serif text-white font-bold tracking-wider">
-                WYD Seoul 2027 - World Youth Day South Korea
-              </h3>
-              <div className="w-24 h-1 bg-amber-600 mx-auto"></div>
-              <div className="max-w-4xl mx-auto">
-                <div className="relative h-64 md:h-96 rounded-lg overflow-hidden shadow-2xl mb-8">
-                  <img
-                    src="https://img.youtube.com/vi/BMbkoZwqRtI/hqdefault.jpg"
-                    alt="Anteprima Video 1"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                </div>
-                <div className="text-center">
-                  <a
-                    href="https://www.youtube.com/watch?v=BMbkoZwqRtI"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-transparent text-white border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-all shadow-lg"
-                  >
-                    <Play size={20} />
-                    Guarda video 1
-                  </a>
+          {[
+            {
+              id: 1,
+              title: 'WYD Seoul 2027 - World Youth Day South Korea',
+              youtubeId: 'BMbkoZwqRtI',
+              buttonLabel: 'Guarda video 1',
+            },
+            {
+              id: 2,
+              title: 'WYD Seoul 2027 - Official Promo Video',
+              youtubeId: 'DgtBKDW8iq0',
+              buttonLabel: 'Guarda video 2',
+            },
+            {
+              id: 3,
+              title: 'Esperienza Seminarista in Corea',
+              youtubeId: '3EBJaZTvQ8w',
+              buttonLabel: 'Guarda video 3',
+            },
+            {
+              id: 4,
+              title: 'Invito del Vescovo di Seul',
+              youtubeId: 'PXKnjtHtVFw',
+              buttonLabel: 'Guarda video 4',
+            },
+          ].map((video) => {
+            const isOpen = openVideoId === video.id;
+            return (
+              <div key={video.id} className="text-center space-y-4 mb-16 last:mb-0">
+                <h3 className="text-3xl md:text-4xl font-serif text-white font-bold tracking-wider">
+                  {video.title}
+                </h3>
+                <div className="w-24 h-1 bg-amber-600 mx-auto"></div>
+                <div className="max-w-4xl mx-auto">
+                  <div className="relative aspect-video rounded-lg overflow-hidden shadow-2xl mb-8 bg-black">
+                    {isOpen ? (
+                      <iframe
+                        className="w-full h-full"
+                        src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&rel=0`}
+                        title={video.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <>
+                        <img
+                          src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
+                          alt={`Anteprima ${video.title}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                      </>
+                    )}
+                  </div>
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => setOpenVideoId(video.id)}
+                      className="inline-flex items-center gap-2 bg-transparent text-white border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-all shadow-lg"
+                    >
+                      <Play size={20} />
+                      {video.buttonLabel}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="text-center space-y-6">
-              <h3 className="text-3xl md:text-4xl font-serif text-white font-bold tracking-wider">
-                WYD Seoul 2027 - Official Promo Video
-              </h3>
-              <div className="w-24 h-1 bg-amber-600 mx-auto"></div>
-              <a
-                href="https://www.youtube.com/watch?v=DgtBKDW8iq0"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-transparent text-white border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-all shadow-lg"
-              >
-                <Play size={20} />
-                Guarda video 2
-              </a>
-            </div>
-
-            <div className="text-center space-y-6">
-              <h3 className="text-3xl md:text-4xl font-serif text-white font-bold tracking-wider">
-                Esperienza Seminarista in Corea
-              </h3>
-              <div className="w-24 h-1 bg-amber-600 mx-auto"></div>
-              <a
-                href="https://www.youtube.com/watch?v=3EBJaZTvQ8w"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-transparent text-white border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-all shadow-lg"
-              >
-                <Play size={20} />
-                Guarda video 3
-              </a>
-            </div>
-
-            <div className="text-center space-y-6">
-              <h3 className="text-3xl md:text-4xl font-serif text-white font-bold tracking-wider">
-                Invito del Vescovo di Seul
-              </h3>
-              <div className="w-24 h-1 bg-amber-600 mx-auto"></div>
-              <a
-                href="https://www.youtube.com/watch?v=PXKnjtHtVFw"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-transparent text-white border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-all shadow-lg"
-              >
-                <Play size={20} />
-                Guarda video 4
-              </a>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </section>
 
