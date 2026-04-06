@@ -18,7 +18,6 @@ const Navigation = () => {
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const [isInteracting, setIsInteracting] = useState(false);
   const [isTop, setIsTop] = useState(true);
-  const [isMobileViewport, setIsMobileViewport] = useState(false);
 
   const navGroups: NavGroup[] = useMemo(
     () => [
@@ -101,17 +100,6 @@ const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [navTargets]);
 
-
-  useEffect(() => {
-    const updateViewport = () => {
-      setIsMobileViewport(window.innerWidth < 1024);
-    };
-
-    updateViewport();
-    window.addEventListener('resize', updateViewport);
-    return () => window.removeEventListener('resize', updateViewport);
-  }, []);
-
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -127,7 +115,7 @@ const Navigation = () => {
     return group.items.some((item) => item.id === activeSection || item.children?.some((child) => child.id === activeSection));
   };
 
-  const headerIsWhite = !isTop || (!!openDropdown && !isMobileViewport) || mobileMenuOpen || (!isMobileViewport && isInteracting);
+  const headerIsWhite = !isTop || isInteracting || !!openDropdown || mobileMenuOpen;
   const baseText = headerIsWhite ? 'text-black' : 'text-white';
   const quickActionIconClass = headerIsWhite ? 'text-black hover:text-amber-700' : 'text-white hover:text-amber-200';
   const quickActionLabelClass = headerIsWhite ? 'text-black/70' : 'text-white/80';
@@ -137,8 +125,8 @@ const Navigation = () => {
       ? 'flex w-full min-w-0 flex-col items-center justify-center gap-0.5 text-center px-0.5'
       : 'flex min-w-[68px] flex-col items-center justify-center gap-1 text-center';
     const labelClass = mobile ? 'text-[8px] leading-[1] font-medium tracking-tight' : 'text-[11px] leading-tight font-medium';
-    const iconClass = `transition-colors ${mobile ? quickActionIconClass : quickActionIconClass}`;
-    const captionClass = `${quickActionLabelClass} ${labelClass}`;
+    const iconClass = `transition-colors ${mobile ? 'text-black hover:text-amber-700' : quickActionIconClass}`;
+    const captionClass = `${mobile ? 'text-black/70' : quickActionLabelClass} ${labelClass}`;
 
     if (action.type === 'reserved-area') {
       const content = (
@@ -146,7 +134,7 @@ const Navigation = () => {
           <img
             src="/images/login.png"
             alt={action.label}
-            className={`${mobile ? 'w-[18px] h-[18px]' : 'w-5 h-5'} ${headerIsWhite ? 'brightness-0' : 'brightness-0 invert'}`}
+            className={`${mobile ? 'w-[18px] h-[18px]' : 'w-5 h-5'} ${mobile || headerIsWhite ? 'brightness-0' : 'brightness-0 invert'}`}
           />
           <span className={captionClass}>{action.label}</span>
         </>
@@ -207,19 +195,15 @@ const Navigation = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${headerIsWhite ? 'bg-white shadow-md' : 'bg-transparent'}`}
-      onMouseEnter={() => {
-        if (!isMobileViewport) setIsInteracting(true);
-      }}
+      onMouseEnter={() => setIsInteracting(true)}
       onMouseLeave={() => {
-        if (!isMobileViewport) {
-          setIsInteracting(false);
-          setOpenDropdown(null);
-          setOpenSubmenu(null);
-        }
+        setIsInteracting(false);
+        setOpenDropdown(null);
+        setOpenSubmenu(null);
       }}
     >
       <nav className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
-        <div className="flex items-center justify-between gap-2 sm:gap-4">
+        <div className="flex items-start justify-between gap-2 sm:gap-4">
           <div className="flex items-center shrink-0">
             <a
               href="https://neocatechumenaleiter.org/it/"
@@ -436,16 +420,16 @@ const Navigation = () => {
             })}
           </div>
 
-          <div className="hidden lg:flex items-center gap-4 shrink-0">
+          <div className="hidden lg:flex items-start gap-4 shrink-0">
             {QUICK_ACTIONS.map((action) => renderQuickAction(action))}
           </div>
 
-          <div className="flex flex-1 min-w-0 items-center justify-end gap-1 lg:hidden">
+          <div className="flex flex-1 min-w-0 items-start justify-end gap-1 lg:hidden">
             <div className="grid flex-1 min-w-0 grid-cols-4 gap-x-0.5 gap-y-0.5">
               {QUICK_ACTIONS.map((action) => renderQuickAction(action, true))}
             </div>
             <button
-              className={`shrink-0 transition-colors ${baseText}`}
+              className={`shrink-0 pt-0.5 transition-colors ${baseText}`}
               onClick={() => setMobileMenuOpen((value) => !value)}
               aria-label={mobileMenuOpen ? 'Chiudi menu' : 'Apri menu'}
             >
