@@ -9,7 +9,7 @@ export type ReservedAreaGuideItem = {
 
 export const RESERVED_AREA_GUIDE_TITLE = 'Area riservata: registrazione e accesso rapido';
 export const RESERVED_AREA_GUIDE_SUBTITLE =
-  'Qui trovi sia le indicazioni per scegliere il profilo corretto durante la registrazione, sia i passaggi per salvare la web app sulla schermata Home del telefono e aprirla più velocemente.';
+  'Qui trovi sia le indicazioni per scegliere il profilo corretto durante la registrazione, sia i passaggi per salvare la web app sulla schermata Home del telefono e aprirla più velocemente. Attenzione: i profili organizzativi non sostituiscono l’iscrizione come Partecipante per chi prende parte al pellegrinaggio.';
 
 export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
   {
@@ -17,27 +17,34 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
     title: 'Partecipante',
     icon: '🏃',
     description:
-      'È il profilo principale per chi vive il pellegrinaggio e deve essere scelto da:',
+      'È il profilo obbligatorio per chi partecipa personalmente al pellegrinaggio. Devono registrarsi come Partecipante:',
     bullets: [
       'Giovani minori e maggiorenni.',
-      'Accompagnatori e catechisti che partecipano attivamente al cammino.',
-      'Responsabili di comunità in cammino con i ragazzi.',
+      'Accompagnatori, catechisti e collaboratori che partecipano al pellegrinaggio.',
+      'Responsabili di comunità che partecipano al pellegrinaggio.',
       'Genitori che partecipano fisicamente all’evento.',
+      'Presbiteri che partecipano al pellegrinaggio.',
     ],
+    note:
+      'Chi partecipa al pellegrinaggio deve sempre risultare registrato anche come Partecipante, anche se ricopre altri ruoli organizzativi.',
   },
   {
     id: 'responsabile',
     title: 'Responsabile',
     icon: '🛡️',
     description:
-      'Profilo dedicato a chi ha il compito di coordinare e gestire il gruppo di giovani a lui associati.',
+      'Profilo dedicato al responsabile di una comunità, non al responsabile del pellegrinaggio.',
+    note:
+      'Se il responsabile partecipa anche al pellegrinaggio, deve registrarsi anche come Partecipante. Questo profilo serve alla gestione del gruppo e non sostituisce l’iscrizione personale. Chi si registra come Responsabile potrebbe inoltre essere contattato per una verifica.',
   },
   {
     id: 'collaboratore',
-    title: 'Collaboratore',
+    title: 'Collaboratore / Accompagnatore',
     icon: '🤝',
     description:
       'Profilo specifico per catechisti e accompagnatori che supportano la gestione organizzativa.',
+    note:
+      'Attenzione: se ti registri come Collaboratore / Accompagnatore e partecipi al pellegrinaggio, devi registrarti anche come Partecipante. Il profilo organizzativo non sostituisce quello di partecipazione. Chi si registra come Collaboratore potrebbe essere contattato per una verifica.',
   },
   {
     id: 'genitore-codice',
@@ -46,7 +53,7 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
     description:
       'Da scegliere se tuo figlio si è iscritto autonomamente come Partecipante.',
     note:
-      'Se tuo figlio è minore, dovrà inviarti un codice di verifica via email dalla sua sezione “Profilo” per permetterti di registrarti.',
+      'Se tuo figlio è minore, dovrà inviarti un codice di verifica via email dalla sua sezione “Profilo” per permetterti di registrarti. Se anche il genitore partecipa al pellegrinaggio, deve registrarsi anche come Partecipante.',
   },
   {
     id: 'genitore-figli',
@@ -55,7 +62,7 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
     description:
       'Da scegliere se devi gestire figli che non hanno un indirizzo email personale.',
     note:
-      'Utilizzerai la tua email per registrarli e potrai creare i profili figli. Per gestirli dovrai impersonare ogni singolo figlio dal tuo pannello, così da completare le loro iscrizioni.',
+      'Utilizzerai la tua email per registrarli e potrai creare i profili figli. Per gestirli dovrai impersonare ogni singolo figlio dal tuo pannello, così da completare le loro iscrizioni. Se anche il genitore partecipa al pellegrinaggio, deve registrarsi anche come Partecipante.',
   },
   {
     id: 'iphone-safari',
@@ -94,6 +101,6 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
     description:
       'L’Area Riservata è una web app. Sul telefono puoi quindi creare un accesso rapido molto comodo dalla schermata Home.',
     note:
-      'Il comportamento finale dipende dal dispositivo e dal browser usato. In alcuni casi si apre come collegamento web avanzato, in altri come vera installazione leggera supportata dal browser.',
+      'In sintesi: chi partecipa al pellegrinaggio deve sempre registrarsi come Partecipante. I profili Collaboratore / Accompagnatore, Responsabile, Genitore e Genitore + Figli sono profili aggiuntivi di gestione e non sostituiscono l’iscrizione personale al pellegrinaggio. I presbiteri si registrano come Partecipanti e, solo se necessario, anche come Collaboratori.',
   },
 ];
