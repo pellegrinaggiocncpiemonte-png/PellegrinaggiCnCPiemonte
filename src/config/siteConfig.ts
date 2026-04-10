@@ -4,7 +4,7 @@ export const SITE_CONFIG = {
   heroTitleLines: ['Pellegrinaggi', 'CnC', 'Piemonte - Svizzera'],
   email: 'pellegrinaggio.cnc.piemonte@gmail.com',
   reservedAreaUrl:
-    'https://script.google.com/macros/s/AKfycbyWHyg6fE0gn-eMsUnyoPhVLu72xM-AzMZVC4-7Lzpo--FlyrzDEBYQOlke3b2lsKtx/exec',
+    'https://script.google.com/macros/s/AKfycbxPa9Oy_RU3qiq5C4qXmXe8dQtWXcLfX-VTgIQ8cB8NXQB_MeOCDZ_E3FVYz6ttJzvL/exec',
   assistanceUrl: 'https://tawk.to/chat/65fdae1ba0c6737bd123b4bd/1hpjf07eo',
   contactPeople: [
     {

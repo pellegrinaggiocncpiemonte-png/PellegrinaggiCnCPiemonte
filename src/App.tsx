@@ -8,6 +8,7 @@ import { RESERVED_AREA_GUIDE_ITEMS, RESERVED_AREA_GUIDE_SUBTITLE, RESERVED_AREA_
 function App() {
   const [pageViews, setPageViews] = useState<number | null>(null);
   const [isReservedGuideOpen, setIsReservedGuideOpen] = useState(false);
+  const [isTelegramGuideOpen, setIsTelegramGuideOpen] = useState(false);
   const [openVideoId, setOpenVideoId] = useState<number | null>(1);
 
   useEffect(() => {
@@ -360,6 +361,83 @@ function App() {
         </div>
       </section>
 
+      <section id="telegram" className="py-20 bg-stone-100">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider mb-4">
+                RICEVI COMUNICAZIONI SU TELEGRAM
+              </h2>
+              <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
+              <p className="mt-6 text-lg md:text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+                Servizio riservato agli utenti registrati all&apos;area riservata.
+                Le comunicazioni dell&apos;organizzazione potranno arrivare sia nella sezione comunicazioni,
+                sia su Telegram tramite il bot dedicato.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 md:p-12">
+              <div className="grid lg:grid-cols-[220px,1fr] gap-8 lg:gap-12 items-center">
+                <div className="flex justify-center lg:justify-start">
+                  <div className="rounded-[2rem] bg-sky-50 border border-sky-100 p-5 shadow-sm">
+                    <img
+                      src="/images/telegram-app.jpg"
+                      alt="Logo Telegram"
+                      className="w-36 h-36 sm:w-40 sm:h-40 object-contain"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-6 text-center lg:text-left">
+                  <div className="space-y-3">
+                    <p className="text-2xl md:text-3xl font-serif font-bold text-black">
+                      Solo per utenti registrati all&apos;area riservata
+                    </p>
+                    <p className="text-lg text-gray-700 leading-relaxed">
+                      Dopo la registrazione, nell&apos;area riservata sarà disponibile la sezione
+                      <span className="font-semibold text-black"> “Ricevi notifiche Telegram”</span>.
+                      Da lì potrai aprire il tuo link personale, premere <span className="font-semibold text-black">Start</span>
+                      nell&apos;app Telegram una sola volta e abilitare la ricezione delle comunicazioni. Verifica nella sezione
+                      Ricevi notifiche Telegram che ci sia scritto in verde <span className="font-semibold text-green-700">“Notifiche Telegram attivate correttamente”</span>.
+                    </p>
+                    <p className="text-base text-gray-600 leading-relaxed">
+                      In caso di messaggi particolarmente lunghi, il testo completo resterà leggibile
+                      nella sezione comunicazioni dell&apos;area riservata.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <button
+                      type="button"
+                      onClick={() => setIsTelegramGuideOpen(true)}
+                      className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                    >
+                      Istruzioni
+                    </button>
+                    <a
+                      href="https://telegram.org/apps?setln=it"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center bg-sky-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-sky-600 transition-colors"
+                    >
+                      Scarica Telegram
+                    </a>
+                    <a
+                      href={SITE_CONFIG.reservedAreaUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-lg font-semibold border border-gray-300 hover:bg-gray-50 transition-colors"
+                    >
+                      Vai all&apos;area riservata
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="gmg-2027-iscrizione" className="py-20 bg-stone-100">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
@@ -536,6 +614,80 @@ function App() {
         </div>
       ) : null}
 
+      {isTelegramGuideOpen ? (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/75 backdrop-blur-sm"
+            onClick={() => setIsTelegramGuideOpen(false)}
+            aria-label="Chiudi istruzioni Telegram"
+          />
+
+          <div className="relative z-10 w-full max-w-4xl max-h-[82vh] overflow-y-auto rounded-2xl border border-white/20 bg-white text-black shadow-2xl sm:max-h-[86vh]">
+            <div className="sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-gray-200 bg-white/95 px-4 py-4 backdrop-blur sm:px-5 md:px-6">
+              <div className="min-w-0">
+                <h3 className="text-xl sm:text-2xl md:text-[1.75rem] font-serif font-bold leading-tight">
+                  Ricevi comunicazioni su Telegram
+                </h3>
+                <p className="mt-1.5 text-xs sm:text-sm md:text-[0.95rem] text-gray-700 max-w-2xl leading-relaxed">
+                  Procedura guidata per attivare il collegamento Telegram dedicato agli utenti registrati all&apos;area riservata.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsTelegramGuideOpen(false)}
+                className="shrink-0 rounded-full border border-gray-300 px-3 py-1.5 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-gray-100 active:scale-95 transition-all duration-200"
+              >
+                Chiudi
+              </button>
+            </div>
+
+            <div className="p-4 sm:p-5 md:p-6 space-y-4">
+              {[
+                'Registrati all’area riservata.',
+                'Scarica l’app Telegram per iPhone o Android.',
+                'Dentro l’area riservata apri la sezione “Ricevi notifiche Telegram”.',
+                'Clicca il link personale presente nella sezione.',
+                'Quando si apre Telegram, premi su Start una sola volta.',
+                'Torna nell’area riservata e aggiorna la sezione per verificare l’avvenuta abilitazione.',
+                'Da quel momento potrai ricevere le comunicazioni sia nella sezione comunicazioni dell’area riservata sia su Telegram dal contatto “Pellegrinaggio CnC Piemonte e Svizzera Bot”.',
+                'Se un messaggio è troppo lungo, potrai leggerlo integralmente nella sezione comunicazioni dell’area riservata.',
+                'La chat Telegram è in modalità broadcast quindi potrai solo leggere i messaggi dell’organizzazione.',
+              ].map((step, index) => (
+                <article key={step} className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 sm:px-5">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-500 text-sm font-bold text-white shadow-sm">
+                      {index + 1}
+                    </div>
+                    <p className="pt-1 text-sm sm:text-base text-gray-800 leading-relaxed">{step}</p>
+                  </div>
+                </article>
+              ))}
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <a
+                  href="https://telegram.org/apps?setln=it"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center bg-sky-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-sky-600 transition-colors"
+                >
+                  Scarica Telegram
+                </a>
+                <a
+                  href={SITE_CONFIG.reservedAreaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                >
+                  Vai all&apos;area riservata
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <section id="donazioni" className="py-20 bg-black">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -559,6 +711,7 @@ function App() {
             <a href="#prossimi-eventi" className="hover:text-amber-500 transition-colors">Prossimi eventi</a>
             <a href="#wyd-seul" className="hover:text-amber-500 transition-colors">WYD Seul 2027</a>
             <a href="#gmg-2027-iscrizione" className="hover:text-amber-500 transition-colors">Iscrizione GMG 2027</a>
+            <a href="#telegram" className="hover:text-amber-500 transition-colors">Telegram</a>
             <a href="#donazioni" className="hover:text-amber-500 transition-colors">Versamenti e Donazioni</a>
           </div>
 

@@ -55,8 +55,11 @@ const Navigation = () => {
       {
         id: 'comunicazioni',
         label: 'Comunicazioni',
-        type: 'link',
-        items: [{ id: 'comunicazioni', label: 'Comunicazioni' }],
+        type: 'dropdown',
+        items: [
+          { id: 'comunicazioni', label: 'Comunicazioni' },
+          { id: 'telegram', label: 'Ricevi comunicazioni su Telegram' },
+        ],
       },
       {
         id: 'donazioni',
