@@ -1,5 +1,5 @@
 import Navigation from './components/Navigation';
-import { Play } from 'lucide-react';
+import { ChevronDown, Play } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import FlipCountdown from './components/FlipCountdown';
 import { SITE_CONFIG } from './config/siteConfig';
@@ -9,6 +9,7 @@ function App() {
   const [pageViews, setPageViews] = useState<number | null>(null);
   const [isReservedGuideOpen, setIsReservedGuideOpen] = useState(false);
   const [isTelegramGuideOpen, setIsTelegramGuideOpen] = useState(false);
+  const [isTelegramDetailsOpen, setIsTelegramDetailsOpen] = useState(false);
   const [openVideoId, setOpenVideoId] = useState<number | null>(1);
 
   useEffect(() => {
@@ -16,38 +17,85 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // Prova conteggio globale (CountAPI). Se bloccato da privacy/adblock,
-    // usa un fallback locale (localStorage) così non resta "—".
-    const LS_KEY = 'pellegrinaggi_cnc_piemonte_page_views_local';
+    const COUNTER_HIT_URL = 'https://api.countapi.xyz/hit/cnc-piemonte-wyd-2027/page-views';
+    const COUNTER_GET_URL = 'https://api.countapi.xyz/get/cnc-piemonte-wyd-2027/page-views';
+    const POLL_INTERVAL_MS = 15000;
 
-    const incLocal = () => {
-      try {
-        const raw = localStorage.getItem(LS_KEY);
-        const current = raw ? parseInt(raw, 10) : 0;
-        const next = Number.isFinite(current) ? current + 1 : 1;
-        localStorage.setItem(LS_KEY, String(next));
-        return next;
-      } catch {
-        return 1;
+    let isMounted = true;
+
+    const updateCount = (value: unknown) => {
+      const numericValue = Number(value);
+      if (isMounted && Number.isFinite(numericValue)) {
+        setPageViews(numericValue);
       }
     };
 
-    const controller = new AbortController();
-    const t = window.setTimeout(() => controller.abort(), 3000);
-
-    fetch('https://api.countapi.xyz/hit/cnc-piemonte-wyd-2027/page-views', { signal: controller.signal })
-      .then((res) => res.json())
-      .then((data) => {
-        const v = Number(data?.value);
-        if (Number.isFinite(v)) setPageViews(v);
-        else setPageViews(incLocal());
-      })
-      .catch(() => {
-        setPageViews(incLocal());
-      })
-      .finally(() => {
-        window.clearTimeout(t);
+    const fetchJson = async (url: string, signal?: AbortSignal) => {
+      const response = await fetch(url, {
+        signal,
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
+        },
       });
+
+      if (!response.ok) {
+        throw new Error(`Counter request failed: ${response.status}`);
+      }
+
+      return response.json();
+    };
+
+    const hitCounter = async () => {
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 5000);
+
+      try {
+        const data = await fetchJson(COUNTER_HIT_URL, controller.signal);
+        updateCount(data?.value);
+      } catch {
+        if (isMounted) {
+          setPageViews(null);
+        }
+      } finally {
+        window.clearTimeout(timeoutId);
+      }
+    };
+
+    const refreshCounter = async () => {
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 5000);
+
+      try {
+        const data = await fetchJson(COUNTER_GET_URL, controller.signal);
+        updateCount(data?.value);
+      } catch {
+        // Mantiene l'ultimo valore valido già mostrato.
+      } finally {
+        window.clearTimeout(timeoutId);
+      }
+    };
+
+    void hitCounter();
+
+    const intervalId = window.setInterval(() => {
+      void refreshCounter();
+    }, POLL_INTERVAL_MS);
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        void refreshCounter();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
   return (
     <div className="min-h-screen">
@@ -390,20 +438,47 @@ function App() {
 
                 <div className="space-y-6 text-center lg:text-left">
                   <div className="space-y-3">
-                    <p className="text-2xl md:text-3xl font-serif font-bold text-black">
-                      Solo per utenti registrati all&apos;area riservata
-                    </p>
-                    <p className="text-lg text-gray-700 leading-relaxed">
-                      Dopo la registrazione, nell&apos;area riservata sarà disponibile la sezione
-                      <span className="font-semibold text-black"> “Ricevi notifiche Telegram”</span>.
-                      Da lì potrai aprire il tuo link personale, premere <span className="font-semibold text-black">Start</span>
-                      nell&apos;app Telegram una sola volta e abilitare la ricezione delle comunicazioni. Verifica nella sezione
-                      Ricevi notifiche Telegram che ci sia scritto in verde <span className="font-semibold text-green-700">“Notifiche Telegram attivate correttamente”</span>.
-                    </p>
-                    <p className="text-base text-gray-600 leading-relaxed">
-                      In caso di messaggi particolarmente lunghi, il testo completo resterà leggibile
-                      nella sezione comunicazioni dell&apos;area riservata.
-                    </p>
+                    <div className="flex flex-col items-center gap-3 lg:items-start">
+                      <p className="text-2xl md:text-3xl font-serif font-bold text-black">
+                        Solo per utenti registrati all&apos;area riservata
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setIsTelegramDetailsOpen((prev) => !prev)}
+                        aria-expanded={isTelegramDetailsOpen}
+                        aria-controls="telegram-details-content"
+                        aria-label={isTelegramDetailsOpen ? 'Nascondi dettagli Telegram' : 'Mostra dettagli Telegram'}
+                        title={isTelegramDetailsOpen ? 'Nascondi dettagli' : 'Mostra dettagli'}
+                        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-800 shadow-sm transition-colors hover:bg-gray-50"
+                      >
+                        <ChevronDown
+                          className={`h-5 w-5 transition-transform duration-300 ${isTelegramDetailsOpen ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                    </div>
+
+                    <div
+                      id="telegram-details-content"
+                      className={`overflow-hidden transition-all duration-300 ease-in-out ${isTelegramDetailsOpen ? 'max-h-[900px] opacity-100 pt-1' : 'max-h-0 opacity-0'}`}
+                    >
+                      <div className="space-y-3">
+                        <p className="text-lg text-gray-700 leading-relaxed">
+                          Dopo la registrazione all&apos;area riservata, per poter ricevere anche le notifiche su Telegram,
+                          sarà prima necessario attendere che <span className="font-semibold text-black">l&apos;amministrazione attivi il tuo link personale Telegram</span>.
+                          Per questo motivo, dovrai entrare nella sezione
+                          <span className="font-semibold text-black"> “Ricevi notifiche Telegram”</span> presente nel tuo profilo e verificare se il collegamento è stato attivato.
+                          Quando il link sarà disponibile, potrai cliccarlo direttamente dalla sezione: si aprirà l&apos;app Telegram,
+                          che dovrà essere già installata sul tuo cellulare. All&apos;interno di Telegram dovrai premere
+                          <span className="font-semibold text-black"> Start</span> una sola volta. Poi torna nella sezione Ricevi notifiche Telegram dell&apos;area riservata e premi su
+                          <span className="font-semibold text-black"> Verifica collegamento</span>. Se tutto è corretto, vedrai in verde
+                          <span className="font-semibold text-green-700"> “Notifiche Telegram attivate correttamente.”</span>.
+                        </p>
+                        <p className="text-base text-gray-600 leading-relaxed">
+                          In caso di messaggi particolarmente lunghi, il testo completo resterà leggibile
+                          nella sezione comunicazioni dell&apos;area riservata.
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -646,14 +721,17 @@ function App() {
             <div className="p-4 sm:p-5 md:p-6 space-y-4">
               {[
                 'Registrati all’area riservata.',
-                'Scarica l’app Telegram per iPhone o Android.',
-                'Dentro l’area riservata apri la sezione “Ricevi notifiche Telegram”.',
-                'Clicca il link personale presente nella sezione.',
-                'Quando si apre Telegram, premi su Start una sola volta.',
-                'Torna nell’area riservata e aggiorna la sezione per verificare l’avvenuta abilitazione.',
-                'Da quel momento potrai ricevere le comunicazioni sia nella sezione comunicazioni dell’area riservata sia su Telegram dal contatto “Pellegrinaggio CnC Piemonte e Svizzera Bot”.',
+                'Scarica l’app Telegram sul tuo cellulare.',
+                'Dopo la registrazione, attendi che l’amministrazione attivi il tuo link personale Telegram.',
+                'Entra nel tuo profilo, nella sezione “Ricevi notifiche Telegram”, e verifica se il link è stato attivato.',
+                'Quando il link risulta disponibile, cliccalo per aprire l’app Telegram.',
+                'Dentro Telegram, premi il pulsante Start una sola volta.',
+                'Torna nell’area riservata e apri di nuovo la sezione “Ricevi notifiche Telegram”.',
+                'Premi su “Verifica collegamento” per controllare che l’attivazione sia andata a buon fine.',
+                'Se il collegamento è corretto, vedrai in verde la scritta: “Notifiche Telegram attivate correttamente.”',
+                'Da quel momento potrai ricevere le comunicazioni dell’organizzazione anche su Telegram dal contatto “Pellegrinaggio CnC Piemonte e Svizzera Bot”.',
                 'Se un messaggio è troppo lungo, potrai leggerlo integralmente nella sezione comunicazioni dell’area riservata.',
-                'La chat Telegram è in modalità broadcast quindi potrai solo leggere i messaggi dell’organizzazione.',
+                'La chat Telegram è in modalità broadcast, quindi potrai solo leggere i messaggi inviati dall’organizzazione.',
               ].map((step, index) => (
                 <article key={step} className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 sm:px-5">
                   <div className="flex items-start gap-4">
