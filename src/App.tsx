@@ -6,7 +6,13 @@ import { SITE_CONFIG } from './config/siteConfig';
 import { RESERVED_AREA_GUIDE_ITEMS, RESERVED_AREA_GUIDE_SUBTITLE, RESERVED_AREA_GUIDE_TITLE } from './config/reservedAreaGuide';
 
 function App() {
-  const [pageViews, setPageViews] = useState<number | null>(null);
+  const [pageViews, setPageViews] = useState<number>(() => {
+    if (typeof window === 'undefined') return 0;
+
+    const cachedValue = window.localStorage.getItem('cnc-piemonte-wyd-2027:page-views:last-known');
+    const numericValue = Number(cachedValue);
+    return Number.isFinite(numericValue) && numericValue >= 0 ? numericValue : 0;
+  });
   const [isReservedGuideOpen, setIsReservedGuideOpen] = useState(false);
   const [isTelegramGuideOpen, setIsTelegramGuideOpen] = useState(false);
   const [isTelegramDetailsOpen, setIsTelegramDetailsOpen] = useState(false);
@@ -19,20 +25,23 @@ function App() {
   useEffect(() => {
     const COUNTER_HIT_URL = 'https://api.countapi.xyz/hit/cnc-piemonte-wyd-2027/page-views';
     const COUNTER_GET_URL = 'https://api.countapi.xyz/get/cnc-piemonte-wyd-2027/page-views';
+    const COUNTER_CACHE_KEY = 'cnc-piemonte-wyd-2027:page-views:last-known';
     const POLL_INTERVAL_MS = 15000;
 
     let isMounted = true;
 
     const updateCount = (value: unknown) => {
       const numericValue = Number(value);
-      if (isMounted && Number.isFinite(numericValue)) {
+      if (isMounted && Number.isFinite(numericValue) && numericValue >= 0) {
         setPageViews(numericValue);
+        window.localStorage.setItem(COUNTER_CACHE_KEY, String(numericValue));
       }
     };
 
     const fetchJson = async (url: string, signal?: AbortSignal) => {
       const response = await fetch(url, {
         signal,
+        mode: 'cors',
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache',
@@ -47,22 +56,6 @@ function App() {
       return response.json();
     };
 
-    const hitCounter = async () => {
-      const controller = new AbortController();
-      const timeoutId = window.setTimeout(() => controller.abort(), 5000);
-
-      try {
-        const data = await fetchJson(COUNTER_HIT_URL, controller.signal);
-        updateCount(data?.value);
-      } catch {
-        if (isMounted) {
-          setPageViews(null);
-        }
-      } finally {
-        window.clearTimeout(timeoutId);
-      }
-    };
-
     const refreshCounter = async () => {
       const controller = new AbortController();
       const timeoutId = window.setTimeout(() => controller.abort(), 5000);
@@ -71,7 +64,22 @@ function App() {
         const data = await fetchJson(COUNTER_GET_URL, controller.signal);
         updateCount(data?.value);
       } catch {
-        // Mantiene l'ultimo valore valido già mostrato.
+        const cachedValue = window.localStorage.getItem(COUNTER_CACHE_KEY);
+        updateCount(cachedValue);
+      } finally {
+        window.clearTimeout(timeoutId);
+      }
+    };
+
+    const hitCounter = async () => {
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 5000);
+
+      try {
+        const data = await fetchJson(COUNTER_HIT_URL, controller.signal);
+        updateCount(data?.value);
+      } catch {
+        await refreshCounter();
       } finally {
         window.clearTimeout(timeoutId);
       }
@@ -109,7 +117,7 @@ function App() {
       {/* ✅ Contatore visite sempre visibile (basso a sinistra) */}
       <div className="fixed left-4 bottom-4 z-40">
         <div className="bg-black/70 text-white px-3 py-2 rounded-full text-xs tracking-wide shadow-lg backdrop-blur">
-          <span className="opacity-80">Visite:</span> <span className="font-semibold">{pageViews ?? '—'}</span>
+          <span className="opacity-80">Visite:</span> <span className="font-semibold">{pageViews}</span>
         </div>
       </div>
 
