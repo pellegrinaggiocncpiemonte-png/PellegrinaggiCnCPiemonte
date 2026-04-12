@@ -4,6 +4,7 @@ import { useState } from 'react';
 import FlipCountdown from './components/FlipCountdown';
 import { SITE_CONFIG } from './config/siteConfig';
 import { RESERVED_AREA_GUIDE_ITEMS, RESERVED_AREA_GUIDE_SUBTITLE, RESERVED_AREA_GUIDE_TITLE } from './config/reservedAreaGuide';
+import VisitCounterBadge from './components/VisitCounterBadge';
 
 function App() {
   const [isReservedGuideOpen, setIsReservedGuideOpen] = useState(false);
@@ -286,7 +287,7 @@ function App() {
       <section id="comunicazioni" className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider mb-4">
+            <h2 className="max-w-[92vw] mx-auto px-4 text-center font-serif font-bold uppercase leading-[0.95] tracking-tight text-[clamp(2rem,8vw,3.2rem)] sm:text-[clamp(2.8rem,7vw,5rem)] break-words mb-4">
               COMUNICAZIONI
             </h2>
             <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
@@ -321,7 +322,7 @@ function App() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider mb-4">
+              <h2 className="max-w-[92vw] mx-auto px-4 text-center font-serif font-bold uppercase leading-[0.95] tracking-tight text-[clamp(2rem,8vw,3.2rem)] sm:text-[clamp(2.8rem,7vw,5rem)] break-words mb-4">
                 RICEVI COMUNICAZIONI SU TELEGRAM
               </h2>
               <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
@@ -707,6 +708,7 @@ function App() {
           </div>
         </div>
       </footer>
+      <VisitCounterBadge />
     </div>
   );
 }
