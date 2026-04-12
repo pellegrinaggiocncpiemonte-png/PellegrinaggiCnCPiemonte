@@ -287,7 +287,7 @@ function App() {
       <section id="comunicazioni" className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="max-w-[92vw] mx-auto px-4 text-center font-serif font-bold uppercase leading-[0.95] tracking-tight text-[clamp(2rem,8vw,3.2rem)] sm:text-[clamp(2.8rem,7vw,5rem)] break-words mb-4">
+            <h2 className="max-w-[92vw] mx-auto px-4 text-center font-serif font-bold uppercase leading-[0.95] tracking-tight text-[clamp(1.65rem,7vw,3.2rem)] sm:text-[clamp(2.8rem,7vw,5rem)] mb-4 whitespace-nowrap">
               COMUNICAZIONI
             </h2>
             <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
@@ -322,8 +322,10 @@ function App() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="max-w-[92vw] mx-auto px-4 text-center font-serif font-bold uppercase leading-[0.95] tracking-tight text-[clamp(2rem,8vw,3.2rem)] sm:text-[clamp(2.8rem,7vw,5rem)] break-words mb-4">
-                RICEVI COMUNICAZIONI SU TELEGRAM
+              <h2 className="max-w-[92vw] mx-auto px-4 text-center font-serif font-bold uppercase leading-[0.95] tracking-tight text-[clamp(1.7rem,6.2vw,3.2rem)] sm:text-[clamp(2.8rem,7vw,5rem)] mb-4">
+                <span className="block whitespace-nowrap">RICEVI</span>
+                <span className="block whitespace-nowrap">COMUNICAZIONI</span>
+                <span className="block whitespace-nowrap">SU TELEGRAM</span>
               </h2>
               <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
               <p className="mt-6 text-lg md:text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
