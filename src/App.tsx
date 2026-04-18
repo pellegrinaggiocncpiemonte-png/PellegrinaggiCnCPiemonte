@@ -296,7 +296,7 @@ function App() {
             <div className="bg-gray-50 rounded-2xl shadow-sm border border-gray-200 p-8 text-left">
               <h3 className="text-2xl font-serif font-bold text-black mb-4">Estate 2026</h3>
               <p className="text-gray-700 leading-relaxed mb-4">
-                Dal 26 luglio al 30 luglio. Anche per Estate 2026 l'iscrizione reale va effettuata passando dall'area riservata
+                Dal 26 luglio al 29 luglio. Anche per Estate 2026 l'iscrizione reale va effettuata passando dall'area riservata
                 e scegliendo il pellegrinaggio di interesse nella sezione dedicata.
               </p>
               <p className="text-gray-700 leading-relaxed font-semibold">
