@@ -94,7 +94,7 @@ function App() {
             Estate 2026
           </h2>
           <p className="text-2xl md:text-3xl text-white/90 mt-6 font-light tracking-wide">
-            Dal 26 luglio al 30 luglio
+            Dal 26 luglio al 29 luglio
           </p>
           <p className="text-xl md:text-2xl text-white/90 mt-4 font-light tracking-wide">
             Iscrizioni aperte dall'area riservata
