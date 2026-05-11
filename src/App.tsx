@@ -97,16 +97,31 @@ function App() {
             Dal 26 luglio al 29 luglio
           </p>
           <p className="text-xl md:text-2xl text-white/90 mt-4 font-light tracking-wide">
-            Iscrizioni aperte dall'area riservata
+            Iscrizioni Estate 2026 chiuse / sospese
           </p>
-          <p className="text-lg md:text-xl text-white/85 mt-8 leading-relaxed">
-            Per i pellegrinaggi Estate 2026 occorre registrarsi nell'area riservata,
-            inserire tutti i dati richiesti e iscriversi nella sezione dedicata scegliendo
-            il pellegrinaggio di interesse.
-          </p>
-          <p className="text-base md:text-lg text-white/80 mt-5 leading-relaxed">
-            Le quote dei pellegrinaggi non sono ancora impostate.
-          </p>
+          <div className="mt-8 space-y-4 text-white/85 max-w-4xl mx-auto">
+            <p className="text-base md:text-lg leading-relaxed">
+              L'Area Riservata rimane attiva per la registrazione: il profilo utente potrà essere utilizzato
+              anche per altri pellegrinaggi o iniziative future.
+            </p>
+            <p className="text-base md:text-lg leading-relaxed">
+              Le iscrizioni al Pellegrinaggio Estate 2026 sono attualmente chiuse/sospese. Sono stati organizzati
+              due incontri; il 29 marzo per l'apertura delle iscrizioni e il secondo si è svolto domenica 10 maggio,
+              durante il quale è stata fatta l'assegnazione ai percorsi del pellegrinaggio sorteggiando gli iscritti.
+            </p>
+            <p className="text-base md:text-lg leading-relaxed">
+              Tutte le comunicazioni relative ai due incontri sono state inviate per tempo dal Centro Neocatecumenale
+              Piemonte a tutti i responsabili delle comunità. Per questo motivo, al momento non è possibile procedere
+              con nuove iscrizioni dirette al Pellegrinaggio Estate 2026.
+            </p>
+            <p className="text-base md:text-lg leading-relaxed">
+              Eventuali nuove richieste verranno raccolte in una lista di attesa e dovranno essere inviate all'email
+              dell'organizzazione specificando chiaramente: email, cognome, nome, numero di telefono ed età della persona interessata.
+            </p>
+            <p className="text-base md:text-lg leading-relaxed font-semibold text-white">
+              Al momento, le iscrizioni aperte tramite Area Riservata riguardano esclusivamente il Pellegrinaggio in Korea 2027.
+            </p>
+          </div>
           <div className="mt-8 flex flex-col items-center gap-3">
             <div className="relative inline-flex items-center justify-center group">
               <button
