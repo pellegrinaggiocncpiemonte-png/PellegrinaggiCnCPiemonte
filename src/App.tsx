@@ -115,8 +115,8 @@ function App() {
               con nuove iscrizioni dirette al Pellegrinaggio Estate 2026.
             </p>
             <p className="text-base md:text-lg leading-relaxed">
-              Eventuali nuove richieste verranno raccolte in una lista di attesa e dovranno essere inviate all'email
-              dell'organizzazione specificando chiaramente: email, cognome, nome, numero di telefono ed età della persona interessata.
+              Eventuali nuove richieste verranno raccolte in una lista di attesa e dovranno essere eseguite attraverso
+              il form dedicato.
             </p>
             <p className="text-base md:text-lg leading-relaxed font-semibold text-white">
               Al momento, le iscrizioni aperte tramite Area Riservata riguardano esclusivamente il Pellegrinaggio in Korea 2027.
@@ -140,12 +140,12 @@ function App() {
             </div>
 
             <a
-              href={SITE_CONFIG.reservedAreaUrl}
+              href="https://pellegrinaggiocncpiemonte.fillout.com/t/uyBxG9c1zsus"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
             >
-              Vai all'area riservata
+              Richiesta Iscrizione
             </a>
           </div>
         </div>
