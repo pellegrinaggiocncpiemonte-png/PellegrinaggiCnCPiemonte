@@ -1,52 +1,17 @@
 import Navigation from './components/Navigation';
-import { Play } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { ChevronDown, Play } from 'lucide-react';
+import { useState } from 'react';
 import FlipCountdown from './components/FlipCountdown';
 import { SITE_CONFIG } from './config/siteConfig';
 import { RESERVED_AREA_GUIDE_ITEMS, RESERVED_AREA_GUIDE_SUBTITLE, RESERVED_AREA_GUIDE_TITLE } from './config/reservedAreaGuide';
+import VisitCounterBadge from './components/VisitCounterBadge';
 
 function App() {
-  const [pageViews, setPageViews] = useState<number | null>(null);
   const [isReservedGuideOpen, setIsReservedGuideOpen] = useState(false);
+  const [isTelegramGuideOpen, setIsTelegramGuideOpen] = useState(false);
+  const [isTelegramDetailsOpen, setIsTelegramDetailsOpen] = useState(false);
+  const [openVideoId, setOpenVideoId] = useState<number | null>(1);
 
-  useEffect(() => {
-    document.title = SITE_CONFIG.browserTitle;
-  }, []);
-
-  useEffect(() => {
-    // Prova conteggio globale (CountAPI). Se bloccato da privacy/adblock,
-    // usa un fallback locale (localStorage) così non resta "—".
-    const LS_KEY = 'pellegrinaggi_cnc_piemonte_page_views_local';
-
-    const incLocal = () => {
-      try {
-        const raw = localStorage.getItem(LS_KEY);
-        const current = raw ? parseInt(raw, 10) : 0;
-        const next = Number.isFinite(current) ? current + 1 : 1;
-        localStorage.setItem(LS_KEY, String(next));
-        return next;
-      } catch {
-        return 1;
-      }
-    };
-
-    const controller = new AbortController();
-    const t = window.setTimeout(() => controller.abort(), 3000);
-
-    fetch('https://api.countapi.xyz/hit/cnc-piemonte-wyd-2027/page-views', { signal: controller.signal })
-      .then((res) => res.json())
-      .then((data) => {
-        const v = Number(data?.value);
-        if (Number.isFinite(v)) setPageViews(v);
-        else setPageViews(incLocal());
-      })
-      .catch(() => {
-        setPageViews(incLocal());
-      })
-      .finally(() => {
-        window.clearTimeout(t);
-      });
-  }, []);
   return (
     <div className="min-h-screen">
       <Navigation />
@@ -56,12 +21,6 @@ function App() {
 
       
 
-      {/* ✅ Contatore visite sempre visibile (basso a sinistra) */}
-      <div className="fixed left-4 bottom-4 z-40">
-        <div className="bg-black/70 text-white px-3 py-2 rounded-full text-xs tracking-wide shadow-lg backdrop-blur">
-          <span className="opacity-80">Visite:</span> <span className="font-semibold">{pageViews ?? '—'}</span>
-        </div>
-      </div>
 
       <section id="home" className="min-h-screen relative flex items-center justify-center">
         <div
@@ -72,7 +31,7 @@ function App() {
         >
           <div className="absolute inset-0 bg-black/40"></div>
         </div>
-        <div className="relative z-10 text-center px-4 max-w-[94vw] mx-auto pt-24 sm:pt-16">
+        <div className="relative z-10 text-center px-4 max-w-[94vw] mx-auto pt-24 sm:pt-16 -translate-y-[105px] sm:-translate-y-[96px] md:-translate-y-[72px]">
           <div className="space-y-2 sm:space-y-3">
             {SITE_CONFIG.heroTitleLines.map((line, index) => {
               const isFirst = index === 0;
@@ -111,6 +70,12 @@ function App() {
                 </h1>
               );
             })}
+            <p
+              className="text-white/95 text-[clamp(1rem,4.6vw,1.65rem)] sm:text-[clamp(1.1rem,3.2vw,1.85rem)] font-medium tracking-[0.18em] uppercase pt-3"
+              style={{ textShadow: '3px 3px 6px rgba(0,0,0,0.75)' }}
+            >
+              Cammino Neocatecumenale
+            </p>
           </div>
         </div>
       </section>
@@ -129,16 +94,27 @@ function App() {
             Estate 2026
           </h2>
           <p className="text-2xl md:text-3xl text-white/90 mt-6 font-light tracking-wide">
-            Iscrizioni aperte dall'area riservata
+            Dal 26 luglio al 29 luglio
           </p>
-          <p className="text-lg md:text-xl text-white/85 mt-8 leading-relaxed">
-            Per i pellegrinaggi Estate 2026 occorre registrarsi nell'area riservata,
-            inserire tutti i dati richiesti e iscriversi nella sezione dedicata scegliendo
-            il pellegrinaggio di interesse.
+          <p className="text-xl md:text-2xl text-white/90 mt-4 font-light tracking-wide">
+            Posti limitati per un nuovo gruppo
           </p>
-          <p className="text-base md:text-lg text-white/80 mt-5 leading-relaxed">
-            Le quote dei pellegrinaggi non sono ancora impostate.
-          </p>
+          <div className="mt-8 space-y-4 text-white/85 max-w-4xl mx-auto">
+            <p className="text-base md:text-lg leading-relaxed font-semibold text-white">
+              Per chi è arrivato in ritardo, oppure desidera ancora aggiungersi al pellegrinaggio Estate 2026,
+              è stata aggiunta una nuova possibilità di richiesta iscrizione per un nuovo gruppo.
+            </p>
+            <p className="text-base md:text-lg leading-relaxed">
+              I posti disponibili sono limitati e le richieste verranno valutate in base alla disponibilità effettiva.
+            </p>
+            <p className="text-base md:text-lg leading-relaxed">
+              La richiesta non garantisce automaticamente il posto, ma permette di essere inseriti nella lista
+              per il nuovo gruppo in fase di organizzazione.
+            </p>
+            <p className="text-base md:text-lg leading-relaxed">
+              Chi desidera aggiungersi può procedere con la richiesta dall'Area Riservata, compilando il form dedicato.
+            </p>
+          </div>
           <div className="mt-8 flex flex-col items-center gap-3">
             <div className="relative inline-flex items-center justify-center group">
               <button
@@ -157,12 +133,12 @@ function App() {
             </div>
 
             <a
-              href={SITE_CONFIG.reservedAreaUrl}
+              href="https://pellegrinaggiocncpiemonte.fillout.com/t/uyBxG9c1zsus"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
             >
-              Vai all'area riservata
+              Richiesta Iscrizione
             </a>
           </div>
         </div>
@@ -244,105 +220,87 @@ function App() {
             <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
           </div>
 
-          <div className="space-y-16">
-            <div className="text-center space-y-4">
-              <h3 className="text-3xl md:text-4xl font-serif text-white font-bold tracking-wider">
-                WYD Seoul 2027 - World Youth Day South Korea
-              </h3>
-              <div className="w-24 h-1 bg-amber-600 mx-auto"></div>
-              <div className="max-w-4xl mx-auto">
-                <div className="relative h-64 md:h-96 rounded-lg overflow-hidden shadow-2xl mb-8">
-                  <img
-                    src="https://img.youtube.com/vi/BMbkoZwqRtI/hqdefault.jpg"
-                    alt="Anteprima Video 1"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                </div>
-                <div className="text-center">
-                  <a
-                    href="https://www.youtube.com/watch?v=BMbkoZwqRtI"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-transparent text-white border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-all shadow-lg"
-                  >
-                    <Play size={20} />
-                    Guarda video 1
-                  </a>
+          {[
+            {
+              id: 1,
+              title: 'WYD Seoul 2027 - World Youth Day South Korea',
+              youtubeId: 'BMbkoZwqRtI',
+              buttonLabel: 'Guarda video 1',
+            },
+            {
+              id: 2,
+              title: 'WYD Seoul 2027 - Official Promo Video',
+              youtubeId: 'DgtBKDW8iq0',
+              buttonLabel: 'Guarda video 2',
+            },
+            {
+              id: 3,
+              title: 'Esperienza Seminarista in Corea',
+              youtubeId: '3EBJaZTvQ8w',
+              buttonLabel: 'Guarda video 3',
+            },
+            {
+              id: 4,
+              title: 'Invito del Vescovo di Seul',
+              youtubeId: 'PXKnjtHtVFw',
+              buttonLabel: 'Guarda video 4',
+            },
+          ].map((video) => {
+            const isOpen = openVideoId === video.id;
+            return (
+              <div key={video.id} className="text-center space-y-4 mb-16 last:mb-0">
+                <h3 className="text-3xl md:text-4xl font-serif text-white font-bold tracking-wider">
+                  {video.title}
+                </h3>
+                <div className="w-24 h-1 bg-amber-600 mx-auto"></div>
+                <div className="max-w-4xl mx-auto">
+                  <div className="relative aspect-video rounded-lg overflow-hidden shadow-2xl mb-8 bg-black">
+                    {isOpen ? (
+                      <iframe
+                        className="w-full h-full"
+                        src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&rel=0`}
+                        title={video.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <>
+                        <img
+                          src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
+                          alt={`Anteprima ${video.title}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                      </>
+                    )}
+                  </div>
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => setOpenVideoId(video.id)}
+                      className="inline-flex items-center gap-2 bg-transparent text-white border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-all shadow-lg"
+                    >
+                      <Play size={20} />
+                      {video.buttonLabel}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="text-center space-y-6">
-              <h3 className="text-3xl md:text-4xl font-serif text-white font-bold tracking-wider">
-                WYD Seoul 2027 - Official Promo Video
-              </h3>
-              <div className="w-24 h-1 bg-amber-600 mx-auto"></div>
-              <a
-                href="https://www.youtube.com/watch?v=DgtBKDW8iq0"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-transparent text-white border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-all shadow-lg"
-              >
-                <Play size={20} />
-                Guarda video 2
-              </a>
-            </div>
-
-            <div className="text-center space-y-6">
-              <h3 className="text-3xl md:text-4xl font-serif text-white font-bold tracking-wider">
-                Esperienza Seminarista in Corea
-              </h3>
-              <div className="w-24 h-1 bg-amber-600 mx-auto"></div>
-              <a
-                href="https://www.youtube.com/watch?v=3EBJaZTvQ8w"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-transparent text-white border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-all shadow-lg"
-              >
-                <Play size={20} />
-                Guarda video 3
-              </a>
-            </div>
-
-            <div className="text-center space-y-6">
-              <h3 className="text-3xl md:text-4xl font-serif text-white font-bold tracking-wider">
-                Invito del Vescovo di Seul
-              </h3>
-              <div className="w-24 h-1 bg-amber-600 mx-auto"></div>
-              <a
-                href="https://www.youtube.com/watch?v=PXKnjtHtVFw"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-transparent text-white border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-all shadow-lg"
-              >
-                <Play size={20} />
-                Guarda video 4
-              </a>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </section>
 
       <section id="comunicazioni" className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider mb-4">
+            <h2 className="max-w-[92vw] mx-auto px-4 text-center font-serif font-bold uppercase leading-[0.95] tracking-tight text-[clamp(1.65rem,7vw,3.2rem)] sm:text-[clamp(2.8rem,7vw,5rem)] mb-4 whitespace-nowrap">
               COMUNICAZIONI
             </h2>
             <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
           </div>
-          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6">
-            <div className="bg-gray-50 rounded-2xl shadow-sm border border-gray-200 p-8 text-left">
-              <h3 className="text-2xl font-serif font-bold text-black mb-4">Estate 2026</h3>
-              <p className="text-gray-700 leading-relaxed mb-4">
-                Anche per Estate 2026 l'iscrizione reale va effettuata passando dall'area riservata
-                e scegliendo il pellegrinaggio di interesse nella sezione dedicata.
-              </p>
-              <p className="text-gray-700 leading-relaxed font-semibold">
-                Le quote dei pellegrinaggi non sono ancora impostate.
-              </p>
-            </div>
+          <div className="max-w-3xl mx-auto">
             <div className="bg-gray-50 rounded-2xl shadow-sm border border-gray-200 p-8 text-left">
               <h3 className="text-2xl font-serif font-bold text-black mb-4">GMG Seoul 2027</h3>
               <p className="text-gray-700 leading-relaxed mb-4">
@@ -353,6 +311,112 @@ function App() {
                 Dopo la preiscrizione verrà comunque richiesto di completare l'iscrizione dall'area riservata,
                 inserendo quanto prima tutti i dati richiesti.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="telegram" className="py-20 bg-stone-100">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="max-w-[92vw] mx-auto px-4 text-center font-serif font-bold uppercase leading-[0.95] tracking-tight text-[clamp(1.7rem,6.2vw,3.2rem)] sm:text-[clamp(2.8rem,7vw,5rem)] mb-4">
+                <span className="block whitespace-nowrap">RICEVI</span>
+                <span className="block whitespace-nowrap">COMUNICAZIONI</span>
+                <span className="block whitespace-nowrap">SU TELEGRAM</span>
+              </h2>
+              <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
+              <p className="mt-6 text-lg md:text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+                Servizio riservato agli utenti registrati all&apos;area riservata.
+                Le comunicazioni dell&apos;organizzazione potranno arrivare sia nella sezione comunicazioni,
+                sia su Telegram tramite il bot dedicato.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 md:p-12">
+              <div className="grid lg:grid-cols-[220px,1fr] gap-8 lg:gap-12 items-center">
+                <div className="flex justify-center lg:justify-start">
+                  <div className="rounded-[2rem] bg-sky-50 border border-sky-100 p-5 shadow-sm">
+                    <img
+                      src="/images/telegram-app.jpg"
+                      alt="Logo Telegram"
+                      className="w-36 h-36 sm:w-40 sm:h-40 object-contain"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-6 text-center lg:text-left">
+                  <div className="space-y-3">
+                    <div className="flex flex-col items-center gap-3 lg:items-start">
+                      <p className="text-2xl md:text-3xl font-serif font-bold text-black">
+                        Solo per utenti registrati all&apos;area riservata
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setIsTelegramDetailsOpen((prev) => !prev)}
+                        aria-expanded={isTelegramDetailsOpen}
+                        aria-controls="telegram-details-content"
+                        aria-label={isTelegramDetailsOpen ? 'Nascondi dettagli Telegram' : 'Mostra dettagli Telegram'}
+                        title={isTelegramDetailsOpen ? 'Nascondi dettagli' : 'Mostra dettagli'}
+                        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-800 shadow-sm transition-colors hover:bg-gray-50"
+                      >
+                        <ChevronDown
+                          className={`h-5 w-5 transition-transform duration-300 ${isTelegramDetailsOpen ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                    </div>
+
+                    <div
+                      id="telegram-details-content"
+                      className={`overflow-hidden transition-all duration-300 ease-in-out ${isTelegramDetailsOpen ? 'max-h-[900px] opacity-100 pt-1' : 'max-h-0 opacity-0'}`}
+                    >
+                      <div className="space-y-3">
+                        <p className="text-lg text-gray-700 leading-relaxed">
+                          Dopo la registrazione all&apos;area riservata, per poter ricevere anche le notifiche su Telegram,
+                          sarà prima necessario attendere che <span className="font-semibold text-black">l&apos;amministrazione attivi il tuo link personale Telegram</span>.
+                          Per questo motivo, dovrai entrare nella sezione
+                          <span className="font-semibold text-black"> “Ricevi notifiche Telegram”</span> presente nel tuo profilo e verificare se il collegamento è stato attivato.
+                          Quando il link sarà disponibile, potrai cliccarlo direttamente dalla sezione: si aprirà l&apos;app Telegram,
+                          che dovrà essere già installata sul tuo cellulare. All&apos;interno di Telegram dovrai premere
+                          <span className="font-semibold text-black"> Start</span> una sola volta. Poi torna nella sezione Ricevi notifiche Telegram dell&apos;area riservata e premi su
+                          <span className="font-semibold text-black"> Verifica collegamento</span>. Se tutto è corretto, vedrai in verde
+                          <span className="font-semibold text-green-700"> “Notifiche Telegram attivate correttamente.”</span>.
+                        </p>
+                        <p className="text-base text-gray-600 leading-relaxed">
+                          In caso di messaggi particolarmente lunghi, il testo completo resterà leggibile
+                          nella sezione comunicazioni dell&apos;area riservata.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <button
+                      type="button"
+                      onClick={() => setIsTelegramGuideOpen(true)}
+                      className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                    >
+                      Istruzioni
+                    </button>
+                    <a
+                      href="https://telegram.org/apps?setln=it"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center bg-sky-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-sky-600 transition-colors"
+                    >
+                      Scarica Telegram
+                    </a>
+                    <a
+                      href={SITE_CONFIG.reservedAreaUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-lg font-semibold border border-gray-300 hover:bg-gray-50 transition-colors"
+                    >
+                      Vai all&apos;area riservata
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -534,6 +598,83 @@ function App() {
         </div>
       ) : null}
 
+      {isTelegramGuideOpen ? (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/75 backdrop-blur-sm"
+            onClick={() => setIsTelegramGuideOpen(false)}
+            aria-label="Chiudi istruzioni Telegram"
+          />
+
+          <div className="relative z-10 w-full max-w-4xl max-h-[82vh] overflow-y-auto rounded-2xl border border-white/20 bg-white text-black shadow-2xl sm:max-h-[86vh]">
+            <div className="sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-gray-200 bg-white/95 px-4 py-4 backdrop-blur sm:px-5 md:px-6">
+              <div className="min-w-0">
+                <h3 className="text-xl sm:text-2xl md:text-[1.75rem] font-serif font-bold leading-tight">
+                  Ricevi comunicazioni su Telegram
+                </h3>
+                <p className="mt-1.5 text-xs sm:text-sm md:text-[0.95rem] text-gray-700 max-w-2xl leading-relaxed">
+                  Procedura guidata per attivare il collegamento Telegram dedicato agli utenti registrati all&apos;area riservata.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsTelegramGuideOpen(false)}
+                className="shrink-0 rounded-full border border-gray-300 px-3 py-1.5 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-gray-100 active:scale-95 transition-all duration-200"
+              >
+                Chiudi
+              </button>
+            </div>
+
+            <div className="p-4 sm:p-5 md:p-6 space-y-4">
+              {[
+                'Registrati all’area riservata.',
+                'Scarica l’app Telegram sul tuo cellulare.',
+                'Dopo la registrazione, attendi che l’amministrazione attivi il tuo link personale Telegram.',
+                'Entra nel tuo profilo, nella sezione “Ricevi notifiche Telegram”, e verifica se il link è stato attivato.',
+                'Quando il link risulta disponibile, cliccalo per aprire l’app Telegram.',
+                'Dentro Telegram, premi il pulsante Start una sola volta.',
+                'Torna nell’area riservata e apri di nuovo la sezione “Ricevi notifiche Telegram”.',
+                'Premi su “Verifica collegamento” per controllare che l’attivazione sia andata a buon fine.',
+                'Se il collegamento è corretto, vedrai in verde la scritta: “Notifiche Telegram attivate correttamente.”',
+                'Da quel momento potrai ricevere le comunicazioni dell’organizzazione anche su Telegram dal contatto “Pellegrinaggio CnC Piemonte e Svizzera Bot”.',
+                'Se un messaggio è troppo lungo, potrai leggerlo integralmente nella sezione comunicazioni dell’area riservata.',
+                'La chat Telegram è in modalità broadcast, quindi potrai solo leggere i messaggi inviati dall’organizzazione.',
+              ].map((step, index) => (
+                <article key={step} className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 sm:px-5">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-500 text-sm font-bold text-white shadow-sm">
+                      {index + 1}
+                    </div>
+                    <p className="pt-1 text-sm sm:text-base text-gray-800 leading-relaxed">{step}</p>
+                  </div>
+                </article>
+              ))}
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <a
+                  href="https://telegram.org/apps?setln=it"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center bg-sky-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-sky-600 transition-colors"
+                >
+                  Scarica Telegram
+                </a>
+                <a
+                  href={SITE_CONFIG.reservedAreaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                >
+                  Vai all&apos;area riservata
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <section id="donazioni" className="py-20 bg-black">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -557,6 +698,7 @@ function App() {
             <a href="#prossimi-eventi" className="hover:text-amber-500 transition-colors">Prossimi eventi</a>
             <a href="#wyd-seul" className="hover:text-amber-500 transition-colors">WYD Seul 2027</a>
             <a href="#gmg-2027-iscrizione" className="hover:text-amber-500 transition-colors">Iscrizione GMG 2027</a>
+            <a href="#telegram" className="hover:text-amber-500 transition-colors">Telegram</a>
             <a href="#donazioni" className="hover:text-amber-500 transition-colors">Versamenti e Donazioni</a>
           </div>
 
@@ -566,6 +708,7 @@ function App() {
           </div>
         </div>
       </footer>
+      <VisitCounterBadge />
     </div>
   );
 }

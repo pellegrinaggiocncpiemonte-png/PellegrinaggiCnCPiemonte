@@ -97,29 +97,18 @@ function App() {
             Dal 26 luglio al 29 luglio
           </p>
           <p className="text-xl md:text-2xl text-white/90 mt-4 font-light tracking-wide">
-            Iscrizioni Estate 2026 chiuse / sospese
+            Attenzione!!!
           </p>
           <div className="mt-8 space-y-4 text-white/85 max-w-4xl mx-auto">
-            <p className="text-base md:text-lg leading-relaxed">
-              L'Area Riservata rimane attiva per la registrazione: il profilo utente potrà essere utilizzato
-              anche per altri pellegrinaggi o iniziative future.
-            </p>
-            <p className="text-base md:text-lg leading-relaxed">
-              Le iscrizioni al Pellegrinaggio Estate 2026 sono attualmente chiuse/sospese. Sono stati organizzati
-              due incontri; il 29 marzo per l'apertura delle iscrizioni e il secondo si è svolto domenica 10 maggio,
-              durante il quale è stata fatta l'assegnazione ai percorsi del pellegrinaggio sorteggiando gli iscritti.
-            </p>
-            <p className="text-base md:text-lg leading-relaxed">
-              Tutte le comunicazioni relative ai due incontri sono state inviate per tempo dal Centro Neocatecumenale
-              Piemonte a tutti i responsabili delle comunità. Per questo motivo, al momento non è possibile procedere
-              con nuove iscrizioni dirette al Pellegrinaggio Estate 2026.
-            </p>
-            <p className="text-base md:text-lg leading-relaxed">
-              Eventuali nuove richieste verranno raccolte in una lista di attesa e dovranno essere eseguite attraverso
-              il form dedicato.
-            </p>
             <p className="text-base md:text-lg leading-relaxed font-semibold text-white">
-              Al momento, le iscrizioni aperte tramite Area Riservata riguardano esclusivamente il Pellegrinaggio in Korea 2027.
+              Per chi è arrivato in ritardo e desidera ancora aggiungersi al pellegrinaggio Estate 2026,
+              è stata aggiunta una nuova possibilità di richiesta iscrizione per un nuovo gruppo.
+            </p>
+            <p className="text-base md:text-lg leading-relaxed">
+              Le richieste dovranno arrivare entro fine maggio, perché i posti sono limitati.
+            </p>
+            <p className="text-base md:text-lg leading-relaxed">
+              Chi desidera aggiungersi può procedere cliccando il pulsante "Richiesta Iscrizione".
             </p>
           </div>
           <div className="mt-8 flex flex-col items-center gap-3">
@@ -147,6 +136,19 @@ function App() {
             >
               Richiesta Iscrizione
             </a>
+            <div className="mt-4 max-w-3xl space-y-2 text-sm md:text-base leading-relaxed text-white/80">
+              <p>
+              L'Area Riservata rimane attiva per la registrazione personale e servirà per gestire successivamente le iscrizioni al pellegrinaggio. 
+              Inoltre il profilo utente potrà essere utilizzato anche per altri pellegrinaggi o iniziative future.
+              </p>
+              <p>
+              Le iscrizioni aperte ufficialmente, tramite Area Riservata, riguardano esclusivamente il Pellegrinaggio in Korea 2027.
+              </p>
+              <p>
+Pulsante “i” - Modalità registrazione all’area riservata.
+
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -307,17 +309,7 @@ function App() {
             </h2>
             <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
           </div>
-          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6">
-            <div className="bg-gray-50 rounded-2xl shadow-sm border border-gray-200 p-8 text-left">
-              <h3 className="text-2xl font-serif font-bold text-black mb-4">Estate 2026</h3>
-              <p className="text-gray-700 leading-relaxed mb-4">
-                Dal 26 luglio al 29 luglio. Anche per Estate 2026 l'iscrizione reale va effettuata passando dall'area riservata
-                e scegliendo il pellegrinaggio di interesse nella sezione dedicata.
-              </p>
-              <p className="text-gray-700 leading-relaxed font-semibold">
-                Le quote dei pellegrinaggi non sono ancora impostate.
-              </p>
-            </div>
+          <div className="max-w-3xl mx-auto">
             <div className="bg-gray-50 rounded-2xl shadow-sm border border-gray-200 p-8 text-left">
               <h3 className="text-2xl font-serif font-bold text-black mb-4">GMG Seoul 2027</h3>
               <p className="text-gray-700 leading-relaxed mb-4">
