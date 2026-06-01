@@ -45,11 +45,10 @@ export const QUICK_ACTIONS = [
     href: SITE_CONFIG.reservedAreaUrl,
   },
   {
-    id: 'assistance',
-    label: 'Assistenza',
-    type: 'link' as const,
-    href: SITE_CONFIG.assistanceUrl,
-    external: true,
+    id: 'telegram',
+    label: 'Telegram',
+    type: 'section' as const,
+    targetId: 'telegram',
   },
   {
     id: 'contact',

@@ -1,15 +1,19 @@
 import Navigation from './components/Navigation';
-import { ChevronDown, Play } from 'lucide-react';
+import { ChevronDown, FileText, Landmark, Play, X } from 'lucide-react';
 import { useState } from 'react';
 import FlipCountdown from './components/FlipCountdown';
 import { SITE_CONFIG } from './config/siteConfig';
 import { RESERVED_AREA_GUIDE_ITEMS, RESERVED_AREA_GUIDE_SUBTITLE, RESERVED_AREA_GUIDE_TITLE } from './config/reservedAreaGuide';
 import VisitCounterBadge from './components/VisitCounterBadge';
+import FloatingAssistance from './components/FloatingAssistance';
 
 function App() {
   const [isReservedGuideOpen, setIsReservedGuideOpen] = useState(false);
   const [isTelegramGuideOpen, setIsTelegramGuideOpen] = useState(false);
   const [isTelegramDetailsOpen, setIsTelegramDetailsOpen] = useState(false);
+  const [isBankDetailsOpen, setIsBankDetailsOpen] = useState(false);
+  const [isPaymentInstructionsOpen, setIsPaymentInstructionsOpen] = useState(false);
+  const [isPaymentNoticeOpen, setIsPaymentNoticeOpen] = useState(false);
   const [openVideoId, setOpenVideoId] = useState<number | null>(1);
 
   return (
@@ -138,15 +142,10 @@ function App() {
             </a>
             <div className="mt-4 max-w-3xl space-y-2 text-sm md:text-base leading-relaxed text-white/80">
               <p>
-              L'Area Riservata rimane attiva per la registrazione personale e servirà per gestire successivamente le iscrizioni al pellegrinaggio. 
-              Inoltre il profilo utente potrà essere utilizzato anche per altri pellegrinaggi o iniziative future.
+                La compilazione della richiesta non conferma automaticamente l'iscrizione.
               </p>
               <p>
-              Le iscrizioni aperte ufficialmente, tramite Area Riservata, riguardano esclusivamente il Pellegrinaggio in Korea 2027.
-              </p>
-              <p>
-Pulsante “i” - Modalità registrazione all’area riservata.
-
+                L'organizzazione valuterà le richieste in base ai posti realmente disponibili e contatterà gli interessati per l'eventuale conferma.
               </p>
             </div>
           </div>
@@ -160,7 +159,7 @@ Pulsante “i” - Modalità registrazione all’area riservata.
             <h2 className="text-4xl md:text-5xl font-serif text-white font-bold tracking-wider mb-4">
               Giorni alla partenza
             </h2>
-            <p className="text-white/80 mt-4 text-lg md:text-xl">La partenza a cui si riferisce il conto alla rovescia è quella per la GMG di Seoul 2027.</p>
+            <p className="text-white/80 mt-4 text-lg md:text-xl">La partenza a cui si riferisce il conto alla rovescia è quella per la JMJ Seoul 2027.</p>
             <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
           </div>
 
@@ -188,13 +187,13 @@ Pulsante “i” - Modalità registrazione all’area riservata.
                 "Abbiate coraggio: io ho vinto il mondo."
               </p>
               <p className="text-lg text-gray-700 leading-relaxed">
-                I giovani, “lieti nella speranza” (tema della 38ª Giornata Mondiale della Gioventù), “camminano senza stancarsi” (tema della 39ª Giornata Mondiale della Gioventù), ‘testimoniando’ Cristo che hanno già incontrato (tema della 40ª Giornata Mondiale della Gioventù) e con “coraggio” (tema della 41ª Giornata Mondiale della Gioventù) si mettono in cammino verso Seul.
+                I giovani, “lieti nella speranza” (tema della 38ª Giornata Mondiale della Gioventù), “camminano senza stancarsi” (tema della 39ª Giornata Mondiale della Gioventù), ‘testimoniando’ Cristo che hanno già incontrato (tema della 40ª Giornata Mondiale della Gioventù) e con “coraggio” (tema della 41ª Giornata Mondiale della Gioventù) si mettono in cammino verso Seoul.
               </p>
               <p className="text-lg text-gray-700 leading-relaxed">
-                Papa Francesco ha scelto il versetto 33 del capitolo 16 del Vangelo secondo Giovanni come tema della GMG 2027 a Seul. Queste parole, rivolte ai discepoli durante l'Ultima Cena, ci ricordano la profonda verità che Gesù, anche di fronte alla sofferenza e alla morte imminente, aveva già superato la paura e alla fine aveva vinto la morte. La certezza della resurrezione contenuta in queste parole non è semplice ottimismo, ma significa “speranza e coraggio” profondamente radicati nel Cristo vivente.
+                Papa Francesco ha scelto il versetto 33 del capitolo 16 del Vangelo secondo Giovanni come tema della GMG 2027 a Seoul. Queste parole, rivolte ai discepoli durante l'Ultima Cena, ci ricordano la profonda verità che Gesù, anche di fronte alla sofferenza e alla morte imminente, aveva già superato la paura e alla fine aveva vinto la morte. La certezza della resurrezione contenuta in queste parole non è semplice ottimismo, ma significa “speranza e coraggio” profondamente radicati nel Cristo vivente.
               </p>
               <p className="text-lg text-gray-700 leading-relaxed">
-                I giovani di tutto il mondo, che oggi affrontano diverse sfide quali conflitti, precarietà lavorativa e difficoltà economiche, sperimenteranno la gioia di essere “luce e sale del mondo” durante la GMG che si terrà a Seul nel 2027. Incontrandosi e sperimentando l'amore incondizionato, saranno inviati nel mondo come “pellegrini di speranza” e “missionari pieni di coraggio”, mettendo in pratica con coraggio nella loro vita la gioia del Vangelo che hanno compreso.
+                I giovani di tutto il mondo, che oggi affrontano diverse sfide quali conflitti, precarietà lavorativa e difficoltà economiche, sperimenteranno la gioia di essere “luce e sale del mondo” durante la GMG che si terrà a Seoul nel 2027. Incontrandosi e sperimentando l'amore incondizionato, saranno inviati nel mondo come “pellegrini di speranza” e “missionari pieni di coraggio”, mettendo in pratica con coraggio nella loro vita la gioia del Vangelo che hanno compreso.
               </p>
               <a
                 href="https://wydseoul.org/it"
@@ -250,7 +249,7 @@ Pulsante “i” - Modalità registrazione all’area riservata.
             },
             {
               id: 4,
-              title: 'Invito del Vescovo di Seul',
+              title: 'Invito del Vescovo di Seoul',
               youtubeId: 'PXKnjtHtVFw',
               buttonLabel: 'Guarda video 4',
             },
@@ -311,14 +310,13 @@ Pulsante “i” - Modalità registrazione all’area riservata.
           </div>
           <div className="max-w-3xl mx-auto">
             <div className="bg-gray-50 rounded-2xl shadow-sm border border-gray-200 p-8 text-left">
-              <h3 className="text-2xl font-serif font-bold text-black mb-4">GMG Seoul 2027</h3>
+              <h3 className="text-2xl font-serif font-bold text-black mb-4">JMJ Seoul 2027</h3>
               <p className="text-gray-700 leading-relaxed mb-4">
-                La preiscrizione serve solo all'organizzazione per avere un'idea indicativa dei numeri dei partecipanti.
-                Non equivale all'iscrizione reale.
+                Sono aperte le iscrizioni ufficiali per la JMJ Seoul 2027, dedicate ai giovani fino ai 25 anni.
               </p>
               <p className="text-gray-700 leading-relaxed">
-                Dopo la preiscrizione verrà comunque richiesto di completare l'iscrizione dall'area riservata,
-                inserendo quanto prima tutti i dati richiesti.
+                Chi aveva già compilato la preiscrizione deve completare l'iscrizione ufficiale dall'area riservata personale.
+                Invitiamo a procedere il prima possibile, perché i posti sono limitati.
               </p>
             </div>
           </div>
@@ -334,7 +332,10 @@ Pulsante “i” - Modalità registrazione all’area riservata.
                 <span className="block whitespace-nowrap">COMUNICAZIONI</span>
                 <span className="block whitespace-nowrap">SU TELEGRAM</span>
               </h2>
-              <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
+              <span className="inline-flex animate-pulse rounded-full bg-sky-500 px-3 py-1 text-xs font-bold tracking-wider text-white shadow-lg">
+                ATTIVA TELEGRAM
+              </span>
+              <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
               <p className="mt-6 text-lg md:text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
                 Servizio riservato agli utenti registrati all&apos;area riservata.
                 Le comunicazioni dell&apos;organizzazione potranno arrivare sia nella sezione comunicazioni,
@@ -435,49 +436,42 @@ Pulsante “i” - Modalità registrazione all’area riservata.
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider mb-4">
-                ISCRIZIONE GMG 2027
-              </h2>
-              <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
+              <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider">
+                  ISCRIZIONI JMJ SEOUL 2027
+                </h2>
+                <span className="animate-pulse rounded-full bg-red-600 px-3 py-1 text-xs font-bold tracking-wider text-white shadow-lg">
+                  APERTE
+                </span>
+              </div>
+              <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 md:p-12 space-y-6">
-              <p className="text-lg text-gray-700 leading-relaxed">
-                Per la GMG 2027 è possibile fare una preiscrizione tramite il modulo dedicato.
-                La preiscrizione non significa iscrizione reale: serve soltanto all'organizzazione,
-                soprattutto per avere una prima idea dei numeri dei partecipanti.
-              </p>
-
-              <p className="text-lg text-gray-700 leading-relaxed">
-                L'iscrizione reale va fatta dall'area riservata, nella sezione dedicata,
-                scegliendo il pellegrinaggio di interesse e inserendo prima possibile tutti i dati richiesti.
-              </p>
-
-              <p className="text-lg text-gray-700 leading-relaxed">
-                Se una persona effettua la preiscrizione, le verrà comunque richiesto di iscriversi successivamente
-                dall'area riservata per completare correttamente la procedura.
-              </p>
-
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-6 sm:p-8 md:p-12 space-y-6">
               <p className="text-lg text-gray-700 leading-relaxed font-semibold">
-                Le quote dei pellegrinaggi non sono ancora impostate.
+                Sono aperte le iscrizioni ufficiali per la JMJ Seoul 2027, dedicate ai giovani fino ai 25 anni.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <a
-                  href="https://pellegrinaggiocncpiemonte.fillout.com/t/gTrbdqkQ9Jus"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
-                >
-                  Preiscrizione Seoul 2027
-                </a>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                Chi aveva già compilato la preiscrizione deve ora completare l&apos;iscrizione ufficiale entrando nell&apos;area riservata personale e scegliendo il pellegrinaggio JMJ Seoul 2027.
+              </p>
+
+              <p className="text-lg text-gray-700 leading-relaxed">
+                La preiscrizione non sostituisce l&apos;iscrizione ufficiale. Invitiamo a procedere il prima possibile, perché i posti disponibili sono limitati.
+              </p>
+
+              <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm sm:text-base leading-relaxed text-amber-950">
+                A breve verranno comunicate le quote minime di iscrizione e le relative scadenze.
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <a
                   href={SITE_CONFIG.reservedAreaUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center bg-amber-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-amber-700 transition-colors"
                 >
-                  Iscrizione reale da area riservata
+                  Iscriviti dall&apos;area riservata
                 </a>
               </div>
             </div>
@@ -505,7 +499,7 @@ Pulsante “i” - Modalità registrazione all’area riservata.
             <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
             <p className="text-lg md:text-xl text-white/90 font-light tracking-wide max-w-3xl mx-auto leading-relaxed">
               Accedi all'area riservata per registrarti, completare i dati richiesti e iscriverti
-              nella sezione dedicata al pellegrinaggio di tuo interesse, sia per Estate 2026 sia per la GMG Seoul 2027.
+              nella sezione dedicata al pellegrinaggio di tuo interesse, sia per Estate 2026 sia per la JMJ Seoul 2027.
             </p>
             <p className="text-base md:text-lg text-white/75 max-w-3xl mx-auto leading-relaxed">
               Le quote dei pellegrinaggi non sono ancora impostate.
@@ -545,7 +539,7 @@ Pulsante “i” - Modalità registrazione all’area riservata.
 
 
       {isReservedGuideOpen ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-2 py-2 sm:px-4 sm:py-6">
           <button
             type="button"
             className="absolute inset-0 bg-black/75 backdrop-blur-sm"
@@ -553,11 +547,14 @@ Pulsante “i” - Modalità registrazione all’area riservata.
             aria-label="Chiudi informazioni registrazione"
           />
 
-          <div className="relative z-10 w-full max-w-4xl max-h-[82vh] overflow-y-auto rounded-2xl border border-white/20 bg-white text-black shadow-2xl sm:max-h-[86vh]">
-            <div className="sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-gray-200 bg-white/95 px-4 py-4 backdrop-blur sm:px-5 md:px-6">
-              <div className="min-w-0">
-                <h3 className="text-xl sm:text-2xl md:text-[1.75rem] font-serif font-bold leading-tight">{RESERVED_AREA_GUIDE_TITLE}</h3>
-                <p className="mt-1.5 text-xs sm:text-sm md:text-[0.95rem] text-gray-700 max-w-2xl leading-relaxed">
+          <div className="relative z-10 flex h-[calc(100dvh-1rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-white/20 bg-white text-black shadow-2xl sm:h-auto sm:max-h-[86vh]">
+            <div className="shrink-0 flex items-start justify-between gap-2 border-b border-gray-200 bg-white px-3 py-3 sm:px-5 sm:py-4 md:px-6">
+              <div className="min-w-0 pr-1">
+                <h3 className="text-base font-serif font-bold leading-tight sm:text-2xl md:text-[1.75rem]">
+                  <span className="sm:hidden">Info registrazione e accesso rapido</span>
+                  <span className="hidden sm:inline">{RESERVED_AREA_GUIDE_TITLE}</span>
+                </h3>
+                <p className="mt-1.5 hidden max-w-2xl text-sm leading-relaxed text-gray-700 sm:block md:text-[0.95rem]">
                   {RESERVED_AREA_GUIDE_SUBTITLE}
                 </p>
               </div>
@@ -565,16 +562,20 @@ Pulsante “i” - Modalità registrazione all’area riservata.
               <button
                 type="button"
                 onClick={() => setIsReservedGuideOpen(false)}
-                className="shrink-0 rounded-full border border-gray-300 px-3 py-1.5 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-gray-100 active:scale-95 transition-all duration-200"
+                className="shrink-0 rounded-full border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-100 active:scale-95 transition-all duration-200 sm:text-sm"
               >
                 Chiudi
               </button>
             </div>
 
-            <div className="p-4 sm:p-5 md:p-6">
+            <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-5 md:p-6">
+              <div className="mb-3 rounded-xl border border-blue-100 bg-blue-50 px-3 py-3 text-sm leading-relaxed text-gray-800 sm:hidden">
+                {RESERVED_AREA_GUIDE_SUBTITLE}
+              </div>
+
               <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
                 {RESERVED_AREA_GUIDE_ITEMS.map((item) => (
-                  <article key={item.id} className="rounded-xl border border-gray-200 bg-white p-4 sm:p-4.5 md:p-5 shadow-sm">
+                  <article key={item.id} className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm sm:p-4 md:p-5">
                     <div className="flex items-start gap-2.5 sm:gap-3">
                       <div className="text-2xl sm:text-[1.7rem] leading-none" aria-hidden="true">{item.icon}</div>
                       <div className="flex-1 min-w-0">
@@ -686,27 +687,189 @@ Pulsante “i” - Modalità registrazione all’area riservata.
 
       <section id="donazioni" className="py-20 bg-black">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider mb-4 text-white">
-              VERSAMENTI E DONAZIONI
-            </h2>
-            <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
+          <div className="text-center mb-10">
+            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider text-white">
+                VERSAMENTI E DONAZIONI
+              </h2>
+              <span className="animate-pulse rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold tracking-wider text-white shadow-lg">
+                SEZIONE ATTIVA
+              </span>
+            </div>
+            <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
           </div>
-          <div className="max-w-3xl mx-auto text-center">
-            <p className="text-xl text-gray-300">
-              Indicazioni disponibili a breve.
-            </p>
+
+          <div className="max-w-4xl mx-auto rounded-3xl border border-white/15 bg-white/10 p-6 text-white shadow-2xl backdrop-blur-sm sm:p-8 md:p-10">
+            <div className="space-y-4 text-base leading-relaxed text-white/90 sm:text-lg">
+              <p>
+                In questa sezione trovi le indicazioni per effettuare versamenti e donazioni destinati alla JMJ Seoul 2027.
+              </p>
+              <p>
+                Le stesse informazioni saranno disponibili anche nell&apos;area riservata personale, nella sezione <span className="font-semibold text-white">“Info pagamenti”</span>.
+              </p>
+              <p className="font-semibold text-amber-200">
+                A breve verranno comunicate le quote minime di iscrizione e le relative scadenze.
+              </p>
+            </div>
+
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <button
+                type="button"
+                onClick={() => setIsBankDetailsOpen(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3.5 font-semibold text-black transition-colors hover:bg-gray-100"
+              >
+                <Landmark size={19} />
+                Dati bancari
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsPaymentInstructionsOpen(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-600 px-6 py-3.5 font-semibold text-white transition-colors hover:bg-amber-700"
+              >
+                <FileText size={19} />
+                Indicazioni e causali
+              </button>
+            </div>
+
+            <div className="mt-7 overflow-hidden rounded-2xl border border-amber-400/40 bg-amber-100/10 text-sm leading-relaxed text-white/90 sm:text-base">
+              <button
+                type="button"
+                onClick={() => setIsPaymentNoticeOpen((prev) => !prev)}
+                className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition-colors hover:bg-amber-100/10 sm:px-5"
+                aria-expanded={isPaymentNoticeOpen}
+                aria-controls="payment-important-notice"
+              >
+                <span className="font-bold text-amber-200">Importante per i bonifici dalla Svizzera</span>
+                <ChevronDown className={`h-5 w-5 shrink-0 transition-transform duration-300 ${isPaymentNoticeOpen ? 'rotate-180' : ''}`} />
+              </button>
+              <div
+                id="payment-important-notice"
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${isPaymentNoticeOpen ? 'max-h-[520px] opacity-100' : 'max-h-0 opacity-0'}`}
+              >
+                <div className="space-y-3 border-t border-amber-400/25 px-4 py-4 sm:px-5">
+                  <p>
+                    Aggiungere 8,50 € di commissioni per ogni operazione.
+                  </p>
+                  <p>
+                    Le ricevute non devono essere inviate via email: vanno caricate esclusivamente tramite l&apos;area personale dell&apos;iscritto oppure tramite il profilo che gestisce i versamenti, come genitore, collaboratore o responsabile.
+                  </p>
+                  <p>
+                    Per problemi tecnici con il bonifico o per richiedere informazioni sulla consegna delle quote in contanti, contattare l&apos;organizzazione.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
+
+      {isBankDetailsOpen ? (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center px-3 py-4 sm:px-4 sm:py-6">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/75 backdrop-blur-sm"
+            onClick={() => setIsBankDetailsOpen(false)}
+            aria-label="Chiudi dati bancari"
+          />
+          <div className="relative z-10 w-full max-w-xl overflow-hidden rounded-2xl bg-white text-black shadow-2xl">
+            <div className="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-4 sm:px-5">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-gray-500">JMJ Seoul 2027</p>
+                <h3 className="text-xl font-serif font-bold sm:text-2xl">Dati bancari</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsBankDetailsOpen(false)}
+                className="rounded-full border border-gray-300 p-2 text-gray-700 hover:bg-gray-100"
+                aria-label="Chiudi"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="max-h-[calc(100dvh-7rem)] overflow-y-auto p-4 sm:p-5">
+              <img src="/images/banca-sella-coordinate.png" alt="Banca Sella" className="mx-auto mb-4 hidden w-full rounded border border-gray-200 sm:block" />
+              <div className="space-y-3 text-sm sm:text-base">
+                <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                  <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Intestazione conto</p>
+                  <p className="mt-1 font-semibold">COMITATO PELLEGRINAGGI CNC PIEMONTE</p>
+                </div>
+                <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                  <p className="text-xs font-bold uppercase tracking-wider text-gray-500">IBAN</p>
+                  <p className="mt-1 break-all font-mono font-semibold">IT97M0326830940052574350520</p>
+                </div>
+                <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                  <p className="text-xs font-bold uppercase tracking-wider text-gray-500">BIC / Codice Swift</p>
+                  <p className="mt-1 font-mono font-semibold">SELBIT2BXXX</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {isPaymentInstructionsOpen ? (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center px-2 py-2 sm:px-4 sm:py-6">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/75 backdrop-blur-sm"
+            onClick={() => setIsPaymentInstructionsOpen(false)}
+            aria-label="Chiudi indicazioni e causali"
+          />
+          <div className="relative z-10 flex h-[calc(100dvh-1rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white text-black shadow-2xl sm:h-auto sm:max-h-[88vh]">
+            <div className="shrink-0 flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-3.5 sm:px-5 sm:py-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 sm:text-xs">JMJ Seoul 2027</p>
+                <h3 className="text-lg font-serif font-bold sm:text-2xl">Indicazioni e causali</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPaymentInstructionsOpen(false)}
+                className="rounded-full border border-gray-300 p-2 text-gray-700 hover:bg-gray-100"
+                aria-label="Chiudi"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3 sm:p-5">
+              <p className="rounded-xl border border-blue-200 bg-blue-50 px-3 py-3 text-sm leading-relaxed text-blue-950 sm:px-4 sm:text-base">
+                Scrivere esclusivamente la causale indicata, senza aggiungere altro testo.
+              </p>
+
+              {[
+                ['Singola quota', 'Cognome, Nome x JMJ Seoul 2027'],
+                ['Donazione', 'Donazione: JMJ Seoul 2027'],
+                ['Versamento multiplo figli', 'Cognome famiglia, n° quote versate, x JMJ Seoul 2027'],
+                ['Versamento multiplo comunitario', 'Diocesi, parrocchia, n° quote versate x JMJ Seoul 2027'],
+              ].map(([title, cause]) => (
+                <article key={title} className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 sm:px-4 sm:py-4">
+                  <h4 className="font-bold text-black">{title}</h4>
+                  <p className="mt-1.5 text-sm leading-relaxed text-gray-800 sm:text-base">{cause}</p>
+                  {title.includes('multiplo') ? (
+                    <p className="mt-2 text-xs leading-relaxed text-gray-600 sm:text-sm">
+                      Dopo il versamento, caricare la ricevuta tramite l&apos;area riservata specificando i singoli nominativi.
+                    </p>
+                  ) : null}
+                </article>
+              ))}
+
+              <div className="space-y-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-3 text-sm leading-relaxed text-amber-950 sm:px-4 sm:py-4 sm:text-base">
+                <p><span className="font-bold">Bonifici dalla Svizzera:</span> aggiungere 8,50 € di commissioni per ogni operazione.</p>
+                <p><span className="font-bold">Ricevute:</span> non inviarle via email. Caricarle esclusivamente tramite l&apos;area personale o tramite il profilo che gestisce i versamenti.</p>
+                <p><span className="font-bold">Contanti:</span> per problemi tecnici con il bonifico e per ricevere informazioni, contattare l&apos;organizzazione.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-6 mb-8">
             <a href="#home" className="hover:text-amber-500 transition-colors">Home Page</a>
             <a href="#prossimi-eventi" className="hover:text-amber-500 transition-colors">Prossimi eventi</a>
-            <a href="#wyd-seul" className="hover:text-amber-500 transition-colors">WYD Seul 2027</a>
-            <a href="#gmg-2027-iscrizione" className="hover:text-amber-500 transition-colors">Iscrizione GMG 2027</a>
+            <a href="#wyd-seul" className="hover:text-amber-500 transition-colors">WYD Seoul 2027</a>
+            <a href="#gmg-2027-iscrizione" className="hover:text-amber-500 transition-colors">Iscrizione JMJ Seoul 2027</a>
             <a href="#telegram" className="hover:text-amber-500 transition-colors">Telegram</a>
             <a href="#donazioni" className="hover:text-amber-500 transition-colors">Versamenti e Donazioni</a>
           </div>
@@ -717,6 +880,7 @@ Pulsante “i” - Modalità registrazione all’area riservata.
           </div>
         </div>
       </footer>
+      <FloatingAssistance />
       <VisitCounterBadge />
     </div>
   );

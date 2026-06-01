@@ -35,10 +35,10 @@ const Navigation = () => {
           { id: 'prossimi-eventi', label: 'Estate 2026' },
           {
             id: 'wyd-submenu',
-            label: 'WYD Seul 2027',
+            label: 'WYD Seoul 2027',
             children: [
               { id: 'giorni-alla-partenza', label: 'Giorni alla partenza' },
-              { id: 'wyd-seul', label: 'WYD Seul 2027' },
+              { id: 'wyd-seul', label: 'WYD Seoul 2027' },
               { id: 'sezione-video', label: 'Video promo GMG 2027' },
               { id: 'gmg-2027-iscrizione', label: 'Iscrizione GMG 2027' },
               {

@@ -1,4 +1,4 @@
-import { Mail, Phone, Menu, X, MessageCircle, ExternalLink, ChevronDown } from 'lucide-react';
+import { Mail, Phone, Menu, X, MessageCircle, ExternalLink, ChevronDown, Send } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { QUICK_ACTIONS, SITE_CONFIG } from '../config/siteConfig';
 
@@ -36,12 +36,12 @@ const Navigation = () => {
           { id: 'prossimi-eventi', label: 'Estate 2026' },
           {
             id: 'wyd-submenu',
-            label: 'WYD Seul 2027',
+            label: 'WYD Seoul 2027',
             children: [
               { id: 'giorni-alla-partenza', label: 'Giorni alla partenza' },
-              { id: 'wyd-seul', label: 'WYD Seul 2027' },
-              { id: 'sezione-video', label: 'Video promo GMG 2027' },
-              { id: 'gmg-2027-iscrizione', label: 'Iscrizione GMG 2027' },
+              { id: 'wyd-seul', label: 'WYD Seoul 2027' },
+              { id: 'sezione-video', label: 'Video promo JMJ 2027' },
+              { id: 'gmg-2027-iscrizione', label: 'Iscrizione JMJ Seoul 2027' },
               {
                 id: 'info-korea',
                 label: 'Info Korea',
@@ -135,6 +135,27 @@ const Navigation = () => {
   const quickActionIconClass = headerIsWhite ? 'text-black hover:text-amber-700' : 'text-white hover:text-amber-200';
   const quickActionLabelClass = headerIsWhite ? 'text-black/70' : 'text-white/80';
 
+  const renderNavLabel = (label: string, id?: string) => (
+    <span className="inline-flex min-w-0 items-center gap-1.5">
+      <span className="min-w-0">{label}</span>
+      {id === 'donazioni' ? (
+        <span className="animate-pulse rounded-full bg-emerald-600 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
+          ATTIVO
+        </span>
+      ) : null}
+      {id === 'gmg-2027-iscrizione' ? (
+        <span className="animate-pulse rounded-full bg-red-600 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
+          APERTE
+        </span>
+      ) : null}
+      {id === 'telegram' ? (
+        <span className="animate-pulse rounded-full bg-sky-500 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
+          NUOVO
+        </span>
+      ) : null}
+    </span>
+  );
+
   const renderQuickAction = (action: (typeof QUICK_ACTIONS)[number], mobile = false) => {
     const wrapperClass = mobile
       ? 'flex w-full min-w-0 flex-col items-center justify-center gap-0.5 text-center px-0.5'
@@ -155,7 +176,7 @@ const Navigation = () => {
         </>
       );
 
-      return action.href ? (
+      return (
         <a
           key={action.id}
           href={action.href}
@@ -167,10 +188,6 @@ const Navigation = () => {
         >
           {content}
         </a>
-      ) : (
-        <span key={action.id} className={`${wrapperClass} opacity-70`} title={`${action.label} (prossimamente)`}>
-          {content}
-        </span>
       );
     }
 
@@ -189,14 +206,30 @@ const Navigation = () => {
       );
     }
 
-    const icon = action.id === 'email' ? <Mail size={mobile ? 18 : 20} className={iconClass} /> : <MessageCircle size={mobile ? 18 : 20} className={iconClass} />;
+    if (action.type === 'section') {
+      return (
+        <button
+          key={action.id}
+          onClick={() => scrollToSection(action.targetId)}
+          className={`relative ${wrapperClass}`}
+          aria-label="Vai alla sezione Telegram"
+          title={action.label}
+        >
+          <span className={`absolute animate-pulse rounded-full bg-sky-500 font-bold leading-none text-white shadow-md ${mobile ? '-right-0.5 -top-1 min-w-[13px] px-1 py-0.5 text-[8px]' : '-right-1 -top-2 px-1.5 py-0.5 text-[8px]'}`}>
+            {mobile ? '!' : 'NUOVO'}
+          </span>
+          <Send size={mobile ? 18 : 20} className={iconClass} />
+          <span className={captionClass}>{action.label}</span>
+        </button>
+      );
+    }
+
+    const icon = <Mail size={mobile ? 18 : 20} className={iconClass} />;
 
     return (
       <a
         key={action.id}
         href={action.href}
-        target={action.external ? '_blank' : undefined}
-        rel={action.external ? 'noopener noreferrer' : undefined}
         className={wrapperClass}
         aria-label={action.id === 'email' ? 'Invia una email' : 'Apri assistenza online'}
         title={action.label}
@@ -259,7 +292,7 @@ const Navigation = () => {
                     className={`relative px-2 py-2 text-sm font-serif tracking-wide transition-colors ${baseText} hover:opacity-80`}
                     aria-label={group.label}
                   >
-                    <span className={active ? 'font-semibold' : ''}>{group.label}</span>
+                    <span className={active ? 'font-semibold' : ''}>{renderNavLabel(group.label, group.id)}</span>
                     <span
                       className={`absolute left-0 right-0 -bottom-1 h-[2px] transition-all duration-200 ${underline ? 'bg-blue-600 opacity-100' : 'bg-transparent opacity-0'}`}
                     />
@@ -277,7 +310,7 @@ const Navigation = () => {
                     aria-haspopup="menu"
                     aria-expanded={isOpen}
                   >
-                    <span className={active ? 'font-semibold' : ''}>{group.label}</span>
+                    <span className={active ? 'font-semibold' : ''}>{renderNavLabel(group.label, group.id)}</span>
                     <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                     <span
                       className={`absolute left-0 right-0 -bottom-1 h-[2px] transition-all duration-200 ${underline ? 'bg-blue-600 opacity-100' : 'bg-transparent opacity-0'}`}
@@ -385,7 +418,7 @@ const Navigation = () => {
                                         }}
                                         className={cls}
                                       >
-                                        <span className="font-serif">{child.label}</span>
+                                        <span className="font-serif">{renderNavLabel(child.label, child.id)}</span>
                                         <span className="text-gray-400">↗</span>
                                       </a>
                                     );
@@ -393,7 +426,7 @@ const Navigation = () => {
 
                                   return (
                                     <button key={child.id} onClick={() => scrollToSection(child.id)} className={cls}>
-                                      <span className="font-serif">{child.label}</span>
+                                      <span className="font-serif">{renderNavLabel(child.label, child.id)}</span>
                                       <span className="text-gray-400">›</span>
                                     </button>
                                   );
@@ -448,10 +481,11 @@ const Navigation = () => {
               {QUICK_ACTIONS.map((action) => renderQuickAction(action, true))}
             </div>
             <button
-              className={`shrink-0 transition-colors ${baseText}`}
+              className={`relative shrink-0 transition-colors ${baseText}`}
               onClick={() => setMobileMenuOpen((value) => !value)}
               aria-label={mobileMenuOpen ? 'Chiudi menu' : 'Apri menu'}
             >
+              <span className="absolute -right-1.5 -top-1.5 h-3 w-3 animate-pulse rounded-full border border-white bg-emerald-500 shadow-md" aria-hidden="true" />
               {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
@@ -475,7 +509,7 @@ const Navigation = () => {
                               onClick={() => setOpenSubmenu(open ? null : item.id)}
                               className={`px-4 py-2 text-sm font-serif tracking-wider text-left transition-all rounded-full flex items-center justify-between ${open ? 'bg-gray-100 text-black' : 'text-black hover:bg-gray-100'}`}
                             >
-                              <span>{item.label}</span>
+                              <span>{renderNavLabel(item.label, item.id)}</span>
                               <span className="text-gray-500">{open ? '˄' : '˅'}</span>
                             </button>
                             {open && (
@@ -496,13 +530,13 @@ const Navigation = () => {
                                         }}
                                         className={childClass}
                                       >
-                                        {child.label}
+                                        {renderNavLabel(child.label, child.id)}
                                       </a>
                                     );
                                   }
                                   return (
                                     <button key={child.id} onClick={() => scrollToSection(child.id)} className={childClass}>
-                                      {child.label}
+                                      {renderNavLabel(child.label, child.id)}
                                     </button>
                                   );
                                 })}
@@ -525,14 +559,14 @@ const Navigation = () => {
                             }}
                             className={cls}
                           >
-                            {item.label}
+                            {renderNavLabel(item.label, item.id)}
                           </a>
                         );
                       }
 
                       return (
                         <button key={item.id} onClick={() => scrollToSection(item.id)} className={cls}>
-                          {item.label}
+                          {renderNavLabel(item.label, item.id)}
                         </button>
                       );
                     })}

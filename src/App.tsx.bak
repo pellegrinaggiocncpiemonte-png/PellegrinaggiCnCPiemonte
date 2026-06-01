@@ -179,13 +179,13 @@ function App() {
                 "Abbiate coraggio: io ho vinto il mondo."
               </p>
               <p className="text-lg text-gray-700 leading-relaxed">
-                I giovani, “lieti nella speranza” (tema della 38ª Giornata Mondiale della Gioventù), “camminano senza stancarsi” (tema della 39ª Giornata Mondiale della Gioventù), ‘testimoniando’ Cristo che hanno già incontrato (tema della 40ª Giornata Mondiale della Gioventù) e con “coraggio” (tema della 41ª Giornata Mondiale della Gioventù) si mettono in cammino verso Seul.
+                I giovani, “lieti nella speranza” (tema della 38ª Giornata Mondiale della Gioventù), “camminano senza stancarsi” (tema della 39ª Giornata Mondiale della Gioventù), ‘testimoniando’ Cristo che hanno già incontrato (tema della 40ª Giornata Mondiale della Gioventù) e con “coraggio” (tema della 41ª Giornata Mondiale della Gioventù) si mettono in cammino verso Seoul.
               </p>
               <p className="text-lg text-gray-700 leading-relaxed">
-                Papa Francesco ha scelto il versetto 33 del capitolo 16 del Vangelo secondo Giovanni come tema della GMG 2027 a Seul. Queste parole, rivolte ai discepoli durante l'Ultima Cena, ci ricordano la profonda verità che Gesù, anche di fronte alla sofferenza e alla morte imminente, aveva già superato la paura e alla fine aveva vinto la morte. La certezza della resurrezione contenuta in queste parole non è semplice ottimismo, ma significa “speranza e coraggio” profondamente radicati nel Cristo vivente.
+                Papa Francesco ha scelto il versetto 33 del capitolo 16 del Vangelo secondo Giovanni come tema della GMG 2027 a Seoul. Queste parole, rivolte ai discepoli durante l'Ultima Cena, ci ricordano la profonda verità che Gesù, anche di fronte alla sofferenza e alla morte imminente, aveva già superato la paura e alla fine aveva vinto la morte. La certezza della resurrezione contenuta in queste parole non è semplice ottimismo, ma significa “speranza e coraggio” profondamente radicati nel Cristo vivente.
               </p>
               <p className="text-lg text-gray-700 leading-relaxed">
-                I giovani di tutto il mondo, che oggi affrontano diverse sfide quali conflitti, precarietà lavorativa e difficoltà economiche, sperimenteranno la gioia di essere “luce e sale del mondo” durante la GMG che si terrà a Seul nel 2027. Incontrandosi e sperimentando l'amore incondizionato, saranno inviati nel mondo come “pellegrini di speranza” e “missionari pieni di coraggio”, mettendo in pratica con coraggio nella loro vita la gioia del Vangelo che hanno compreso.
+                I giovani di tutto il mondo, che oggi affrontano diverse sfide quali conflitti, precarietà lavorativa e difficoltà economiche, sperimenteranno la gioia di essere “luce e sale del mondo” durante la GMG che si terrà a Seoul nel 2027. Incontrandosi e sperimentando l'amore incondizionato, saranno inviati nel mondo come “pellegrini di speranza” e “missionari pieni di coraggio”, mettendo in pratica con coraggio nella loro vita la gioia del Vangelo che hanno compreso.
               </p>
               <a
                 href="https://wydseoul.org/it"
@@ -241,7 +241,7 @@ function App() {
             },
             {
               id: 4,
-              title: 'Invito del Vescovo di Seul',
+              title: 'Invito del Vescovo di Seoul',
               youtubeId: 'PXKnjtHtVFw',
               buttonLabel: 'Guarda video 4',
             },
@@ -696,7 +696,7 @@ function App() {
           <div className="flex flex-wrap justify-center gap-6 mb-8">
             <a href="#home" className="hover:text-amber-500 transition-colors">Home Page</a>
             <a href="#prossimi-eventi" className="hover:text-amber-500 transition-colors">Prossimi eventi</a>
-            <a href="#wyd-seul" className="hover:text-amber-500 transition-colors">WYD Seul 2027</a>
+            <a href="#wyd-seul" className="hover:text-amber-500 transition-colors">WYD Seoul 2027</a>
             <a href="#gmg-2027-iscrizione" className="hover:text-amber-500 transition-colors">Iscrizione GMG 2027</a>
             <a href="#telegram" className="hover:text-amber-500 transition-colors">Telegram</a>
             <a href="#donazioni" className="hover:text-amber-500 transition-colors">Versamenti e Donazioni</a>

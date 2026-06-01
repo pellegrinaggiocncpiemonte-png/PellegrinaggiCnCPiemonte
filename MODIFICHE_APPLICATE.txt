@@ -1,0 +1,25 @@
+AGGIORNAMENTO SITO - 01/06/2026
+
+Modifiche applicate:
+- Corretto il modal informativo dell'area riservata per smartphone in verticale: intestazione compatta e contenuto scorrevole con maggiore spazio utile.
+- Attivate le iscrizioni ufficiali GMG Corea 2027 con badge lampeggiante e pulsante verso l'area riservata.
+- Indicata l'iscrizione per giovani fino ai 25 anni e la necessità di completare l'iscrizione ufficiale anche per chi aveva già effettuato la preiscrizione.
+- Attivata la sezione Versamenti e donazioni con badge lampeggiante.
+- Inseriti i dati bancari Banca Sella e un modal dedicato.
+- Inserite le causali dei versamenti e un modal responsivo dedicato, ottimizzato per smartphone verticali.
+- Inserite le indicazioni per bonifici dalla Svizzera, caricamento ricevute e richiesta informazioni per eventuali quote in contanti.
+- Aggiunto il pulsante Telegram tra le azioni rapide dell'intestazione, anche su smartphone.
+- Spostata l'assistenza in un widget flottante in basso a destra che apre la chat all'interno del sito.
+- Rigenerata la cartella dist pronta per la pubblicazione.
+
+Verifiche eseguite:
+- npm run typecheck
+- npm run build
+
+Aggiornamento richiesto successivamente:
+- uniformata la grafia della città da "Seul" a "Seoul";
+- sostituiti i riferimenti esposti come "GMG Corea 2027" con "JMJ Seoul 2027";
+- reso compresso di default il box "Importante per i bonifici dalla Svizzera", apribile con un clic;
+- aggiunto un badge lampeggiante sull'icona hamburger per smartphone e tablet, così da rendere visibile l'attivazione della sezione versamenti e donazioni;
+- aggiunti badge lampeggianti per Telegram su desktop, smartphone e tablet;
+- mantenute invariate le altre parti del sito.
