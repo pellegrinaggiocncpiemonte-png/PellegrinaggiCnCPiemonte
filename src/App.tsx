@@ -133,7 +133,7 @@ function App() {
             </div>
 
             <a
-              href="https://pellegrinaggiocncpiemonte.fillout.com/t/uyBxG9c1zsus"
+              href="https://script.google.com/macros/s/AKfycbwXSLED8tYW0QcgW1bdyJz7vmHE2P1LfG3UZrDO7DcSvAAtlkrtZTvDB6fUWSOC7AjF/exec"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
