@@ -33,7 +33,6 @@ const Navigation = () => {
         label: 'Eventi',
         type: 'dropdown',
         items: [
-          { id: 'prossimi-eventi', label: 'Estate 2026' },
           {
             id: 'wyd-submenu',
             label: 'WYD Seoul 2027',

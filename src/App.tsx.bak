@@ -133,7 +133,7 @@ function App() {
             </div>
 
             <a
-              href="https://script.google.com/macros/s/AKfycbzbBk7SfDpxTucdq8qo5zsSUC2aPqi4-8ynJR8CG5AkbBvmxLSl9t2x-tbDlqhDthFR/exec"
+              href="https://pellegrinaggiocncpiemonte.fillout.com/t/uyBxG9c1zsus"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
@@ -455,7 +455,7 @@ function App() {
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <a
-                  href="https://script.google.com/macros/s/AKfycbzbBk7SfDpxTucdq8qo5zsSUC2aPqi4-8ynJR8CG5AkbBvmxLSl9t2x-tbDlqhDthFR/exec"
+                  href="https://pellegrinaggiocncpiemonte.fillout.com/t/gTrbdqkQ9Jus"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors"

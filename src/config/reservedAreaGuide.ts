@@ -7,9 +7,9 @@ export type ReservedAreaGuideItem = {
   note?: string;
 };
 
-export const RESERVED_AREA_GUIDE_TITLE = 'Area riservata: registrazione e accesso rapido';
+export const RESERVED_AREA_GUIDE_TITLE = 'Prima di registrarti: scegli la modalità corretta';
 export const RESERVED_AREA_GUIDE_SUBTITLE =
-  'Qui trovi sia le indicazioni per scegliere il profilo corretto durante la registrazione, sia i passaggi per salvare la web app sulla schermata Home del telefono e aprirla più velocemente. Attenzione: i profili organizzativi non sostituiscono l’iscrizione come Partecipante per chi prende parte al pellegrinaggio.';
+  'Leggi con attenzione prima di creare un profilo. La scelta corretta è particolarmente importante per i genitori che desiderano gestire i profili dei figli. Qui trovi anche i passaggi per salvare la web app sulla schermata Home del telefono.';
 
 export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
   {
@@ -51,18 +51,23 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
     title: 'Genitore (con codice)',
     icon: '👨‍👩‍👧',
     description:
-      'Da scegliere se tuo figlio si è iscritto autonomamente come Partecipante.',
+      'Da scegliere soltanto quando tuo figlio possiede già un profilo Partecipante autonomo e desidera collegarti successivamente come genitore.',
     note:
-      'Se tuo figlio è minore, dovrà inviarti un codice di verifica via email dalla sua sezione “Profilo” per permetterti di registrarti. Se anche il genitore partecipa al pellegrinaggio, deve registrarsi anche come Partecipante.',
+      'Se tuo figlio è minore, dovrà inviarti un codice di verifica via email dalla sua sezione “Profilo”. Se invece vuoi creare e gestire tu i profili dei figli, scegli Genitore + Figli. Se anche il genitore partecipa al pellegrinaggio, deve registrarsi anche come Partecipante.',
   },
   {
     id: 'genitore-figli',
-    title: 'Genitore + Figli (senza email)',
+    title: 'Genitore + Figli',
     icon: '👥',
     description:
-      'Da scegliere se devi gestire figli che non hanno un indirizzo email personale.',
+      'È il profilo corretto quando un genitore desidera creare e gestire direttamente i profili dei propri figli usando la propria email, anche se alcuni figli possiedono già un indirizzo email personale.',
+    bullets: [
+      'Non creare più profili Partecipante separati usando la stessa email del genitore: dal secondo profilo il sistema segnalerà che l’email è già utilizzata.',
+      'Registrati una sola volta come Genitore + Figli inserendo l’email del genitore.',
+      'Dopo l’accesso al pannello, crea i profili dei singoli figli e gestiscili direttamente dal profilo del genitore.',
+    ],
     note:
-      'Utilizzerai la tua email per registrarli e potrai creare i profili figli. Per gestirli dovrai impersonare ogni singolo figlio dal tuo pannello, così da completare le loro iscrizioni. Se anche il genitore partecipa al pellegrinaggio, deve registrarsi anche come Partecipante.',
+      'Questa è la procedura consigliata quando il genitore vuole gestire personalmente i figli. Se anche il genitore partecipa al pellegrinaggio, dovrà completare anche la propria iscrizione come Partecipante.',
   },
   {
     id: 'iphone-safari',

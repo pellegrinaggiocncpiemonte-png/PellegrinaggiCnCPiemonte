@@ -84,74 +84,6 @@ function App() {
         </div>
       </section>
 
-      <section id="prossimi-eventi" className="min-h-screen relative flex items-center justify-center py-20">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: 'url(https://images.pexels.com/photos/1252890/pexels-photo-1252890.jpeg?auto=compress&cs=tinysrgb&w=1920)',
-          }}
-        >
-          <div className="absolute inset-0 bg-black/60"></div>
-        </div>
-        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-          <h2 className="text-5xl md:text-6xl font-serif text-white font-bold tracking-wider">
-            Estate 2026
-          </h2>
-          <p className="text-2xl md:text-3xl text-white/90 mt-6 font-light tracking-wide">
-            Dal 26 luglio al 29 luglio
-          </p>
-          <p className="text-xl md:text-2xl text-white/90 mt-4 font-light tracking-wide">
-            Attenzione!!!
-          </p>
-          <div className="mt-8 space-y-4 text-white/85 max-w-4xl mx-auto">
-            <p className="text-base md:text-lg leading-relaxed font-semibold text-white">
-              Per chi è arrivato in ritardo e desidera ancora aggiungersi al pellegrinaggio Estate 2026,
-              è stata aggiunta una nuova possibilità di richiesta iscrizione per un nuovo gruppo.
-            </p>
-            <p className="text-base md:text-lg leading-relaxed">
-              Le richieste dovranno arrivare entro fine maggio, perché i posti sono limitati.
-            </p>
-            <p className="text-base md:text-lg leading-relaxed">
-              Chi desidera aggiungersi può procedere cliccando il pulsante "Richiesta Iscrizione".
-            </p>
-          </div>
-          <div className="mt-8 flex flex-col items-center gap-3">
-            <div className="relative inline-flex items-center justify-center group">
-              <button
-                type="button"
-                onClick={() => setIsReservedGuideOpen(true)}
-                className="w-7 h-7 rounded-full border border-white/35 bg-white text-black shadow-lg hover:scale-105 hover:bg-amber-50 active:scale-95 transition-all duration-200 flex items-center justify-center"
-                aria-label="Info registrazione all'app"
-                title="Info registrazione all'app"
-              >
-                <span className="text-sm font-bold leading-none">i</span>
-              </button>
-
-              <div className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-white/20 bg-black/90 px-3 py-1.5 text-xs text-white opacity-0 shadow-xl transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 translate-y-1">
-                Info registrazione all'app
-              </div>
-            </div>
-
-            <a
-              href="https://script.google.com/macros/s/AKfycbzbBk7SfDpxTucdq8qo5zsSUC2aPqi4-8ynJR8CG5AkbBvmxLSl9t2x-tbDlqhDthFR/exec"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-            >
-              Richiesta Iscrizione
-            </a>
-            <div className="mt-4 max-w-3xl space-y-2 text-sm md:text-base leading-relaxed text-white/80">
-              <p>
-                La compilazione della richiesta non conferma automaticamente l'iscrizione.
-              </p>
-              <p>
-                L'organizzazione valuterà le richieste in base ai posti realmente disponibili e contatterà gli interessati per l'eventuale conferma.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ✅ Nuova sezione: Giorni alla partenza (countdown a cartelli) */}
       <section id="giorni-alla-partenza" className="py-20 bg-black">
         <div className="container mx-auto px-4">
@@ -499,7 +431,7 @@ function App() {
             <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
             <p className="text-lg md:text-xl text-white/90 font-light tracking-wide max-w-3xl mx-auto leading-relaxed">
               Accedi all'area riservata per registrarti, completare i dati richiesti e iscriverti
-              nella sezione dedicata al pellegrinaggio di tuo interesse, sia per Estate 2026 sia per la JMJ Seoul 2027.
+              nella sezione dedicata alla JMJ Seoul 2027.
             </p>
             <p className="text-base md:text-lg text-white/75 max-w-3xl mx-auto leading-relaxed">
               Le quote dei pellegrinaggi non sono ancora impostate.
@@ -510,15 +442,16 @@ function App() {
                 <button
                   type="button"
                   onClick={() => setIsReservedGuideOpen(true)}
-                  className="w-7 h-7 rounded-full border border-white/35 bg-white text-black shadow-lg hover:scale-105 hover:bg-amber-50 active:scale-95 transition-all duration-200 flex items-center justify-center"
-                  aria-label="Info registrazione all'app"
-                  title="Info registrazione all'app"
+                  className="registration-guide-cta inline-flex items-center justify-center gap-2 rounded-full bg-amber-400 px-4 py-2.5 text-sm font-extrabold tracking-wide text-black shadow-xl hover:scale-[1.03] hover:bg-amber-300 active:scale-95 transition-all duration-200 sm:px-5 sm:text-base"
+                  aria-label="Leggi prima di registrarti: modalità di registrazione"
+                  title="Leggi prima di registrarti"
                 >
-                  <span className="text-sm font-bold leading-none">i</span>
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black text-sm font-black leading-none text-white">i</span>
+                  <span>LEGGI PRIMA DI REGISTRARTI</span>
                 </button>
 
-                <div className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-white/20 bg-black/90 px-3 py-1.5 text-xs text-white opacity-0 shadow-xl transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 translate-y-1">
-                  Info registrazione all'app
+                <div className="pointer-events-none absolute left-1/2 top-full z-10 mt-3 w-max max-w-[88vw] -translate-x-1/2 rounded-lg border border-amber-300/60 bg-black/95 px-3 py-2 text-center text-xs font-semibold text-white opacity-0 shadow-xl transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 translate-y-1">
+                  Importante: scegli il profilo corretto, soprattutto per genitori e figli
                 </div>
               </div>
 
@@ -571,6 +504,14 @@ function App() {
             <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-5 md:p-6">
               <div className="mb-3 rounded-xl border border-blue-100 bg-blue-50 px-3 py-3 text-sm leading-relaxed text-gray-800 sm:hidden">
                 {RESERVED_AREA_GUIDE_SUBTITLE}
+              </div>
+
+              <div className="mb-4 rounded-2xl border-2 border-amber-400 bg-amber-50 px-3 py-3.5 text-sm leading-relaxed text-gray-900 shadow-sm sm:px-4 sm:py-4 sm:text-base">
+                <p className="font-extrabold text-black">Attenzione genitori: leggete prima di creare i profili dei figli.</p>
+                <p className="mt-1.5">
+                  Non create più profili Partecipante usando la stessa email del genitore: dal secondo profilo il sistema segnalerà che l&apos;indirizzo email è già utilizzato.
+                  Se volete gestire direttamente i profili dei vostri figli, anche quando alcuni figli hanno una propria email personale, registrate prima il profilo <span className="font-extrabold">Genitore + Figli</span> con l&apos;email del genitore. Dopo l&apos;accesso potrete creare e gestire i profili dei singoli figli dal vostro pannello.
+                </p>
               </div>
 
               <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
@@ -867,7 +808,6 @@ function App() {
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-6 mb-8">
             <a href="#home" className="hover:text-amber-500 transition-colors">Home Page</a>
-            <a href="#prossimi-eventi" className="hover:text-amber-500 transition-colors">Prossimi eventi</a>
             <a href="#wyd-seul" className="hover:text-amber-500 transition-colors">WYD Seoul 2027</a>
             <a href="#gmg-2027-iscrizione" className="hover:text-amber-500 transition-colors">Iscrizione JMJ Seoul 2027</a>
             <a href="#telegram" className="hover:text-amber-500 transition-colors">Telegram</a>

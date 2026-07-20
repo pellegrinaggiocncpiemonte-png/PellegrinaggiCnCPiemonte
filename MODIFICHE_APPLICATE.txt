@@ -23,3 +23,12 @@ Aggiornamento richiesto successivamente:
 - aggiunto un badge lampeggiante sull'icona hamburger per smartphone e tablet, così da rendere visibile l'attivazione della sezione versamenti e donazioni;
 - aggiunti badge lampeggianti per Telegram su desktop, smartphone e tablet;
 - mantenute invariate le altre parti del sito.
+
+AGGIORNAMENTO GUIDA REGISTRAZIONE AREA RISERVATA
+- Migliorati i due richiami informativi già presenti: il piccolo pulsante "i" è stato trasformato in un richiamo lampeggiante "LEGGI PRIMA DI REGISTRARTI", mantenuto sopra i pulsanti principali senza sovrastarli.
+- Aggiunta animazione del bordo e alone pulsante, con disattivazione automatica per chi utilizza la preferenza di accessibilità "riduci movimento".
+- Inserito nel modal un avviso evidenziato dedicato ai genitori.
+- Chiarito che non bisogna creare più profili Partecipante separati usando la stessa email del genitore.
+- Aggiornata la spiegazione del profilo "Genitore + Figli": va scelto quando il genitore vuole gestire direttamente i profili dei figli usando la propria email, anche se alcuni figli possiedono un indirizzo email personale.
+- Chiarita la differenza con "Genitore (con codice)", da usare quando il figlio dispone già di un profilo Partecipante autonomo.
+- Verifiche eseguite: npm run typecheck e npm run build completati correttamente.

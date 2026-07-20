@@ -179,3 +179,49 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+/* Richiamo evidente ma non invasivo per la guida alla registrazione */
+.registration-guide-cta {
+  position: relative;
+  isolation: isolate;
+  border: 2px solid rgba(251, 191, 36, 0.98);
+  animation: registrationGuideGlow 1.45s ease-in-out infinite;
+}
+
+.registration-guide-cta::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  z-index: -1;
+  border-radius: 9999px;
+  border: 2px solid rgba(251, 191, 36, 0.72);
+  animation: registrationGuideRing 1.45s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes registrationGuideGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.15), 0 10px 24px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(251, 191, 36, 0.22), 0 12px 30px rgba(0, 0, 0, 0.4);
+  }
+}
+
+@keyframes registrationGuideRing {
+  0% {
+    opacity: 0.95;
+    transform: scale(0.96);
+  }
+  75%, 100% {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .registration-guide-cta,
+  .registration-guide-cta::before {
+    animation: none;
+  }
+}
