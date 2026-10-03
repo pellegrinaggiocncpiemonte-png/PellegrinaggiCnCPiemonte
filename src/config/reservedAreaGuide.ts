@@ -7,9 +7,8 @@ export type ReservedAreaGuideItem = {
   note?: string;
 };
 
-export const RESERVED_AREA_GUIDE_TITLE = 'Prima di registrarti: scegli la modalità corretta';
-export const RESERVED_AREA_GUIDE_SUBTITLE =
-  'Leggi con attenzione prima di creare un profilo. La scelta corretta è particolarmente importante per i genitori che desiderano gestire i profili dei figli. Qui trovi anche i passaggi per salvare la web app sulla schermata Home del telefono.';
+export const RESERVED_AREA_GUIDE_TITLE = 'Leggi con attenzione prima di creare un profilo';
+export const RESERVED_AREA_GUIDE_SUBTITLE = '';
 
 export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
   {
@@ -47,27 +46,22 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
       'Attenzione: se ti registri come Collaboratore / Accompagnatore e partecipi al pellegrinaggio, devi registrarti anche come Partecipante. Il profilo organizzativo non sostituisce quello di partecipazione. Chi si registra come Collaboratore potrebbe essere contattato per una verifica.',
   },
   {
-    id: 'genitore-codice',
-    title: 'Genitore (con codice)',
-    icon: '👨‍👩‍👧',
+    id: 'genitore',
+    title: 'Genitore',
+    icon: '👨‍👩‍👧‍👦',
     description:
-      'Da scegliere soltanto quando tuo figlio possiede già un profilo Partecipante autonomo e desidera collegarti successivamente come genitore.',
+      'Con il profilo Genitore si possono creare i profili dei figli minorenni o maggiorenni, oppure controllare e gestire anche i profili Partecipante dei figli che si sono registrati autonomamente con la propria email.',
     note:
-      'Se tuo figlio è minore, dovrà inviarti un codice di verifica via email dalla sua sezione “Profilo”. Se invece vuoi creare e gestire tu i profili dei figli, scegli Genitore + Figli. Se anche il genitore partecipa al pellegrinaggio, deve registrarsi anche come Partecipante.',
+      'Se il genitore partecipa al pellegrinaggio deve registrarsi anche come Partecipante e/o Collaboratore, in base al ruolo che svolge.',
   },
   {
-    id: 'genitore-figli',
-    title: 'Genitore + Figli',
-    icon: '👥',
+    id: 'accesso-multiplo',
+    title: 'Accesso multiplo',
+    icon: '🔐',
     description:
-      'È il profilo corretto quando un genitore desidera creare e gestire direttamente i profili dei propri figli usando la propria email, anche se alcuni figli possiedono già un indirizzo email personale.',
-    bullets: [
-      'Non creare più profili Partecipante separati usando la stessa email del genitore: dal secondo profilo il sistema segnalerà che l’email è già utilizzata.',
-      'Registrati una sola volta come Genitore + Figli inserendo l’email del genitore.',
-      'Dopo l’accesso al pannello, crea i profili dei singoli figli e gestiscili direttamente dal profilo del genitore.',
-    ],
+      'Quando ci si registra con più profili — ad esempio Genitore, Accompagnatore, Responsabile o Partecipante — utilizzare la stessa email e la stessa password.',
     note:
-      'Questa è la procedura consigliata quando il genitore vuole gestire personalmente i figli. Se anche il genitore partecipa al pellegrinaggio, dovrà completare anche la propria iscrizione come Partecipante.',
+      'All’accesso il sistema chiederà con quale profilo si intende entrare, così è possibile utilizzare più ruoli con le stesse credenziali.',
   },
   {
     id: 'iphone-safari',
@@ -106,6 +100,6 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
     description:
       'L’Area Riservata è una web app. Sul telefono puoi quindi creare un accesso rapido molto comodo dalla schermata Home.',
     note:
-      'In sintesi: chi partecipa al pellegrinaggio deve sempre registrarsi come Partecipante. I profili Collaboratore / Accompagnatore, Responsabile, Genitore e Genitore + Figli sono profili aggiuntivi di gestione e non sostituiscono l’iscrizione personale al pellegrinaggio. I presbiteri si registrano come Partecipanti e, solo se necessario, anche come Collaboratori.',
+      'In sintesi: chi partecipa al pellegrinaggio deve sempre registrarsi come Partecipante. I profili Collaboratore / Accompagnatore e Responsabile sono profili aggiuntivi di gestione e non sostituiscono l’iscrizione personale al pellegrinaggio. I presbiteri si registrano come Partecipanti e, solo se necessario, anche come Collaboratori.',
   },
 ];

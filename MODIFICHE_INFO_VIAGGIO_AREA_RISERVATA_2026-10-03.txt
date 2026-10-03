@@ -1,0 +1,12 @@
+MODIFICHE 03/10/2026
+
+1. Sezione Iscrizioni JMJ Seoul 2027
+- aggiunto pulsante attivo “Info viaggio”
+- finestra informativa con date 31/07/2027–10/08/2027
+- quota indicata come “In definizione” perché non risulta ancora fissato un importo ufficiale
+- indicata modalità di pagamento tramite bonifico bancario e rinvio alla sezione Versamenti e donazioni / Area Riservata
+
+2. Area Riservata nella barra superiore
+- dimensione allineata agli altri pulsanti
+- rimosso il contenitore circolare attorno all’icona omino
+- evidenziazione applicata all’intero pulsante con riquadro/alone lampeggiante discreto

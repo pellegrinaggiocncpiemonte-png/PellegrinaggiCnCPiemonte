@@ -1,0 +1,9 @@
+REVISIONE 4
+
+- Il pulsante ENTRA NEL SITO avvia una transizione luminosa bianca.
+- La luce nasce dal pulsante premuto, si espande fino a coprire tutto lo schermo e apre la Home.
+- La Home compare con fade-in, lieve riduzione dello zoom e progressiva eliminazione della sfocatura.
+- Anche la barra menu entra dolcemente dopo la luce.
+- Il comando Salta introduzione mantiene un'uscita rapida separata.
+- Contatore visite, Assistenza e chat restano nascosti durante tutta l'introduzione.
+- Aggiunto comportamento ridotto per chi ha attivato Riduci movimento nel sistema.

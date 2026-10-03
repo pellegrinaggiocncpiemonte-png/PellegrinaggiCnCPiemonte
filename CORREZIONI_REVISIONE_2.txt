@@ -1,0 +1,6 @@
+1. Navigation.tsx è identico al file originale.
+2. Nessuna regola grafica personalizzata modifica header o nav.
+3. Eliminati barra di avanzamento e pulsante fisso per rivedere l'intro.
+4. Intro ricostruita con animazioni sequenziali chiaramente visibili.
+5. Migliorato il contrasto nelle sezioni scure.
+6. App.tsx differisce dall'originale solo per il tema, l'intro e le animazioni allo scorrimento.

@@ -1,11 +1,72 @@
 import Navigation from './components/Navigation';
 import { ChevronDown, FileText, Landmark, Play, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import FlipCountdown from './components/FlipCountdown';
 import { SITE_CONFIG } from './config/siteConfig';
-import { RESERVED_AREA_GUIDE_ITEMS, RESERVED_AREA_GUIDE_SUBTITLE, RESERVED_AREA_GUIDE_TITLE } from './config/reservedAreaGuide';
+import { RESERVED_AREA_GUIDE_ITEMS, RESERVED_AREA_GUIDE_TITLE } from './config/reservedAreaGuide';
 import VisitCounterBadge from './components/VisitCounterBadge';
 import FloatingAssistance from './components/FloatingAssistance';
+import SiteMotion from './components/SiteMotion';
+
+type KoreanSong = {
+  id: number;
+  titleIt: string;
+  titleKr: string;
+  note?: string;
+  videoSrc?: string;
+  sheetSrc?: string;
+};
+
+const getGoogleDrivePreviewUrl = (url: string) => {
+  const match = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  return match ? `https://drive.google.com/file/d/${match[1]}/preview` : url;
+};
+
+const KOREAN_SONGS: KoreanSong[] = [
+  {
+    id: 1,
+    titleIt: 'Benedetta sei tu, Maria',
+    titleKr: '복되신 당신, 마리아',
+    videoSrc: 'https://drive.google.com/file/d/1mnNx2WRxY14Jiw_jJSi1TDqUlZvCe9xk/view?usp=sharing',
+    sheetSrc: '/canti/benedetta-sei-tu-maria-testo-accordi.png',
+  },
+  {
+    id: 2,
+    titleIt: 'Una donna vestita di sole',
+    titleKr: '태양을 입은 한 여인',
+    note: '2 pagine',
+    videoSrc: 'https://drive.google.com/file/d/1lPHFLyrJQV5Q8gHFFpKNI99485GPhZJN/view?usp=sharing',
+  },
+  {
+    id: 3,
+    titleIt: 'Le onde della morte mi avvolgevano',
+    titleKr: '죽음의 물결이 나를 에워쌌네',
+    videoSrc: 'https://drive.google.com/file/d/1bdP3iOYPpwH9OElYkkFr3vUFL6Vs9KB7/view?usp=sharing',
+  },
+  {
+    id: 4,
+    titleIt: 'Guardate come è bello',
+    titleKr: '보라, 얼마나 아름다운가',
+    videoSrc: 'https://drive.google.com/file/d/17Cu2oZWRT_qLxq3j93MRWtbQELjgQxlg/view?usp=sharing',
+  },
+  {
+    id: 5,
+    titleIt: 'Gerusalemme ricostruita',
+    titleKr: '재건된 예루살렘',
+    videoSrc: 'https://drive.google.com/file/d/1S6a4PqvvlpTc_pMUK7hIiN2r74NLWfK_/view?usp=sharing',
+  },
+  {
+    id: 6,
+    titleIt: 'Andate ed annunziate ai miei fratelli',
+    titleKr: '가서 내 형제들에게 전하여라',
+  },
+  {
+    id: 7,
+    titleIt: 'Salve Regina dei cieli',
+    titleKr: '하늘의 모후님',
+    videoSrc: 'https://drive.google.com/file/d/1dx3jsOhpjlw-kNExA8q25tgIVHQue3yH/view?usp=sharing',
+  },
+];
 
 function App() {
   const [isReservedGuideOpen, setIsReservedGuideOpen] = useState(false);
@@ -15,9 +76,51 @@ function App() {
   const [isPaymentInstructionsOpen, setIsPaymentInstructionsOpen] = useState(false);
   const [isPaymentNoticeOpen, setIsPaymentNoticeOpen] = useState(false);
   const [openVideoId, setOpenVideoId] = useState<number | null>(1);
+  const [comingSoonKey, setComingSoonKey] = useState<string | null>(null);
+  const [songViewer, setSongViewer] = useState<{ type: 'video' | 'sheet'; title: string; src: string } | null>(null);
+  const [sheetZoom, setSheetZoom] = useState(1);
+  const sheetViewportRef = useRef<HTMLDivElement | null>(null);
+  const sheetPointersRef = useRef(new Map<number, { x: number; y: number }>());
+  const sheetPinchStartRef = useRef<{ distance: number; zoom: number } | null>(null);
+  const sheetPanLastRef = useRef<{ x: number; y: number } | null>(null);
+
+  const showComingSoon = (key: string) => {
+    setComingSoonKey(key);
+    window.setTimeout(() => {
+      setComingSoonKey((current) => (current === key ? null : current));
+    }, 2000);
+  };
+
+  const openSongViewer = (type: 'video' | 'sheet', song: KoreanSong) => {
+    const src = type === 'video' ? song.videoSrc : song.sheetSrc;
+    if (!src) {
+      showComingSoon(`song-${song.id}-${type}`);
+      return;
+    }
+    setSheetZoom(1);
+    sheetPointersRef.current.clear();
+    sheetPinchStartRef.current = null;
+    sheetPanLastRef.current = null;
+    setSongViewer({ type, title: song.titleIt, src });
+  };
+
+  useEffect(() => {
+    const viewport = sheetViewportRef.current;
+    if (!viewport || songViewer?.type !== 'sheet') return;
+
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      const step = event.deltaY < 0 ? 0.1 : -0.1;
+      setSheetZoom((value) => Math.min(3, Math.max(0.6, Number((value + step).toFixed(2)))));
+    };
+
+    viewport.addEventListener('wheel', handleWheel, { passive: false });
+    return () => viewport.removeEventListener('wheel', handleWheel);
+  }, [songViewer]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen site-shell theme-verso-la-luce">
+      <SiteMotion />
       <Navigation />
 
       {/* ✅ Pulsante chat custom (Tawk launcher nascosto) */}
@@ -26,7 +129,7 @@ function App() {
       
 
 
-      <section id="home" className="min-h-screen relative flex items-center justify-center">
+      <section id="home" className="hero-section min-h-screen relative flex items-center justify-center">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -35,8 +138,8 @@ function App() {
         >
           <div className="absolute inset-0 bg-black/40"></div>
         </div>
-        <div className="relative z-10 text-center px-4 max-w-[94vw] mx-auto pt-24 sm:pt-16 -translate-y-[105px] sm:-translate-y-[96px] md:-translate-y-[72px]">
-          <div className="space-y-2 sm:space-y-3">
+        <div className="hero-copy relative z-10 text-center px-4 max-w-[94vw] mx-auto pt-24 sm:pt-16 -translate-y-[105px] sm:-translate-y-[96px] md:-translate-y-[72px]">
+          <div className="hero-title-wrap space-y-2 sm:space-y-3">
             {SITE_CONFIG.heroTitleLines.map((line, index) => {
               const isFirst = index === 0;
               const isLast = index === SITE_CONFIG.heroTitleLines.length - 1;
@@ -82,16 +185,91 @@ function App() {
             </p>
           </div>
         </div>
+        <div className="hero-scroll-cue" aria-hidden="true">
+          <span>Scopri</span>
+          <ChevronDown className="h-5 w-5" />
+        </div>
       </section>
 
-      {/* ✅ Nuova sezione: Giorni alla partenza (countdown a cartelli) */}
-      <section id="giorni-alla-partenza" className="py-20 bg-black">
+      <section id="gmg-2027-iscrizione" className="content-section section-registration py-20 bg-stone-100">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider">
+                  ISCRIZIONI JMJ SEOUL 2027
+                </h2>
+                <span className="animate-pulse rounded-full bg-red-600 px-3 py-1 text-xs font-bold tracking-wider text-white shadow-lg">
+                  APERTE
+                </span>
+              </div>
+              <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-6 sm:p-8 md:p-12 space-y-6 text-center">
+              <p className="text-2xl font-bold leading-snug text-gray-700 md:text-3xl">
+                Iscrizioni aperte: JMJ Seoul 2027<br />
+                Giovani del Cammino Neocatecumenale di Piemonte e Svizzera.
+              </p>
+
+              <div className="mx-auto max-w-3xl rounded-xl border-2 border-red-500 bg-red-50 px-3 py-3 text-left shadow-sm sm:px-4 sm:py-4">
+                <p className="whitespace-nowrap text-center text-sm font-extrabold uppercase leading-tight tracking-wide text-red-800 sm:text-base md:text-lg">
+                  Informazioni
+                </p>
+                <div className="mt-3 space-y-2 text-sm leading-relaxed text-gray-900 sm:text-base">
+                  <p className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2">
+                    <span className="font-extrabold text-amber-900">Partecipanti minorenni:</span>{' '}
+                    poiché in Corea la maggiore età si raggiunge a 19 anni, anche i partecipanti di 18 anni dovranno presentare il modello firmato dai genitori.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <details className="group mx-auto max-w-3xl overflow-hidden rounded-xl border-2 border-amber-600 bg-white text-left shadow-sm">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 font-bold text-amber-900 transition-colors hover:bg-amber-50 [&::-webkit-details-marker]:hidden">
+                    <span className="inline-flex items-center gap-2">
+                      <FileText size={19} />
+                      Info viaggio
+                    </span>
+                    <ChevronDown className="h-5 w-5 shrink-0 transition-transform duration-300 group-open:rotate-180" />
+                  </summary>
+                  <div className="space-y-4 border-t border-amber-200 bg-amber-50/40 p-4 sm:p-5">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="rounded-xl border border-gray-200 bg-white px-4 py-4">
+                        <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Date del pellegrinaggio</p>
+                        <p className="mt-1 text-lg font-extrabold text-gray-900">In definizione</p>
+                        <p className="mt-1 text-sm leading-relaxed text-gray-600">Le date definitive saranno comunicate appena confermati i voli e il programma del pellegrinaggio.</p>
+                      </div>
+                      <div className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-4">
+                        <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Quota richiesta</p>
+                        <p className="mt-1 text-lg font-extrabold text-amber-950">In definizione</p>
+                        <p className="mt-1 text-sm leading-relaxed text-amber-900">L&apos;importo e le eventuali scadenze dei versamenti saranno pubblicati appena definiti.</p>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+
+                <div className="flex justify-center">
+                  <a
+                    href="#area-riservata"
+                    className="inline-flex items-center justify-center bg-amber-600 text-white px-8 py-4 rounded-lg font-semibold transition-colors hover:bg-amber-700"
+                  >
+                    Iscriviti dall&apos;area riservata
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="giorni-alla-partenza" className="content-section section-countdown py-20 bg-black">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
             <h2 className="text-4xl md:text-5xl font-serif text-white font-bold tracking-wider mb-4">
               Giorni alla partenza
             </h2>
-            <p className="text-white/80 mt-4 text-lg md:text-xl">La partenza a cui si riferisce il conto alla rovescia è quella per la JMJ Seoul 2027.</p>
+            <p className="text-white/80 mt-4 text-lg md:text-xl">La partenza a cui si riferisce il conto alla rovescia è quella per la GMG di Seoul 2027.</p>
             <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
           </div>
 
@@ -101,49 +279,112 @@ function App() {
         </div>
       </section>
 
-      <section id="wyd-seul" className="py-20 bg-white">
+      <section id="area-riservata" className="content-section section-private py-20 bg-black relative">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-            <div className="space-y-6">
-              <h2 className="text-4xl md:text-5xl font-serif font-bold">WYD Seoul 2027</h2>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                La Giornata Mondiale della Gioventù 2027 si svolgerà a Seoul, in Corea del Sud,
-                dal 2 all'8 agosto 2027. Un'esperienza unica di fede, comunità e cultura che
-                riunirà giovani da tutto il mondo per celebrare insieme la propria spiritualità.
+          <div className="text-center space-y-8">
+            <h2 className="text-4xl md:text-5xl font-serif text-white font-bold tracking-wider">
+              AREA RISERVATA
+            </h2>
+            <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
+            <div className="mx-auto max-w-4xl space-y-5 text-center">
+              <p className="text-2xl md:text-3xl font-serif font-bold text-white">
+                Accedi o Registrati
               </p>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                Unisciti a noi in questo straordinario pellegrinaggio che cambierà la tua vita.
-                Scopri la bellezza della cultura coreana mentre approfondisci la tua fede.
+              <p className="text-lg md:text-xl text-white/90 font-light tracking-wide leading-relaxed">
+                Crea un account inserendo un&apos;e-mail valida e una password a tua scelta, oppure accedi per gestire il tuo profilo e le tue iscrizioni.
               </p>
-              <p className="text-lg text-gray-700 leading-relaxed font-bold text-black">
-                "Abbiate coraggio: io ho vinto il mondo."
-              </p>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                I giovani, “lieti nella speranza” (tema della 38ª Giornata Mondiale della Gioventù), “camminano senza stancarsi” (tema della 39ª Giornata Mondiale della Gioventù), ‘testimoniando’ Cristo che hanno già incontrato (tema della 40ª Giornata Mondiale della Gioventù) e con “coraggio” (tema della 41ª Giornata Mondiale della Gioventù) si mettono in cammino verso Seoul.
-              </p>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                Papa Francesco ha scelto il versetto 33 del capitolo 16 del Vangelo secondo Giovanni come tema della GMG 2027 a Seoul. Queste parole, rivolte ai discepoli durante l'Ultima Cena, ci ricordano la profonda verità che Gesù, anche di fronte alla sofferenza e alla morte imminente, aveva già superato la paura e alla fine aveva vinto la morte. La certezza della resurrezione contenuta in queste parole non è semplice ottimismo, ma significa “speranza e coraggio” profondamente radicati nel Cristo vivente.
-              </p>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                I giovani di tutto il mondo, che oggi affrontano diverse sfide quali conflitti, precarietà lavorativa e difficoltà economiche, sperimenteranno la gioia di essere “luce e sale del mondo” durante la GMG che si terrà a Seoul nel 2027. Incontrandosi e sperimentando l'amore incondizionato, saranno inviati nel mondo come “pellegrini di speranza” e “missionari pieni di coraggio”, mettendo in pratica con coraggio nella loro vita la gioia del Vangelo che hanno compreso.
-              </p>
-              <a
-                href="https://wydseoul.org/it"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block bg-black text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
-              >
-                VAI AL SITO
-              </a>
+
+              <div className="rounded-2xl border border-sky-300/40 bg-white/10 px-5 py-4 text-base md:text-lg leading-relaxed text-white/95">
+                <p>
+                  <span className="font-semibold">ℹ️ Nota bene:</span> la semplice registrazione all&apos;Area Riservata non comporta l&apos;iscrizione automatica al pellegrinaggio.
+                </p>
+              </div>
+
+
+              <div className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 px-5 py-4 text-base md:text-lg leading-relaxed text-white">
+                <p className="font-bold text-amber-200">Prima volta nell&apos;Area Riservata?</p>
+                <p className="mt-1 text-white/90">
+                  Leggi prima le indicazioni qui sotto e premi <span className="font-extrabold text-amber-200">“LEGGI PRIMA DI REGISTRARTI”</span> prima di creare il profilo.
+                </p>
+              </div>
+
+              <div className="rounded-3xl border border-amber-300/50 bg-white/10 px-4 py-5 sm:px-6 sm:py-6">
+                <p className="text-xl md:text-2xl font-serif font-bold text-white">
+                  ⚠️ Come procedere dentro l&apos;Area Riservata
+                </p>
+
+                <div className="mt-5 grid gap-4 text-center">
+                  <article className="rounded-2xl border border-white/15 bg-black/20 px-4 py-4">
+                    <p className="text-lg font-semibold text-white">Registrazione</p>
+                    <p className="mt-2 text-white/85 leading-relaxed">
+                      Più in basso trovi il pulsante &quot;Leggi prima di registrarti&quot;: premilo per scegliere il profilo corretto e consultare le modalità di creazione del profilo prima di registrarti con la tua e-mail valida e una password a scelta.
+                    </p>
+                  </article>
+
+                  <article className="rounded-2xl border border-white/15 bg-black/20 px-4 py-4">
+                    <p className="text-lg font-semibold text-white">Dati Anagrafici</p>
+                    <p className="mt-2 text-white/85 leading-relaxed">
+                      Completa tutte le sezioni richieste all&apos;interno della tua area personale.
+                    </p>
+                  </article>
+
+                  <article className="rounded-2xl border border-white/15 bg-black/20 px-4 py-4">
+                    <p className="text-lg font-semibold text-white">Iscrizione al Pellegrinaggio</p>
+                    <p className="mt-2 text-white/85 leading-relaxed">
+                      Vai nella sezione &quot;Iscrizione Pellegrinaggi&quot; e seleziona l&apos;evento a cui desideri partecipare.
+                    </p>
+                  </article>
+
+                  <article className="rounded-2xl border border-white/15 bg-black/20 px-4 py-4">
+                    <p className="text-lg font-semibold text-white">Conferma via E-mail</p>
+                    <p className="mt-2 text-white/85 leading-relaxed">
+                      Controlla la tua posta elettronica e clicca sul link di verifica per confermare definitivamente l&apos;iscrizione. Se non vedi il messaggio, verifica nelle cartelle Spam o Posta indesiderata.
+                    </p>
+                  </article>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-center">
-              <div className="transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                <div className="bg-white p-4 shadow-2xl rounded-lg">
-                  <img
-                    src="/images/logo.png"
-                    alt="WYD Seoul 2027"
-                    className="w-full h-auto rounded"
-                  />
+
+            <div className="pt-4 md:pt-6 flex flex-col items-center gap-4">
+              <div className="relative inline-flex items-center justify-center group">
+                <button
+                  type="button"
+                  onClick={() => setIsReservedGuideOpen(true)}
+                  className="registration-guide-cta inline-flex items-center justify-center gap-2 rounded-full bg-amber-400 px-4 py-2.5 text-sm font-extrabold tracking-wide text-black shadow-xl hover:scale-[1.03] hover:bg-amber-300 active:scale-95 transition-all duration-200 sm:px-5 sm:text-base"
+                  aria-label="Scegli il profilo corretto"
+                  title="Scegli il profilo corretto"
+                >
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black text-sm font-black leading-none text-white">i</span>
+                  <span>LEGGI PRIMA DI REGISTRARTI</span>
+                </button>
+
+                <div className="pointer-events-none absolute left-1/2 top-full z-10 mt-3 w-max max-w-[88vw] -translate-x-1/2 rounded-lg border border-amber-300/60 bg-black/95 px-3 py-2 text-center text-xs font-semibold text-white opacity-0 shadow-xl transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 translate-y-1">
+                  Scegli il profilo corretto.
+                </div>
+              </div>
+
+              <div className="w-full max-w-md">
+                <p className="reserved-area-entry-title text-center font-serif font-bold tracking-wider text-white">
+                  Entra nell&apos;area riservata
+                </p>
+
+                <div className="reserved-area-entry-visual relative mt-4">
+                  <a
+                    href={SITE_CONFIG.reservedAreaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="reserved-area-image-link group relative block"
+                    title="Clicca sull'immagine per entrare nell'area riservata"
+                    aria-label="Entra nell'area riservata"
+                  >
+                    <img
+                      src="/images/area-riservata-animata.gif"
+                      alt="Area Riservata"
+                      className="w-full h-auto rounded-lg shadow-2xl transition-transform duration-300 group-hover:scale-[1.01]"
+                      draggable={false}
+                    />
+                  </a>
+
                 </div>
               </div>
             </div>
@@ -151,111 +392,7 @@ function App() {
         </div>
       </section>
 
-      <section id="sezione-video" className="py-20 bg-black">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-serif text-white font-bold tracking-wider mb-4">
-              SEZIONE VIDEO
-            </h2>
-            <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
-          </div>
-
-          {[
-            {
-              id: 1,
-              title: 'WYD Seoul 2027 - World Youth Day South Korea',
-              youtubeId: 'BMbkoZwqRtI',
-              buttonLabel: 'Guarda video 1',
-            },
-            {
-              id: 2,
-              title: 'WYD Seoul 2027 - Official Promo Video',
-              youtubeId: 'DgtBKDW8iq0',
-              buttonLabel: 'Guarda video 2',
-            },
-            {
-              id: 3,
-              title: 'Esperienza Seminarista in Corea',
-              youtubeId: '3EBJaZTvQ8w',
-              buttonLabel: 'Guarda video 3',
-            },
-            {
-              id: 4,
-              title: 'Invito del Vescovo di Seoul',
-              youtubeId: 'PXKnjtHtVFw',
-              buttonLabel: 'Guarda video 4',
-            },
-          ].map((video) => {
-            const isOpen = openVideoId === video.id;
-            return (
-              <div key={video.id} className="text-center space-y-4 mb-16 last:mb-0">
-                <h3 className="text-3xl md:text-4xl font-serif text-white font-bold tracking-wider">
-                  {video.title}
-                </h3>
-                <div className="w-24 h-1 bg-amber-600 mx-auto"></div>
-                <div className="max-w-4xl mx-auto">
-                  <div className="relative aspect-video rounded-lg overflow-hidden shadow-2xl mb-8 bg-black">
-                    {isOpen ? (
-                      <iframe
-                        className="w-full h-full"
-                        src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&rel=0`}
-                        title={video.title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerPolicy="strict-origin-when-cross-origin"
-                        allowFullScreen
-                      />
-                    ) : (
-                      <>
-                        <img
-                          src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
-                          alt={`Anteprima ${video.title}`}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                      </>
-                    )}
-                  </div>
-                  <div className="text-center">
-                    <button
-                      type="button"
-                      onClick={() => setOpenVideoId(video.id)}
-                      className="inline-flex items-center gap-2 bg-transparent text-white border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-all shadow-lg"
-                    >
-                      <Play size={20} />
-                      {video.buttonLabel}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      <section id="comunicazioni" className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="max-w-[92vw] mx-auto px-4 text-center font-serif font-bold uppercase leading-[0.95] tracking-tight text-[clamp(1.65rem,7vw,3.2rem)] sm:text-[clamp(2.8rem,7vw,5rem)] mb-4 whitespace-nowrap">
-              COMUNICAZIONI
-            </h2>
-            <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
-          </div>
-          <div className="max-w-3xl mx-auto">
-            <div className="bg-gray-50 rounded-2xl shadow-sm border border-gray-200 p-8 text-left">
-              <h3 className="text-2xl font-serif font-bold text-black mb-4">JMJ Seoul 2027</h3>
-              <p className="text-gray-700 leading-relaxed mb-4">
-                Sono aperte le iscrizioni ufficiali per la JMJ Seoul 2027, dedicate ai giovani fino ai 25 anni.
-              </p>
-              <p className="text-gray-700 leading-relaxed">
-                Chi aveva già compilato la preiscrizione deve completare l'iscrizione ufficiale dall'area riservata personale.
-                Invitiamo a procedere il prima possibile, perché i posti sono limitati.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="telegram" className="py-20 bg-stone-100">
+      <section id="telegram" className="content-section section-telegram py-20 bg-stone-100">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
@@ -270,8 +407,7 @@ function App() {
               <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
               <p className="mt-6 text-lg md:text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
                 Servizio riservato agli utenti registrati all&apos;area riservata.
-                Le comunicazioni dell&apos;organizzazione potranno arrivare sia nella sezione comunicazioni,
-                sia su Telegram tramite il bot dedicato.
+                Le comunicazioni dell&apos;organizzazione potranno arrivare su Telegram tramite il bot dedicato.
               </p>
             </div>
 
@@ -326,7 +462,7 @@ function App() {
                         </p>
                         <p className="text-base text-gray-600 leading-relaxed">
                           In caso di messaggi particolarmente lunghi, il testo completo resterà leggibile
-                          nella sezione comunicazioni dell&apos;area riservata.
+                          all&apos;interno dell&apos;area riservata.
                         </p>
                       </div>
                     </div>
@@ -364,112 +500,313 @@ function App() {
         </div>
       </section>
 
-      <section id="gmg-2027-iscrizione" className="py-20 bg-stone-100">
+      <section id="wyd-seul" className="content-section section-wyd py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-12">
-              <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider">
-                  ISCRIZIONI JMJ SEOUL 2027
-                </h2>
-                <span className="animate-pulse rounded-full bg-red-600 px-3 py-1 text-xs font-bold tracking-wider text-white shadow-lg">
-                  APERTE
-                </span>
-              </div>
-              <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
-            </div>
-
-            <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-6 sm:p-8 md:p-12 space-y-6">
-              <p className="text-lg text-gray-700 leading-relaxed font-semibold">
-                Sono aperte le iscrizioni ufficiali per la JMJ Seoul 2027, dedicate ai giovani fino ai 25 anni.
-              </p>
-
+          <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+            <div className="space-y-6">
+              <h2 className="text-4xl md:text-5xl font-serif font-bold">WYD Seoul 2027</h2>
               <p className="text-lg text-gray-700 leading-relaxed">
-                Chi aveva già compilato la preiscrizione deve ora completare l&apos;iscrizione ufficiale entrando nell&apos;area riservata personale e scegliendo il pellegrinaggio JMJ Seoul 2027.
+                La Giornata Mondiale della Gioventù 2027 si svolgerà a Seoul, in Corea del Sud,
+                dal 2 all'8 agosto 2027. Un'esperienza unica di fede, comunità e cultura che
+                riunirà giovani da tutto il mondo per celebrare insieme la propria spiritualità.
               </p>
-
               <p className="text-lg text-gray-700 leading-relaxed">
-                La preiscrizione non sostituisce l&apos;iscrizione ufficiale. Invitiamo a procedere il prima possibile, perché i posti disponibili sono limitati.
+                Unisciti a noi in questo straordinario pellegrinaggio che cambierà la tua vita.
+                Scopri la bellezza della cultura coreana mentre approfondisci la tua fede.
               </p>
-
-              <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm sm:text-base leading-relaxed text-amber-950">
-                A breve verranno comunicate le quote minime di iscrizione e le relative scadenze.
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                <a
-                  href={SITE_CONFIG.reservedAreaUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center bg-amber-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-amber-700 transition-colors"
-                >
-                  Iscriviti dall&apos;area riservata
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ✅ Countdown non è più una sezione: ora è un “logo animato” sempre visibile nel menu */}
-
-      <section id="area-riservata" className="py-20 bg-black relative">
-        <div className="container mx-auto px-4">
-          <div className="text-center space-y-8">
-            <div className="max-w-md mx-auto">
-              <a href={SITE_CONFIG.reservedAreaUrl} target="_blank" rel="noopener noreferrer" title="Apri area riservata" className="inline-block hover:opacity-90 transition-opacity">
-                <img
-                  src="/images/area riservata.png"
-                  alt="Area Riservata"
-                  className="w-full h-auto rounded-lg shadow-2xl"
-                />
-              </a>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-serif text-white font-bold tracking-wider">
-              AREA RISERVATA
-            </h2>
-            <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
-            <p className="text-lg md:text-xl text-white/90 font-light tracking-wide max-w-3xl mx-auto leading-relaxed">
-              Accedi all'area riservata per registrarti, completare i dati richiesti e iscriverti
-              nella sezione dedicata alla JMJ Seoul 2027.
-            </p>
-            <p className="text-base md:text-lg text-white/75 max-w-3xl mx-auto leading-relaxed">
-              Le quote dei pellegrinaggi non sono ancora impostate.
-            </p>
-
-            <div className="pt-4 md:pt-6 flex flex-col items-center gap-3">
-              <div className="relative inline-flex items-center justify-center group">
-                <button
-                  type="button"
-                  onClick={() => setIsReservedGuideOpen(true)}
-                  className="registration-guide-cta inline-flex items-center justify-center gap-2 rounded-full bg-amber-400 px-4 py-2.5 text-sm font-extrabold tracking-wide text-black shadow-xl hover:scale-[1.03] hover:bg-amber-300 active:scale-95 transition-all duration-200 sm:px-5 sm:text-base"
-                  aria-label="Leggi prima di registrarti: modalità di registrazione"
-                  title="Leggi prima di registrarti"
-                >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black text-sm font-black leading-none text-white">i</span>
-                  <span>LEGGI PRIMA DI REGISTRARTI</span>
-                </button>
-
-                <div className="pointer-events-none absolute left-1/2 top-full z-10 mt-3 w-max max-w-[88vw] -translate-x-1/2 rounded-lg border border-amber-300/60 bg-black/95 px-3 py-2 text-center text-xs font-semibold text-white opacity-0 shadow-xl transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 translate-y-1">
-                  Importante: scegli il profilo corretto, soprattutto per genitori e figli
-                </div>
-              </div>
-
-              {/* ✅ Pulsante (ora attivo) */}
+              <p className="text-lg text-gray-700 leading-relaxed font-bold text-black">
+                "Abbiate coraggio: io ho vinto il mondo."
+              </p>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                I giovani, “lieti nella speranza” (tema della 38ª Giornata Mondiale della Gioventù), “camminano senza stancarsi” (tema della 39ª Giornata Mondiale della Gioventù), ‘testimoniando’ Cristo che hanno già incontrato (tema della 40ª Giornata Mondiale della Gioventù) e con “coraggio” (tema della 41ª Giornata Mondiale della Gioventù) si mettono in cammino verso Seoul.
+              </p>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                Papa Francesco ha scelto il versetto 33 del capitolo 16 del Vangelo secondo Giovanni come tema della GMG 2027 a Seoul. Queste parole, rivolte ai discepoli durante l'Ultima Cena, ci ricordano la profonda verità che Gesù, anche di fronte alla sofferenza e alla morte imminente, aveva già superato la paura e alla fine aveva vinto la morte. La certezza della resurrezione contenuta in queste parole non è semplice ottimismo, ma significa “speranza e coraggio” profondamente radicati nel Cristo vivente.
+              </p>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                I giovani di tutto il mondo, che oggi affrontano diverse sfide quali conflitti, precarietà lavorativa e difficoltà economiche, sperimenteranno la gioia di essere “luce e sale del mondo” durante la GMG che si terrà a Seoul nel 2027. Incontrandosi e sperimentando l'amore incondizionato, saranno inviati nel mondo come “pellegrini di speranza” e “missionari pieni di coraggio”, mettendo in pratica con coraggio nella loro vita la gioia del Vangelo che hanno compreso.
+              </p>
               <a
-                href={SITE_CONFIG.reservedAreaUrl}
+                href="https://wydseoul.org/it"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center bg-white text-black px-10 py-4 rounded-lg font-semibold border border-white/30 hover:bg-gray-100 transition-colors"
-                title="Apri area riservata"
+                className="inline-block bg-black text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
               >
-                ENTRA
+                VAI AL SITO
               </a>
+            </div>
+            <div className="flex justify-center">
+              <div className="transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                <div className="bg-white p-4 shadow-2xl rounded-lg">
+                  <img
+                    src="/images/logo.png"
+                    alt="WYD Seoul 2027"
+                    className="w-full h-auto rounded"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
+      <section id="sezione-video" className="content-section section-videos py-20 bg-black">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-serif text-white font-bold tracking-wider mb-4">
+              SEZIONE VIDEO
+            </h2>
+            <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
+          </div>
+
+          {[
+            {
+              id: 1,
+              title: 'WYD Seoul 2027 - World Youth Day South Korea',
+              youtubeId: 'BMbkoZwqRtI',
+              buttonLabel: 'Guarda video 1',
+            },
+            {
+              id: 2,
+              title: 'WYD Seoul 2027 - Official Promo Video',
+              youtubeId: 'DgtBKDW8iq0',
+              buttonLabel: 'Guarda video 2',
+            },
+            {
+              id: 3,
+              title: 'Esperienza Seminarista in Corea',
+              youtubeId: '3EBJaZTvQ8w',
+              buttonLabel: 'Guarda video 3',
+            },
+            {
+              id: 4,
+              title: 'Invito del Vescovo di Seoul',
+              youtubeId: 'PXKnjtHtVFw',
+              buttonLabel: 'Guarda video 4',
+            },
+          ].map((video) => {
+            const isOpen = openVideoId === video.id;
+            return (
+              <div key={video.id} className="text-center space-y-4 mb-16 last:mb-0">
+                <h3 className="text-3xl md:text-4xl font-serif text-white font-bold tracking-wider">
+                  {video.title}
+                </h3>
+                <div className="w-24 h-1 bg-amber-600 mx-auto"></div>
+                <div className="max-w-4xl mx-auto">
+                  <div className="relative aspect-video rounded-lg overflow-hidden shadow-2xl mb-8 bg-black">
+                    {isOpen ? (
+                      <iframe
+                        className="w-full h-full"
+                        src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&mute=${video.id === 1 ? 1 : 0}&rel=0`}
+                        title={video.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <>
+                        <img
+                          src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
+                          alt={`Anteprima ${video.title}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                      </>
+                    )}
+                  </div>
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => setOpenVideoId(video.id)}
+                      className="inline-flex items-center gap-2 bg-transparent text-white border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-all shadow-lg"
+                    >
+                      <Play size={20} />
+                      {video.buttonLabel}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section id="canti-in-coreano" className="content-section section-songs py-20 bg-stone-100">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider mb-4 text-black">
+              CANTI IN COREANO
+            </h2>
+            <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
+            <p className="mx-auto mt-6 max-w-3xl text-lg text-gray-700 leading-relaxed">
+              In preparazione alla Giornata Mondiale della Gioventù di Seoul 2027, qui trovi i canti in coreano da imparare insieme in vista del pellegrinaggio.
+            </p>
+          </div>
+
+          <div className="mx-auto max-w-4xl space-y-4">
+            {KOREAN_SONGS.map((song, index) => {
+              const sheetKey = `song-${song.id}-sheet`;
+              return (
+                <div key={song.id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div className="min-w-0">
+                      <p className="text-lg font-serif font-bold text-black leading-snug">
+                        {index + 1}. {song.titleIt}
+                      </p>
+                      <p className="text-base text-gray-600 leading-snug">
+                        {song.titleKr}
+                        {song.note ? <span className="text-sm text-gray-500"> — {song.note}</span> : null}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+                      <button
+                        type="button"
+                        onClick={() => openSongViewer('video', song)}
+                        disabled={!song.videoSrc}
+                        className={`inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 font-semibold text-white transition-colors ${song.videoSrc ? 'bg-black hover:bg-gray-800' : 'cursor-not-allowed bg-gray-500/90'}`}
+                        title={song.videoSrc ? `Apri il video di ${song.titleIt}` : 'Video in arrivo'}
+                      >
+                        <Play size={18} />
+                        {song.videoSrc ? 'Video (voce e testi)' : 'VIDEO — IN ARRIVO'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => openSongViewer('sheet', song)}
+                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-600 px-5 py-3 font-semibold text-white transition-colors hover:bg-amber-700"
+                      >
+                        <FileText size={18} />
+                        {song.sheetSrc ? 'Testo e accordi' : comingSoonKey === sheetKey ? 'In arrivo' : 'Testo e accordi'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {songViewer ? (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-2 sm:p-5">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={() => setSongViewer(null)}
+            aria-label="Chiudi visualizzatore canto"
+          />
+
+          <div
+            className={`relative z-10 flex flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ${
+              songViewer.type === 'sheet'
+                ? 'h-[86dvh] w-[94vw] max-w-3xl sm:w-[78vw]'
+                : 'h-[94dvh] w-full max-w-6xl'
+            }`}
+          >
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-gray-200 px-4 py-3 sm:px-5">
+              <div className="min-w-0">
+                <p className="truncate font-serif text-base font-bold text-black sm:text-xl">{songViewer.title}</p>
+                <p className="text-xs text-gray-500 sm:text-sm">
+                  {songViewer.type === 'video' ? 'Video (voce e testi)' : 'Testo e accordi'}
+                </p>
+              </div>
+
+              <div className="flex shrink-0 items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSongViewer(null)}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-colors hover:bg-gray-800"
+                  aria-label="Chiudi"
+                  title="Chiudi"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-hidden bg-neutral-950">
+              {songViewer.type === 'video' ? (
+                <div className="flex h-full w-full items-center justify-center p-2 sm:p-4">
+                  <iframe
+                    key={songViewer.src}
+                    src={getGoogleDrivePreviewUrl(songViewer.src)}
+                    title={`Video di ${songViewer.title}`}
+                    className="h-full w-full rounded-lg bg-black shadow-2xl"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              ) : (
+                <div
+                  ref={sheetViewportRef}
+                  className="h-full w-full cursor-grab overflow-auto bg-stone-200 p-2 active:cursor-grabbing sm:p-4"
+                  style={{ touchAction: 'none' }}
+                  onPointerDown={(event) => {
+                    const viewport = sheetViewportRef.current;
+                    if (!viewport) return;
+                    viewport.setPointerCapture?.(event.pointerId);
+                    const point = { x: event.clientX, y: event.clientY };
+                    sheetPointersRef.current.set(event.pointerId, point);
+
+                    if (sheetPointersRef.current.size === 1) {
+                      sheetPanLastRef.current = point;
+                    } else if (sheetPointersRef.current.size === 2) {
+                      const [first, second] = Array.from(sheetPointersRef.current.values());
+                      sheetPinchStartRef.current = {
+                        distance: Math.hypot(second.x - first.x, second.y - first.y),
+                        zoom: sheetZoom,
+                      };
+                      sheetPanLastRef.current = null;
+                    }
+                  }}
+                  onPointerMove={(event) => {
+                    const viewport = sheetViewportRef.current;
+                    const previous = sheetPointersRef.current.get(event.pointerId);
+                    if (!viewport || !previous) return;
+
+                    const current = { x: event.clientX, y: event.clientY };
+                    sheetPointersRef.current.set(event.pointerId, current);
+
+                    if (sheetPointersRef.current.size >= 2 && sheetPinchStartRef.current) {
+                      const [first, second] = Array.from(sheetPointersRef.current.values());
+                      const distance = Math.hypot(second.x - first.x, second.y - first.y);
+                      const ratio = distance / Math.max(1, sheetPinchStartRef.current.distance);
+                      setSheetZoom(
+                        Math.min(3, Math.max(0.6, Number((sheetPinchStartRef.current.zoom * ratio).toFixed(2))))
+                      );
+                      return;
+                    }
+
+                    if (sheetPointersRef.current.size === 1 && sheetPanLastRef.current) {
+                      viewport.scrollLeft -= current.x - sheetPanLastRef.current.x;
+                      viewport.scrollTop -= current.y - sheetPanLastRef.current.y;
+                      sheetPanLastRef.current = current;
+                    }
+                  }}
+                  onPointerUp={(event) => {
+                    sheetPointersRef.current.delete(event.pointerId);
+                    sheetPinchStartRef.current = null;
+                    const remaining = Array.from(sheetPointersRef.current.values());
+                    sheetPanLastRef.current = remaining.length === 1 ? remaining[0] : null;
+                  }}
+                  onPointerCancel={(event) => {
+                    sheetPointersRef.current.delete(event.pointerId);
+                    sheetPinchStartRef.current = null;
+                    sheetPanLastRef.current = null;
+                  }}
+                >
+                  <img
+                    src={songViewer.src}
+                    alt={`Testo e accordi di ${songViewer.title}`}
+                    className="mx-auto h-auto select-none rounded-lg bg-white shadow-xl"
+                    style={{ width: `${sheetZoom * 100}%`, maxWidth: 'none' }}
+                    draggable={false}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {isReservedGuideOpen ? (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-2 py-2 sm:px-4 sm:py-6">
@@ -484,12 +821,9 @@ function App() {
             <div className="shrink-0 flex items-start justify-between gap-2 border-b border-gray-200 bg-white px-3 py-3 sm:px-5 sm:py-4 md:px-6">
               <div className="min-w-0 pr-1">
                 <h3 className="text-base font-serif font-bold leading-tight sm:text-2xl md:text-[1.75rem]">
-                  <span className="sm:hidden">Info registrazione e accesso rapido</span>
+                  <span className="sm:hidden">Leggi con attenzione prima di creare un profilo</span>
                   <span className="hidden sm:inline">{RESERVED_AREA_GUIDE_TITLE}</span>
                 </h3>
-                <p className="mt-1.5 hidden max-w-2xl text-sm leading-relaxed text-gray-700 sm:block md:text-[0.95rem]">
-                  {RESERVED_AREA_GUIDE_SUBTITLE}
-                </p>
               </div>
 
               <button
@@ -502,18 +836,6 @@ function App() {
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-5 md:p-6">
-              <div className="mb-3 rounded-xl border border-blue-100 bg-blue-50 px-3 py-3 text-sm leading-relaxed text-gray-800 sm:hidden">
-                {RESERVED_AREA_GUIDE_SUBTITLE}
-              </div>
-
-              <div className="mb-4 rounded-2xl border-2 border-amber-400 bg-amber-50 px-3 py-3.5 text-sm leading-relaxed text-gray-900 shadow-sm sm:px-4 sm:py-4 sm:text-base">
-                <p className="font-extrabold text-black">Attenzione genitori: leggete prima di creare i profili dei figli.</p>
-                <p className="mt-1.5">
-                  Non create più profili Partecipante usando la stessa email del genitore: dal secondo profilo il sistema segnalerà che l&apos;indirizzo email è già utilizzato.
-                  Se volete gestire direttamente i profili dei vostri figli, anche quando alcuni figli hanno una propria email personale, registrate prima il profilo <span className="font-extrabold">Genitore + Figli</span> con l&apos;email del genitore. Dopo l&apos;accesso potrete creare e gestire i profili dei singoli figli dal vostro pannello.
-                </p>
-              </div>
-
               <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
                 {RESERVED_AREA_GUIDE_ITEMS.map((item) => (
                   <article key={item.id} className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm sm:p-4 md:p-5">
@@ -590,7 +912,7 @@ function App() {
                 'Premi su “Verifica collegamento” per controllare che l’attivazione sia andata a buon fine.',
                 'Se il collegamento è corretto, vedrai in verde la scritta: “Notifiche Telegram attivate correttamente.”',
                 'Da quel momento potrai ricevere le comunicazioni dell’organizzazione anche su Telegram dal contatto “Pellegrinaggio CnC Piemonte e Svizzera Bot”.',
-                'Se un messaggio è troppo lungo, potrai leggerlo integralmente nella sezione comunicazioni dell’area riservata.',
+                'Se un messaggio è troppo lungo, potrai leggerlo integralmente all’interno dell’area riservata.',
                 'La chat Telegram è in modalità broadcast, quindi potrai solo leggere i messaggi inviati dall’organizzazione.',
               ].map((step, index) => (
                 <article key={step} className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 sm:px-5">
@@ -626,7 +948,7 @@ function App() {
         </div>
       ) : null}
 
-      <section id="donazioni" className="py-20 bg-black">
+      <section id="donazioni" className="content-section section-donations py-20 bg-black">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -649,7 +971,7 @@ function App() {
                 Le stesse informazioni saranno disponibili anche nell&apos;area riservata personale, nella sezione <span className="font-semibold text-white">“Info pagamenti”</span>.
               </p>
               <p className="font-semibold text-amber-200">
-                A breve verranno comunicate le quote minime di iscrizione e le relative scadenze.
+                Le quote di partecipazione da versare e le relative scadenze saranno indicate sia sul sito che all&apos;interno dell&apos;Area Riservata.
               </p>
             </div>
 
@@ -804,7 +1126,7 @@ function App() {
         </div>
       ) : null}
 
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="site-footer bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-6 mb-8">
             <a href="#home" className="hover:text-amber-500 transition-colors">Home Page</a>

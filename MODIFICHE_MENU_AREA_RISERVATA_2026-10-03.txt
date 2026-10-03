@@ -1,0 +1,21 @@
+Modifiche richieste 03/10/2026
+
+1. Area Riservata nella barra superiore
+- Icona resa molto più evidente con bordo/alone color ambra.
+- Indicatore rosso lampeggiante e badge "IMPORTANTE" su desktop.
+- Il click non apre più direttamente la web app: porta prima alla sezione "AREA RISERVATA" del sito.
+- Chi conosce già la procedura può usare il pulsante "ACCEDI" presente nella sezione.
+
+2. Menu Eventi
+- Badge "NOVITÀ" visibile direttamente accanto a "Eventi".
+- Badge "NUOVO" su WYD Seoul 2027 nel sottomenu.
+- Badge "NUOVO" sulla sezione "Canti in coreano".
+- Badge "APERTE" su "Iscrizione JMJ Seoul 2027".
+
+3. Immagine Area Riservata
+- L'immagine grande nella sezione non è più cliccabile e non apre la web app.
+
+4. Canto "Andate ed annunziate ai miei fratelli"
+- Il video resta indicato come "VIDEO — IN ARRIVO" e il relativo pulsante è disattivato.
+
+Le modifiche sono state riportate sia nei sorgenti sia nella cartella dist presente nel pacchetto.

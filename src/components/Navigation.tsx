@@ -40,25 +40,17 @@ const Navigation = () => {
               { id: 'giorni-alla-partenza', label: 'Giorni alla partenza' },
               { id: 'wyd-seul', label: 'WYD Seoul 2027' },
               { id: 'sezione-video', label: 'Video promo JMJ 2027' },
+              { id: 'canti-in-coreano', label: 'Canti in coreano' },
               { id: 'gmg-2027-iscrizione', label: 'Iscrizione JMJ Seoul 2027' },
-              {
-                id: 'info-korea',
-                label: 'Info Korea',
-                href:
-                  'https://ambseoul.esteri.it/it/servizi-consolari-e-visti/servizi-per-il-cittadino-italiano/informazioni-utili-allarrivo-in-corea/',
-              },
             ],
           },
         ],
       },
       {
-        id: 'comunicazioni',
-        label: 'Comunicazioni',
-        type: 'dropdown',
-        items: [
-          { id: 'comunicazioni', label: 'Comunicazioni' },
-          { id: 'telegram', label: 'Ricevi comunicazioni su Telegram' },
-        ],
+        id: 'telegram',
+        label: 'Telegram',
+        type: 'link',
+        items: [{ id: 'telegram', label: 'Telegram' }],
       },
       {
         id: 'donazioni',
@@ -106,12 +98,43 @@ const Navigation = () => {
 
   useEffect(() => {
     const updateViewport = () => {
-      setIsMobileViewport(window.innerWidth < 1024);
+      const mobile = window.innerWidth < 1024;
+      setIsMobileViewport(mobile);
+
+      // Evita che un menu rimanga aperto nella modalità sbagliata durante il ridimensionamento.
+      if (mobile) {
+        setOpenDropdown(null);
+      } else {
+        setMobileMenuOpen(false);
+        setOpenSubmenu(null);
+      }
     };
 
     updateViewport();
     window.addEventListener('resize', updateViewport);
     return () => window.removeEventListener('resize', updateViewport);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    const closeWithEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setMobileMenuOpen(false);
+      setOpenDropdown(null);
+      setOpenSubmenu(null);
+      setPhoneModalOpen(false);
+    };
+
+    window.addEventListener('keydown', closeWithEscape);
+    return () => window.removeEventListener('keydown', closeWithEscape);
   }, []);
 
   const scrollToSection = (id: string) => {
@@ -136,19 +159,34 @@ const Navigation = () => {
 
   const renderNavLabel = (label: string, id?: string) => (
     <span className="inline-flex min-w-0 items-center gap-1.5">
-      <span className="min-w-0">{label}</span>
+      <span className="min-w-0 break-words whitespace-normal leading-snug">{label}</span>
+      {id === 'eventi' ? (
+        <span className="nav-status-badge nav-status-badge-new shrink-0 rounded-full bg-amber-600 px-1.5 py-0.5 text-[8px] font-extrabold leading-none tracking-wide text-white shadow-sm">
+          NOVITÀ
+        </span>
+      ) : null}
+      {id === 'wyd-submenu' ? (
+        <span className="nav-status-badge shrink-0 rounded-full bg-sky-500 px-1.5 py-0.5 text-[8px] font-extrabold leading-none tracking-wide text-white shadow-sm">
+          NUOVO
+        </span>
+      ) : null}
       {id === 'donazioni' ? (
-        <span className="animate-pulse rounded-full bg-emerald-600 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
+        <span className="shrink-0 animate-pulse rounded-full bg-emerald-600 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
           ATTIVO
         </span>
       ) : null}
       {id === 'gmg-2027-iscrizione' ? (
-        <span className="animate-pulse rounded-full bg-red-600 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
+        <span className="shrink-0 animate-pulse rounded-full bg-red-600 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
           APERTE
         </span>
       ) : null}
       {id === 'telegram' ? (
-        <span className="animate-pulse rounded-full bg-sky-500 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
+        <span className="shrink-0 animate-pulse rounded-full bg-sky-500 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
+          NUOVO
+        </span>
+      ) : null}
+      {id === 'canti-in-coreano' ? (
+        <span className="shrink-0 animate-pulse rounded-full bg-amber-600 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
           NUOVO
         </span>
       ) : null}
@@ -168,7 +206,8 @@ const Navigation = () => {
         <>
           <img
             src="/images/login.png"
-            alt={action.label}
+            alt=""
+            aria-hidden="true"
             className={`${mobile ? 'w-[18px] h-[18px]' : 'w-5 h-5'} ${headerIsWhite ? 'brightness-0' : 'brightness-0 invert'}`}
           />
           <span className={captionClass}>{action.label}</span>
@@ -176,17 +215,16 @@ const Navigation = () => {
       );
 
       return (
-        <a
+        <button
           key={action.id}
-          href={action.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`${wrapperClass} transition-opacity hover:opacity-80`}
-          aria-label={`Apri ${action.label.toLowerCase()}`}
-          title={action.label}
+          type="button"
+          onClick={() => scrollToSection('area-riservata')}
+          className={`reserved-area-nav-alert relative ${wrapperClass} transition-all hover:scale-105`}
+          aria-label="Vai prima alle informazioni dell'Area riservata"
+          title="Area riservata: leggi prima le istruzioni"
         >
           {content}
-        </a>
+        </button>
       );
     }
 
@@ -317,7 +355,7 @@ const Navigation = () => {
                   </button>
 
                   {isOpen && (
-                    <div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 w-[620px] max-w-[90vw] bg-white shadow-2xl rounded-xl border border-gray-200 overflow-hidden">
+                    <div className="desktop-nav-popover fixed left-1/2 -translate-x-1/2 w-[min(620px,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] bg-white shadow-2xl rounded-xl border border-gray-200 overflow-x-hidden overflow-y-auto">
                       <div className="p-6">
                         <div className="flex items-center justify-between mb-4">
                           <h3 className="text-lg font-serif font-bold text-black">{group.label}</h3>
@@ -334,8 +372,8 @@ const Navigation = () => {
                         </div>
 
                         {group.id === 'eventi' ? (
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="space-y-1">
+                          <div className="grid min-w-0 grid-cols-2 gap-3">
+                            <div className="min-w-0 space-y-1">
                               {group.items.map((item) => {
                                 const isTrigger = !!item.children?.length;
                                 const isSelected = !item.href && !isTrigger && activeSection === item.id;
@@ -353,7 +391,7 @@ const Navigation = () => {
                                       aria-haspopup="menu"
                                       aria-expanded={open}
                                     >
-                                      <span className="font-serif">{item.label}</span>
+                                      <span className="font-serif">{renderNavLabel(item.label, item.id)}</span>
                                       <span className="text-gray-400">›</span>
                                     </button>
                                   );
@@ -387,7 +425,7 @@ const Navigation = () => {
                               })}
                             </div>
 
-                            <div className="space-y-1">
+                            <div className="min-w-0 space-y-1">
                               {(() => {
                                 const trigger = group.items.find((item) => item.id === openSubmenu && item.children?.length);
                                 const children = trigger?.children ?? [];
@@ -491,30 +529,30 @@ const Navigation = () => {
         </div>
 
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-4 pb-4 border-t pt-4 bg-white">
-            <div className="flex flex-col space-y-3">
+          <div className="mobile-nav-panel lg:hidden border-t bg-white shadow-2xl">
+            <div className="mx-auto flex w-full max-w-screen-lg flex-col space-y-3 px-3 pb-6 pt-4 sm:px-4">
               {navGroups.map((group) => (
-                <div key={group.id} className="px-2">
-                  <div className="text-xs uppercase tracking-wider text-gray-500 px-2 py-2">{group.label}</div>
-                  <div className="flex flex-col gap-1">
+                <div key={group.id} className="min-w-0 px-2">
+                  <div className="text-xs uppercase tracking-wider text-gray-500 px-2 py-2">{renderNavLabel(group.label, group.id)}</div>
+                  <div className="flex min-w-0 flex-col gap-1">
                     {group.items.map((item) => {
-                      const cls = `px-4 py-2 text-sm font-serif tracking-wider text-left transition-all rounded-full ${!item.href && activeSection === item.id ? 'bg-black text-white' : 'text-black hover:bg-gray-100'}`;
+                      const cls = `w-full min-w-0 break-words whitespace-normal px-4 py-2 text-sm font-serif tracking-wider text-left leading-snug transition-all rounded-full ${!item.href && activeSection === item.id ? 'bg-black text-white' : 'text-black hover:bg-gray-100'}`;
 
                       if (group.id === 'eventi' && item.children?.length) {
                         const open = openSubmenu === item.id;
                         return (
-                          <div key={item.id} className="flex flex-col gap-1">
+                          <div key={item.id} className="flex min-w-0 flex-col gap-1">
                             <button
                               onClick={() => setOpenSubmenu(open ? null : item.id)}
-                              className={`px-4 py-2 text-sm font-serif tracking-wider text-left transition-all rounded-full flex items-center justify-between ${open ? 'bg-gray-100 text-black' : 'text-black hover:bg-gray-100'}`}
+                              className={`w-full min-w-0 break-words whitespace-normal px-4 py-2 text-sm font-serif tracking-wider text-left leading-snug transition-all rounded-full flex items-center justify-between gap-2 ${open ? 'bg-gray-100 text-black' : 'text-black hover:bg-gray-100'}`}
                             >
                               <span>{renderNavLabel(item.label, item.id)}</span>
                               <span className="text-gray-500">{open ? '˄' : '˅'}</span>
                             </button>
                             {open && (
-                              <div className="pl-4 flex flex-col gap-1">
+                              <div className="flex min-w-0 flex-col gap-1 pl-3 sm:pl-4">
                                 {item.children.map((child) => {
-                                  const childClass = `px-4 py-2 text-sm font-serif tracking-wider text-left transition-all rounded-full ${!child.href && activeSection === child.id ? 'bg-black text-white' : 'text-black hover:bg-gray-100'}`;
+                                  const childClass = `w-full min-w-0 break-words whitespace-normal px-4 py-2 text-sm font-serif tracking-wider text-left leading-snug transition-all rounded-full ${!child.href && activeSection === child.id ? 'bg-black text-white' : 'text-black hover:bg-gray-100'}`;
                                   if (child.href) {
                                     return (
                                       <a

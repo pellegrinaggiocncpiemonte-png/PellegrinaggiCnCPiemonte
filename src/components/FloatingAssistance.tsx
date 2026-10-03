@@ -14,6 +14,33 @@ export default function FloatingAssistance() {
   const [showFallback, setShowFallback] = useState(false);
 
   useEffect(() => {
+    const fixedPageTitle = 'Pellegrinaggi CnC Piemonte';
+    const titleElement = document.querySelector('title');
+    let restoringTitle = false;
+
+    const restorePageTitle = () => {
+      if (restoringTitle || document.title === fixedPageTitle) return;
+      restoringTitle = true;
+      document.title = fixedPageTitle;
+      restoringTitle = false;
+    };
+
+    // Tawk può sostituire il titolo della scheda con notifiche come
+    // “1 nuovo messaggio!”. Manteniamo invece sempre il titolo del sito.
+    const titleObserver = titleElement
+      ? new MutationObserver(() => restorePageTitle())
+      : null;
+
+    titleObserver?.observe(titleElement!, {
+      childList: true,
+      characterData: true,
+      subtree: true,
+    });
+
+    window.addEventListener('focus', restorePageTitle);
+    document.addEventListener('visibilitychange', restorePageTitle);
+    restorePageTitle();
+
     const api = (window.Tawk_API = window.Tawk_API || {});
     window.Tawk_LoadStart = new Date();
 
@@ -41,6 +68,12 @@ export default function FloatingAssistance() {
       script.dataset.tawkWidget = 'true';
       document.body.appendChild(script);
     }
+
+    return () => {
+      titleObserver?.disconnect();
+      window.removeEventListener('focus', restorePageTitle);
+      document.removeEventListener('visibilitychange', restorePageTitle);
+    };
   }, []);
 
   const openAssistance = () => {
@@ -59,7 +92,7 @@ export default function FloatingAssistance() {
         <button
           type="button"
           onClick={openAssistance}
-          className="fixed bottom-5 right-4 z-[90] inline-flex items-center gap-2 rounded-full bg-black px-4 py-3 text-sm font-semibold text-white shadow-2xl transition-transform hover:scale-105 active:scale-95 sm:bottom-6 sm:right-6"
+          className="site-floating-assistance fixed bottom-5 right-4 z-[90] inline-flex items-center gap-2 rounded-full bg-black px-4 py-3 text-sm font-semibold text-white shadow-2xl transition-transform hover:scale-105 active:scale-95 sm:bottom-6 sm:right-6"
           aria-label="Apri assistenza online"
           title="Apri assistenza online"
         >
@@ -69,7 +102,7 @@ export default function FloatingAssistance() {
       ) : null}
 
       {showFallback ? (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center px-4 py-6">
+        <div className="site-floating-assistance fixed inset-0 z-[120] flex items-center justify-center px-4 py-6">
           <button
             type="button"
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"

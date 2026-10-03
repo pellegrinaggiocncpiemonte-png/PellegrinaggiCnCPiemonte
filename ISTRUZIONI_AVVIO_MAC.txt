@@ -1,0 +1,21 @@
+AVVIO DEL SITO SU MAC
+=====================
+
+METODO PIU SEMPLICE
+1. Estrai completamente lo ZIP.
+2. Apri la cartella del progetto.
+3. Fai doppio clic su AVVIO_MAC.command.
+4. Alla prima esecuzione verranno installate le dipendenze corrette per il tuo Mac.
+5. Apri l'indirizzo mostrato nel Terminale, normalmente http://localhost:5173/
+
+Se macOS blocca il file:
+- clic destro su AVVIO_MAC.command > Apri > Apri.
+
+DA TERMINALE
+cd "/percorso/della/cartella"
+rm -rf node_modules
+npm install
+npm run dev
+
+IMPORTANTE
+La cartella node_modules NON e inclusa nello ZIP volutamente. Deve essere generata sul Mac tramite npm, altrimenti i collegamenti di Vite possono rompersi durante la compressione.

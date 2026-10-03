@@ -1,0 +1,11 @@
+REVISIONE 5 - 28/09/2026
+
+Modifiche applicate:
+1. Rimossi dalla guida "Prima di registrarti" i blocchi:
+   - Genitore (con codice)
+   - Genitore + Figli
+2. Aggiornata la nota riepilogativa della guida eliminando i riferimenti ai due profili rimossi.
+3. Rimossa dalla hero la scritta "JMJ Seoul · 2–10 agosto 2027" sotto "Cammino Neocatecumenale".
+4. Impedita la sostituzione del titolo della scheda da parte della chat Tawk (es. "1 nuovo messaggio!").
+   Il titolo resta "Pellegrinaggi CnC Piemonte".
+5. Aggiornata anche la build già presente nella cartella dist.

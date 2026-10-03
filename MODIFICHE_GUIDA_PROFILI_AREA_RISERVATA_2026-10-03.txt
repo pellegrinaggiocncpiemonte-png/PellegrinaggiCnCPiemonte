@@ -1,0 +1,17 @@
+MODIFICHE APPLICATE
+
+1. Finestra "Leggi prima di registrarti"
+- Eliminata la vecchia introduzione a tendina separata.
+- Titolo: "Leggi con attenzione prima di creare un profilo".
+- Aggiunte le schede "Genitore" e "Accesso multiplo" allo stesso livello di Partecipante, Responsabile e Collaboratore/Accompagnatore.
+
+2. Icona Area riservata nel menu superiore
+- Rimossa la scritta "IMPORTANTE".
+- Rimosso il badge con punto esclamativo.
+- Rimossi bordo, sfondo e alone giallo attorno all'icona persona.
+- Mantenuto un lampeggio discreto dell'intero collegamento Area riservata.
+
+3. Conservate le modifiche precedenti
+- Andate ed annunziate ai miei fratelli: VIDEO — IN ARRIVO.
+- Immagine interna della sezione Area riservata non cliccabile.
+- Badge novità/iscrizioni aperte nel menu Eventi.

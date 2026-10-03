@@ -1,0 +1,23 @@
+AVVIO SU MAC
+
+Metodo semplice:
+1. Estrai completamente lo ZIP.
+2. Apri la cartella estratta.
+3. Fai doppio clic su AVVIA_SITO.command.
+4. Alla prima esecuzione verranno installate automaticamente le dipendenze.
+5. Al termine comparira nel Terminale l'indirizzo locale del sito, normalmente http://localhost:5173/
+
+Se macOS blocca il file .command:
+- clic destro su AVVIA_SITO.command > Apri > Apri.
+
+Metodo da Terminale:
+cd "/percorso/della/cartella"
+npm install
+npm run dev
+
+IMPORTANTE:
+Non copiare mai la cartella node_modules da un altro computer o da un vecchio ZIP.
+Se si verifica un problema con Vite, elimina node_modules e reinstalla:
+rm -rf node_modules
+npm install
+npm run dev

@@ -1,0 +1,9 @@
+CORREZIONI REVISIONE 3
+
+- Contatore visite e pulsante Assistenza completamente nascosti durante la schermata introduttiva.
+- Nascosto anche il widget Tawk eventualmente già caricato durante la intro.
+- Menu desktop centrati nella finestra e limitati in larghezza/altezza: non possono uscire dai bordi.
+- Menu smartphone/tablet fissato sotto la barra originale, largo esattamente quanto lo schermo.
+- Scorrimento verticale interno al menu su schermi bassi; nessuna fuoriuscita orizzontale.
+- Voci lunghe e badge adattati senza tagli o espansioni oltre pagina.
+- Chiusura automatica dei menu quando si cambia larghezza e chiusura con tasto ESC.
