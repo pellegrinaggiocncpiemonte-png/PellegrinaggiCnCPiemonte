@@ -218,7 +218,12 @@ const Navigation = () => {
         <button
           key={action.id}
           type="button"
-          onClick={() => scrollToSection('area-riservata')}
+          onClick={() => {
+            scrollToSection('area-riservata');
+            window.setTimeout(() => {
+              window.dispatchEvent(new CustomEvent('reserved-area-reading:start'));
+            }, 420);
+          }}
           className={`reserved-area-nav-alert relative ${wrapperClass} transition-all hover:scale-105`}
           aria-label="Vai prima alle informazioni dell'Area riservata"
           title="Area riservata: leggi prima le istruzioni"
