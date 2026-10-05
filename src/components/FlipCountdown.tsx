@@ -84,7 +84,7 @@ function FlipUnit({ value, label }: { value: number; label: string }) {
 }
 
 export default function FlipCountdown({
-  target = new Date('2027-08-02T00:00:00+02:00'),
+  target = new Date('2027-08-03T00:00:00+02:00'),
   className = '',
 }: Props) {
   const [now, setNow] = useState(() => new Date());

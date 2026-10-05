@@ -37,7 +37,7 @@ const Navigation = () => {
             id: 'wyd-submenu',
             label: 'WYD Seoul 2027',
             children: [
-              { id: 'giorni-alla-partenza', label: 'Giorni alla partenza' },
+              { id: 'giorni-alla-partenza', label: 'Giorni alla GMG' },
               { id: 'wyd-seul', label: 'WYD Seoul 2027' },
               { id: 'sezione-video', label: 'Video promo JMJ 2027' },
               { id: 'canti-in-coreano', label: 'Canti in coreano' },

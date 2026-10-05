@@ -70,20 +70,24 @@ const KOREAN_SONGS: KoreanSong[] = [
 
 const RESERVED_AREA_READING_STEPS = [
   {
-    title: 'Prima di iniziare',
-    text: 'Leggi con attenzione queste indicazioni. La semplice registrazione all’Area Riservata non equivale all’iscrizione al pellegrinaggio.',
+    title: 'ATTENZIONE: creare l’account non basta',
+    text: 'Registrarsi all’Area Riservata serve solo per creare l’accesso personale. NON significa essere iscritti alla JMJ Seoul 2027. Dopo l’accesso devi continuare fino alla sezione “Iscrizione Pellegrinaggi”.',
   },
   {
-    title: '1. Scegli il profilo corretto',
-    text: 'Dopo questa guida premi “Leggi prima di registrarti”. Troverai le spiegazioni per Partecipante, Genitore, Responsabile e Collaboratore / Accompagnatore.',
+    title: '1. Scegli e completa il profilo',
+    text: 'Premi “Leggi prima di registrarti”, scegli il profilo corretto e completa i dati anagrafici richiesti. Il profilo è importante, ma da solo non costituisce iscrizione al pellegrinaggio.',
   },
   {
-    title: '2. Completa l’iscrizione',
-    text: 'Crea o accedi al profilo, completa i dati richiesti e poi entra nella sezione “Iscrizione Pellegrinaggi” per selezionare JMJ Seoul 2027. Controlla anche l’e-mail di conferma.',
+    title: '2. Iscriviti alla JMJ',
+    text: 'Dopo aver creato o aperto il profilo, vai nella sezione “Iscrizione Pellegrinaggi”, scegli Korea 2027 e completa l’iscrizione.',
   },
   {
-    title: '3. Conferma economica e volo',
-    text: 'Come annunciato all’incontro del 04/10/2026, l’iscrizione è economicamente confermata solo con il versamento della prima rata di 400,00 € per ogni partecipante entro e non oltre il 20 ottobre 2026. La scadenza è inderogabile: la quota serve a bloccare il posto sul volo.',
+    title: '3. Documenti',
+    text: 'I documenti richiesti sono necessari e vanno caricati nella sezione dedicata. Se al momento non li hai disponibili, puoi aggiungerli successivamente: non fermarti per questo e completa comunque l’iscrizione al pellegrinaggio.',
+  },
+  {
+    title: '4. Prima rata: rende valida l’iscrizione',
+    text: 'L’iscrizione al pellegrinaggio non è valida senza il versamento della prima rata di 400,00 € per partecipante entro e non oltre il 20 ottobre 2026. La scadenza è inderogabile e la quota serve a bloccare il posto sul volo. Le rate successive saranno comunicate prossimamente.',
   },
 ];
 
@@ -92,7 +96,6 @@ function App() {
   const [isReservedGuideOpen, setIsReservedGuideOpen] = useState(false);
   const [isReservedReadingOpen, setIsReservedReadingOpen] = useState(false);
   const [reservedReadingStep, setReservedReadingStep] = useState(0);
-  const [reservedReadingComplete, setReservedReadingComplete] = useState(false);
   const [isTelegramGuideOpen, setIsTelegramGuideOpen] = useState(false);
   const [isTelegramDetailsOpen, setIsTelegramDetailsOpen] = useState(false);
   const [isBankDetailsOpen, setIsBankDetailsOpen] = useState(false);
@@ -117,12 +120,6 @@ function App() {
   };
 
   const completeReservedAreaReading = () => {
-    setReservedReadingComplete(true);
-    try {
-      window.sessionStorage.setItem('reserved-area-reading-complete-v1', '1');
-    } catch {
-      // sessionStorage può non essere disponibile in alcuni browser/modalità private.
-    }
     setIsReservedReadingOpen(false);
     window.setTimeout(() => {
       document.getElementById('reserved-area-actions')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -130,12 +127,6 @@ function App() {
   };
 
   useEffect(() => {
-    try {
-      setReservedReadingComplete(window.sessionStorage.getItem('reserved-area-reading-complete-v1') === '1');
-    } catch {
-      setReservedReadingComplete(false);
-    }
-
     const handleReservedAreaReading = () => startReservedAreaReading();
     window.addEventListener('reserved-area-reading:start', handleReservedAreaReading);
     return () => window.removeEventListener('reserved-area-reading:start', handleReservedAreaReading);
@@ -302,9 +293,11 @@ function App() {
                   <div className="space-y-4 border-t border-amber-200 bg-amber-50/40 p-4 sm:p-5">
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div className="rounded-xl border border-gray-200 bg-white px-4 py-4">
-                        <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Date del pellegrinaggio</p>
-                        <p className="mt-1 text-lg font-extrabold text-gray-900">In definizione</p>
-                        <p className="mt-1 text-sm leading-relaxed text-gray-600">Le date definitive saranno comunicate appena confermati i voli e il programma del pellegrinaggio.</p>
+                        <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Periodo indicativo del pellegrinaggio</p>
+                        <p className="mt-1 text-lg font-extrabold text-gray-900">Fine luglio – 10/12 agosto 2027</p>
+                        <p className="mt-1 text-sm leading-relaxed text-gray-600">
+                          Le partenze potranno essere scaglionate in più gruppi, indicativamente tra il <span className="font-bold">30 e il 31 luglio</span>, in base ai voli che verranno confermati. I rientri potranno avvenire indicativamente il <span className="font-bold">10, 11 o 12 agosto</span>. Sono date ancora in fase di definizione.
+                        </p>
                       </div>
                       <div className="rounded-xl border-2 border-red-400 bg-red-50 px-4 py-4">
                         <p className="text-xs font-bold uppercase tracking-wider text-red-800">Prima rata richiesta</p>
@@ -312,6 +305,37 @@ function App() {
                         <p className="mt-1 text-sm font-extrabold leading-relaxed text-red-900">ENTRO E NON OLTRE IL 20 OTTOBRE 2026</p>
                       </div>
                     </div>
+                    <div className="rounded-xl border-2 border-sky-400 bg-sky-50 px-4 py-4 text-sky-950 shadow-sm">
+                      <p className="text-base font-extrabold sm:text-lg">GMG internazionale e incontro vocazionale</p>
+                      <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                        <div className="rounded-lg bg-white px-3 py-3 ring-1 ring-sky-200">
+                          <p className="text-xs font-bold uppercase tracking-wide text-sky-700">3–8 agosto 2027</p>
+                          <p className="mt-1 text-sm font-semibold">Giornata Mondiale della Gioventù a Seoul</p>
+                        </div>
+                        <div className="rounded-lg bg-white px-3 py-3 ring-1 ring-sky-200">
+                          <p className="text-xs font-bold uppercase tracking-wide text-sky-700">7–8 agosto</p>
+                          <p className="mt-1 text-sm font-semibold">Veglia il 7 e Santa Messa con il Santo Padre l&apos;8</p>
+                        </div>
+                        <div className="rounded-lg bg-white px-3 py-3 ring-1 ring-sky-200">
+                          <p className="text-xs font-bold uppercase tracking-wide text-sky-700">9 agosto</p>
+                          <p className="mt-1 text-sm font-semibold">Incontro vocazionale del Cammino Neocatecumenale</p>
+                        </div>
+                      </div>
+                      <p className="mt-3 text-sm leading-relaxed sm:text-base">
+                        Come Cammino Neocatecumenale parteciperemo alla <span className="font-bold">Veglia</span> e alla <span className="font-bold">Santa Messa con il Santo Padre</span>; il giorno successivo parteciperemo all&apos;<span className="font-bold">incontro vocazionale</span>.
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-4 text-amber-950">
+                      <p className="font-extrabold">Programma e costo complessivo ancora in definizione</p>
+                      <p className="mt-2 text-sm leading-relaxed sm:text-base">
+                        Il programma completo del pellegrinaggio sarà pubblicato prossimamente. La cifra totale non è ancora definita perché la quotazione dei voli non è stata ancora confermata.
+                      </p>
+                      <p className="mt-2 text-sm font-semibold leading-relaxed sm:text-base">
+                        Le richieste sono moltissime e le disponibilità sono limitate, soprattutto per i gruppi: per questo le partenze e i rientri potranno essere distribuiti su voli e giorni diversi.
+                      </p>
+                    </div>
+
                     <div className="rounded-xl border-2 border-red-500 bg-red-50 px-4 py-4 text-red-950 shadow-sm">
                       <p className="text-base font-extrabold sm:text-lg">Prima rata per confermare iscrizione e volo</p>
                       <p className="mt-2 text-sm leading-relaxed sm:text-base">
@@ -346,14 +370,16 @@ function App() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
             <h2 className="text-4xl md:text-5xl font-serif text-white font-bold tracking-wider mb-4">
-              Giorni alla partenza
+              Giorni alla GMG internazionale
             </h2>
-            <p className="text-white/80 mt-4 text-lg md:text-xl">La partenza a cui si riferisce il conto alla rovescia è quella per la GMG di Seoul 2027.</p>
+            <p className="text-white/80 mt-4 text-lg md:text-xl">
+              Il conto alla rovescia indica l&apos;inizio della GMG internazionale a Seoul, previsto per il <span className="font-bold text-white">3 agosto 2027</span>. Le date di partenza dei gruppi restano invece in definizione.
+            </p>
             <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
           </div>
 
           <div className="flex justify-center">
-            <FlipCountdown target={new Date('2027-08-02T00:00:00+02:00')} />
+            <FlipCountdown target={new Date('2027-08-03T00:00:00+02:00')} />
           </div>
         </div>
       </section>
@@ -373,17 +399,10 @@ function App() {
                 Crea un account inserendo un&apos;e-mail valida e una password a tua scelta, oppure accedi per gestire il tuo profilo e le tue iscrizioni.
               </p>
 
-              <div className="rounded-2xl border border-sky-300/40 bg-white/10 px-5 py-4 text-base md:text-lg leading-relaxed text-white/95">
-                <p>
-                  <span className="font-semibold">ℹ️ Nota bene:</span> la semplice registrazione all&apos;Area Riservata non comporta l&apos;iscrizione automatica al pellegrinaggio.
-                </p>
-              </div>
-
-
               <div className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 px-5 py-4 text-base md:text-lg leading-relaxed text-white">
                 <p className="font-bold text-amber-200">⚠️ LEGGI CON ATTENZIONE PRIMA DI ACCEDERE</p>
                 <p className="mt-1 text-white/90">
-                  Prima dell&apos;accesso devi completare una breve guida obbligatoria. Al termine arriverai ai due passaggi operativi: <span className="font-extrabold text-amber-200">“LEGGI PRIMA DI REGISTRARTI”</span> e poi <span className="font-extrabold text-amber-200">“ACCEDI”</span>.
+                  Se arrivi a questa sezione dal menu <span className="font-extrabold text-amber-200">“Area riservata”</span>, leggerai prima una breve guida con i passaggi principali. Poi potrai usare <span className="font-extrabold text-amber-200">“LEGGI PRIMA DI REGISTRARTI”</span> oppure <span className="font-extrabold text-amber-200">“ACCEDI”</span>.
                 </p>
               </div>
 
@@ -394,30 +413,31 @@ function App() {
 
                 <div className="mt-5 grid gap-4 text-center">
                   <article className="rounded-2xl border border-white/15 bg-black/20 px-4 py-4">
-                    <p className="text-lg font-semibold text-white">Registrazione</p>
+                    <p className="text-lg font-semibold text-white">1. Crea l&apos;accesso e completa il profilo</p>
                     <p className="mt-2 text-white/85 leading-relaxed">
-                      Più in basso trovi il pulsante &quot;Leggi prima di registrarti&quot;: premilo per scegliere il profilo corretto e consultare le modalità di creazione del profilo prima di registrarti con la tua e-mail valida e una password a scelta.
+                      Registrati con e-mail e password, scegli il profilo corretto e completa i dati anagrafici. <span className="font-bold text-amber-200">Questo passaggio da solo NON ti iscrive al pellegrinaggio.</span>
                     </p>
                   </article>
 
-                  <article className="rounded-2xl border border-white/15 bg-black/20 px-4 py-4">
-                    <p className="text-lg font-semibold text-white">Dati Anagrafici</p>
-                    <p className="mt-2 text-white/85 leading-relaxed">
-                      Completa tutte le sezioni richieste all&apos;interno della tua area personale.
+                  <article className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 px-4 py-5 shadow-lg">
+                    <p className="text-xl font-extrabold text-amber-200">2. ISCRIVITI ALLA JMJ</p>
+                    <p className="mt-2 text-white leading-relaxed">
+                      Questa è l&apos;operazione fondamentale. Nell&apos;Area Riservata apri <span className="font-extrabold">“Iscrizione Pellegrinaggi”</span>, seleziona <span className="font-extrabold">Korea 2027</span> e completa la procedura.
                     </p>
+                    <p className="mt-2 font-bold text-red-200">Se non fai questo passaggio, non risulti iscritto al pellegrinaggio.</p>
                   </article>
 
                   <article className="rounded-2xl border border-white/15 bg-black/20 px-4 py-4">
-                    <p className="text-lg font-semibold text-white">Iscrizione al Pellegrinaggio</p>
+                    <p className="text-lg font-semibold text-white">3. Documenti</p>
                     <p className="mt-2 text-white/85 leading-relaxed">
-                      Vai nella sezione &quot;Iscrizione Pellegrinaggi&quot; e seleziona l&apos;evento a cui desideri partecipare.
+                      I documenti richiesti sono necessari. Se li hai, caricali subito; se non sono ancora disponibili, potrai aggiungerli successivamente. <span className="font-semibold text-white">Non rimandare per questo l&apos;iscrizione al pellegrinaggio.</span>
                     </p>
                   </article>
 
-                  <article className="rounded-2xl border border-white/15 bg-black/20 px-4 py-4">
-                    <p className="text-lg font-semibold text-white">Conferma via E-mail</p>
-                    <p className="mt-2 text-white/85 leading-relaxed">
-                      Controlla la tua posta elettronica e clicca sul link di verifica per confermare definitivamente l&apos;iscrizione. Se non vedi il messaggio, verifica nelle cartelle Spam o Posta indesiderata.
+                  <article className="rounded-2xl border-2 border-red-400 bg-red-500/10 px-4 py-5">
+                    <p className="text-lg font-extrabold text-red-200">4. Versa la prima rata — 400,00 €</p>
+                    <p className="mt-2 text-white/90 leading-relaxed">
+                      L&apos;iscrizione al pellegrinaggio <span className="font-extrabold text-white">non è valida</span> senza il versamento della prima rata di <span className="font-extrabold text-white">400,00 € per partecipante entro e non oltre il 20 ottobre 2026</span>. La scadenza è inderogabile e la quota serve a bloccare il posto sul volo.
                     </p>
                   </article>
                 </div>
@@ -428,7 +448,7 @@ function App() {
               <div className="relative inline-flex items-center justify-center group">
                 <button
                   type="button"
-                  onClick={() => (reservedReadingComplete ? setIsReservedGuideOpen(true) : startReservedAreaReading())}
+                  onClick={() => setIsReservedGuideOpen(true)}
                   className="registration-guide-cta inline-flex items-center justify-center gap-2 rounded-full bg-amber-400 px-4 py-2.5 text-sm font-extrabold tracking-wide text-black shadow-xl hover:scale-[1.03] hover:bg-amber-300 active:scale-95 transition-all duration-200 sm:px-5 sm:text-base"
                   aria-label="Scegli il profilo corretto"
                   title="Scegli il profilo corretto"
@@ -446,40 +466,22 @@ function App() {
                 <p className="reserved-area-entry-title text-center font-serif font-bold tracking-wider text-white">
                   Entra nell&apos;area riservata
                 </p>
-
                 <div className="reserved-area-entry-visual relative mt-4">
-                  {reservedReadingComplete ? (
-                    <a
-                      href={SITE_CONFIG.reservedAreaUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="reserved-area-image-link group relative block"
-                      title="Clicca sull'immagine per entrare nell'area riservata"
-                      aria-label="Entra nell'area riservata"
-                    >
-                      <img
-                        src="/images/area-riservata-animata-v2.gif"
-                        alt="Area Riservata"
-                        className="w-full h-auto rounded-lg shadow-2xl transition-transform duration-150 group-hover:scale-[1.01]"
-                        draggable={false}
-                      />
-                    </a>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={startReservedAreaReading}
-                      className="reserved-area-image-link group relative block w-full text-left"
-                      title="Prima leggi le istruzioni obbligatorie"
-                      aria-label="Leggi le istruzioni prima di accedere all'area riservata"
-                    >
-                      <img
-                        src="/images/area-riservata-animata-v2.gif"
-                        alt="Area Riservata"
-                        className="w-full h-auto rounded-lg shadow-2xl transition-transform duration-150 group-hover:scale-[1.01]"
-                        draggable={false}
-                      />
-                    </button>
-                  )}
+                  <a
+                    href={SITE_CONFIG.reservedAreaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="reserved-area-image-link group relative block"
+                    title="Clicca sull'immagine per entrare nell'area riservata"
+                    aria-label="Entra nell'area riservata"
+                  >
+                    <img
+                      src="/images/area-riservata-animata-v2.gif"
+                      alt="Area Riservata"
+                      className="w-full h-auto rounded-lg shadow-2xl transition-transform duration-150 group-hover:scale-[1.01]"
+                      draggable={false}
+                    />
+                  </a>
                 </div>
               </div>
             </div>
@@ -602,9 +604,17 @@ function App() {
               <h2 className="text-4xl md:text-5xl font-serif font-bold">WYD Seoul 2027</h2>
               <p className="text-lg text-gray-700 leading-relaxed">
                 La Giornata Mondiale della Gioventù 2027 si svolgerà a Seoul, in Corea del Sud,
-                dal 2 all'8 agosto 2027. Un'esperienza unica di fede, comunità e cultura che
-                riunirà giovani da tutto il mondo per celebrare insieme la propria spiritualità.
+                dal <span className="font-bold text-black">3 all&apos;8 agosto 2027</span>. Per il nostro gruppo del Cammino Neocatecumenale, i momenti centrali saranno la <span className="font-bold text-black">Veglia con il Santo Padre il 7 agosto</span>, la <span className="font-bold text-black">Santa Messa l&apos;8 agosto</span> e, il giorno successivo, l&apos;<span className="font-bold text-black">incontro vocazionale del 9 agosto</span>.
               </p>
+              <div className="rounded-2xl border border-sky-200 bg-sky-50 p-5 text-sky-950">
+                <p className="font-extrabold">Date del viaggio completo ancora indicative</p>
+                <p className="mt-2 leading-relaxed">
+                  Le partenze dall&apos;Italia potranno essere scaglionate tra il <span className="font-bold">30 e il 31 luglio 2027</span>, mentre i rientri potranno essere distribuiti indicativamente tra il <span className="font-bold">10, 11 e 12 agosto</span>, in base alla disponibilità dei voli. Il programma definitivo sarà pubblicato prossimamente.
+                </p>
+                <p className="mt-2 leading-relaxed">
+                  Anche il costo complessivo è ancora in fase di definizione: la quotazione dei voli non è stata ancora confermata e, per i gruppi numerosi, le disponibilità sono particolarmente limitate.
+                </p>
+              </div>
               <p className="text-lg text-gray-700 leading-relaxed">
                 Unisciti a noi in questo straordinario pellegrinaggio che cambierà la tua vita.
                 Scopri la bellezza della cultura coreana mentre approfondisci la tua fede.
@@ -1132,7 +1142,7 @@ function App() {
           <div className="absolute inset-0 bg-black/85 backdrop-blur-sm" aria-hidden="true"></div>
           <div className="relative z-10 w-full max-w-2xl overflow-hidden rounded-3xl border-2 border-amber-400 bg-slate-950 text-white shadow-2xl">
             <div className="border-b border-white/15 px-5 py-4 sm:px-7">
-              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-amber-300">Lettura obbligatoria</p>
+              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-amber-300">Guida</p>
               <h3 className="mt-1 text-2xl font-serif font-bold sm:text-3xl">Leggi con attenzione prima di accedere</h3>
               <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
                 <div
@@ -1167,7 +1177,7 @@ function App() {
                 {reservedReadingStep < RESERVED_AREA_READING_STEPS.length - 1 ? 'HO LETTO — CONTINUA' : 'HO LETTO E CAPITO'}
               </button>
               <p className="mt-3 text-center text-xs leading-relaxed text-white/50">
-                L&apos;accesso all&apos;Area Riservata viene abilitato dopo l&apos;ultimo passaggio.
+                Al termine troverai i pulsanti per leggere le modalità di creazione del profilo e accedere all&apos;Area Riservata.
               </p>
             </div>
           </div>
