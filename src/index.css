@@ -1683,3 +1683,81 @@ body {
     animation: none !important;
   }
 }
+
+/* Modal Area Riservata: resta sopra i widget flottanti e, su cellulare verticale,
+   si compatta in altezza senza uscire dalla finestra. */
+.reserved-modal-layer {
+  z-index: 10000;
+}
+
+.reserved-reading-modal {
+  max-height: calc(100dvh - 1rem);
+  max-width: min(42rem, calc(100vw - 1rem));
+}
+
+@media (max-width: 639px) {
+  .reserved-reading-modal {
+    max-height: calc(100dvh - .75rem);
+  }
+
+  .reserved-reading-header {
+    padding: clamp(.45rem, 1.35dvh, .7rem) 1rem;
+  }
+
+  .reserved-reading-eyebrow {
+    font-size: clamp(.58rem, 1.45dvh, .68rem);
+    line-height: 1.1;
+    letter-spacing: .14em;
+  }
+
+  .reserved-reading-title {
+    margin-top: clamp(.12rem, .45dvh, .25rem);
+    font-size: clamp(1.08rem, 3.15dvh, 1.45rem);
+    line-height: 1.08;
+  }
+
+  .reserved-reading-progress {
+    height: .375rem;
+    margin-top: clamp(.4rem, 1.25dvh, .7rem);
+  }
+
+  .reserved-reading-counter {
+    margin-top: clamp(.25rem, .75dvh, .4rem);
+    font-size: clamp(.66rem, 1.65dvh, .78rem);
+    line-height: 1.2;
+  }
+
+  .reserved-reading-body {
+    padding: clamp(.5rem, 1.45dvh, .8rem) 1rem;
+  }
+
+  .reserved-reading-card {
+    border-radius: .8rem;
+    padding: clamp(.55rem, 1.55dvh, .9rem) 1rem;
+  }
+
+  .reserved-reading-step-title {
+    font-size: clamp(1rem, 2.75dvh, 1.22rem);
+    line-height: 1.15;
+  }
+
+  .reserved-reading-step-text {
+    margin-top: clamp(.35rem, 1dvh, .6rem);
+    font-size: clamp(.78rem, 2.05dvh, .92rem);
+    line-height: 1.38;
+    overflow-wrap: anywhere;
+  }
+
+  .reserved-reading-button {
+    margin-top: clamp(.5rem, 1.45dvh, .8rem);
+    padding: clamp(.62rem, 1.65dvh, .8rem) .85rem;
+    font-size: clamp(.76rem, 1.9dvh, .9rem);
+    line-height: 1.15;
+  }
+
+  .reserved-reading-footer {
+    margin-top: clamp(.3rem, .85dvh, .5rem);
+    font-size: clamp(.6rem, 1.5dvh, .7rem);
+    line-height: 1.25;
+  }
+}

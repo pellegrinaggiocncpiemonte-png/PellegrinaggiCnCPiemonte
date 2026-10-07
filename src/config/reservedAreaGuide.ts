@@ -16,7 +16,7 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
     title: 'Partecipante',
     icon: '🏃',
     description:
-      'È il profilo obbligatorio per chi partecipa personalmente al pellegrinaggio. Devono registrarsi come Partecipante:',
+      'È il profilo obbligatorio per chi partecipa personalmente al pellegrinaggio. L’iscrizione a Korea 2027 deve essere effettuata sempre entrando con il profilo Partecipante, anche quando si possiede anche un profilo aggiuntivo di Accompagnatore / Catechista / Collaboratore o Responsabile di comunità.',
     bullets: [
       'Giovani minori e maggiorenni.',
       'Accompagnatori, catechisti e collaboratori che partecipano al pellegrinaggio.',
@@ -25,25 +25,34 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
       'Presbiteri che partecipano al pellegrinaggio.',
     ],
     note:
-      'Chi partecipa al pellegrinaggio deve sempre risultare registrato anche come Partecipante, anche se ricopre altri ruoli organizzativi.',
+      'Chi partecipa al pellegrinaggio deve sempre risultare registrato come Partecipante. Il profilo Partecipante è quello da usare anche per completare l’iscrizione al pellegrinaggio.',
   },
   {
     id: 'responsabile',
-    title: 'Responsabile',
+    title: 'Responsabile di comunità',
     icon: '🛡️',
     description:
-      'Profilo dedicato al responsabile di una comunità, non al responsabile del pellegrinaggio.',
+      'Questo profilo è riservato esclusivamente ai responsabili di comunità. Non è il profilo del responsabile del pellegrinaggio e non va scelto per altri incarichi.',
     note:
-      'Se il responsabile partecipa anche al pellegrinaggio, deve registrarsi anche come Partecipante. Questo profilo serve alla gestione del gruppo e non sostituisce l’iscrizione personale. Chi si registra come Responsabile potrebbe inoltre essere contattato per una verifica.',
+      'Se scegli di creare il profilo Responsabile di comunità, prima di consentire l’accesso al sistema verrà verificato il ruolo. Se partecipi anche al pellegrinaggio devi avere anche il profilo Partecipante e fare da lì l’iscrizione a Korea 2027.',
   },
   {
     id: 'collaboratore',
-    title: 'Collaboratore / Accompagnatore',
+    title: 'Accompagnatore / Catechista / Collaboratore',
     icon: '🤝',
     description:
-      'Profilo specifico per catechisti e accompagnatori che supportano la gestione organizzativa.',
+      'È il profilo aggiuntivo per accompagnatori, catechisti e collaboratori che svolgono un ruolo di supporto e gestione organizzativa.',
     note:
-      'Attenzione: se ti registri come Collaboratore / Accompagnatore e partecipi al pellegrinaggio, devi registrarti anche come Partecipante. Il profilo organizzativo non sostituisce quello di partecipazione. Chi si registra come Collaboratore potrebbe essere contattato per una verifica.',
+      'Se partecipi al pellegrinaggio devi avere anche il profilo Partecipante, creato con la stessa email e la stessa password. L’iscrizione al pellegrinaggio va sempre effettuata entrando come Partecipante.',
+  },
+  {
+    id: 'presbiteri',
+    title: 'Presbiteri',
+    icon: '⛪',
+    description:
+      'I presbiteri si registrano prima come Partecipanti e, nella sezione Profilo, indicano di essere presbiteri.',
+    note:
+      'Successivamente creano anche il profilo Accompagnatore / Catechista / Collaboratore usando esattamente le stesse credenziali del profilo Partecipante: stessa email e stessa password.',
   },
   {
     id: 'genitore',
@@ -52,16 +61,16 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
     description:
       'Con il profilo Genitore si possono creare i profili dei figli minorenni o maggiorenni, oppure controllare e gestire anche i profili Partecipante dei figli che si sono registrati autonomamente con la propria email.',
     note:
-      'Se il genitore partecipa al pellegrinaggio deve registrarsi anche come Partecipante e/o Collaboratore, in base al ruolo che svolge.',
+      'Se il genitore partecipa al pellegrinaggio deve registrarsi anche come Partecipante e, se svolge un incarico organizzativo, può avere anche il profilo Accompagnatore / Catechista / Collaboratore.',
   },
   {
     id: 'accesso-multiplo',
-    title: 'Accesso multiplo',
+    title: 'Accesso multiplo: come funziona',
     icon: '🔐',
     description:
-      'Quando ci si registra con più profili — ad esempio Genitore, Accompagnatore, Responsabile o Partecipante — utilizzare la stessa email e la stessa password.',
+      'Accesso multiplo significa avere più profili associati alle stesse credenziali. Per creare profili diversi usa sempre la stessa email e la stessa password.',
     note:
-      'All’accesso il sistema chiederà con quale profilo si intende entrare, così è possibile utilizzare più ruoli con le stesse credenziali.',
+      'Quando avrai più profili con la stessa email e password, inserisci le credenziali e richiedi l’accesso: comparirà la scelta del tipo di profilo. Scegli il profilo con cui vuoi entrare e poi accedi alla relativa area.',
   },
   {
     id: 'iphone-safari',
@@ -100,6 +109,6 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
     description:
       'L’Area Riservata è una web app. Sul telefono puoi quindi creare un accesso rapido molto comodo dalla schermata Home.',
     note:
-      'In sintesi: chi partecipa al pellegrinaggio deve sempre registrarsi come Partecipante. I profili Collaboratore / Accompagnatore e Responsabile sono profili aggiuntivi di gestione e non sostituiscono l’iscrizione personale al pellegrinaggio. I presbiteri si registrano come Partecipanti e, solo se necessario, anche come Collaboratori.',
+      'In sintesi: l’iscrizione al pellegrinaggio va sempre fatta con il profilo Partecipante. Accompagnatore / Catechista / Collaboratore e Responsabile di comunità sono profili aggiuntivi e non sostituiscono il profilo Partecipante.',
   },
 ];

@@ -604,17 +604,8 @@ function App() {
               <h2 className="text-4xl md:text-5xl font-serif font-bold">WYD Seoul 2027</h2>
               <p className="text-lg text-gray-700 leading-relaxed">
                 La Giornata Mondiale della Gioventù 2027 si svolgerà a Seoul, in Corea del Sud,
-                dal <span className="font-bold text-black">3 all&apos;8 agosto 2027</span>. Per il nostro gruppo del Cammino Neocatecumenale, i momenti centrali saranno la <span className="font-bold text-black">Veglia con il Santo Padre il 7 agosto</span>, la <span className="font-bold text-black">Santa Messa l&apos;8 agosto</span> e, il giorno successivo, l&apos;<span className="font-bold text-black">incontro vocazionale del 9 agosto</span>.
+                dal <span className="font-bold">3 all&apos;8 agosto 2027</span>. Per il nostro gruppo del Cammino Neocatecumenale, i momenti centrali saranno la <span className="font-bold">Veglia con il Santo Padre il 7 agosto</span>, la <span className="font-bold">Santa Messa l&apos;8 agosto</span> e, il giorno successivo, l&apos;<span className="font-bold">incontro vocazionale del 9 agosto</span>.
               </p>
-              <div className="rounded-2xl border border-sky-200 bg-sky-50 p-5 text-sky-950">
-                <p className="font-extrabold">Date del viaggio completo ancora indicative</p>
-                <p className="mt-2 leading-relaxed">
-                  Le partenze dall&apos;Italia potranno essere scaglionate tra il <span className="font-bold">30 e il 31 luglio 2027</span>, mentre i rientri potranno essere distribuiti indicativamente tra il <span className="font-bold">10, 11 e 12 agosto</span>, in base alla disponibilità dei voli. Il programma definitivo sarà pubblicato prossimamente.
-                </p>
-                <p className="mt-2 leading-relaxed">
-                  Anche il costo complessivo è ancora in fase di definizione: la quotazione dei voli non è stata ancora confermata e, per i gruppi numerosi, le disponibilità sono particolarmente limitate.
-                </p>
-              </div>
               <p className="text-lg text-gray-700 leading-relaxed">
                 Unisciti a noi in questo straordinario pellegrinaggio che cambierà la tua vita.
                 Scopri la bellezza della cultura coreana mentre approfondisci la tua fede.
@@ -914,7 +905,7 @@ function App() {
       ) : null}
 
       {isReservedGuideOpen ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center px-2 py-2 sm:px-4 sm:py-6">
+        <div className="reserved-modal-layer fixed inset-0 flex items-center justify-center px-2 py-2 sm:px-4 sm:py-6">
           <button
             type="button"
             className="absolute inset-0 bg-black/75 backdrop-blur-sm"
@@ -1138,27 +1129,27 @@ function App() {
       </section>
 
       {isReservedReadingOpen ? (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center px-3 py-4 sm:px-4">
+        <div className="reserved-modal-layer fixed inset-0 flex items-center justify-center overflow-hidden px-2 py-2 sm:px-4">
           <div className="absolute inset-0 bg-black/85 backdrop-blur-sm" aria-hidden="true"></div>
-          <div className="relative z-10 w-full max-w-2xl overflow-hidden rounded-3xl border-2 border-amber-400 bg-slate-950 text-white shadow-2xl">
-            <div className="border-b border-white/15 px-5 py-4 sm:px-7">
-              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-amber-300">Guida</p>
-              <h3 className="mt-1 text-2xl font-serif font-bold sm:text-3xl">Leggi con attenzione prima di accedere</h3>
-              <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
+          <div className="reserved-reading-modal relative z-10 flex w-full max-w-2xl flex-col overflow-hidden rounded-2xl border-2 border-amber-400 bg-slate-950 text-white shadow-2xl sm:rounded-3xl">
+            <div className="reserved-reading-header shrink-0 border-b border-white/15 px-4 py-3 sm:px-7 sm:py-4">
+              <p className="reserved-reading-eyebrow text-xs font-extrabold uppercase tracking-[0.18em] text-amber-300">Guida</p>
+              <h3 className="reserved-reading-title mt-1 font-serif text-2xl font-bold leading-tight sm:text-3xl">Leggi con attenzione prima di accedere</h3>
+              <div className="reserved-reading-progress mt-4 h-2 overflow-hidden rounded-full bg-white/10">
                 <div
                   className="h-full rounded-full bg-amber-400 transition-all duration-300"
                   style={{ width: `${((reservedReadingStep + 1) / RESERVED_AREA_READING_STEPS.length) * 100}%` }}
                 ></div>
               </div>
-              <p className="mt-2 text-sm text-white/65">Passaggio {reservedReadingStep + 1} di {RESERVED_AREA_READING_STEPS.length}</p>
+              <p className="reserved-reading-counter mt-2 text-sm text-white/65">Passaggio {reservedReadingStep + 1} di {RESERVED_AREA_READING_STEPS.length}</p>
             </div>
 
-            <div className="px-5 py-7 sm:px-7 sm:py-8">
-              <div className="rounded-2xl border border-white/15 bg-white/5 px-5 py-6 text-left">
-                <p className="text-xl font-extrabold text-amber-200 sm:text-2xl">
+            <div className="reserved-reading-body min-h-0 flex-1 px-5 py-7 sm:px-7 sm:py-8">
+              <div className="reserved-reading-card rounded-2xl border border-white/15 bg-white/5 px-5 py-6 text-left">
+                <p className="reserved-reading-step-title text-xl font-extrabold leading-snug text-amber-200 sm:text-2xl">
                   {RESERVED_AREA_READING_STEPS[reservedReadingStep].title}
                 </p>
-                <p className="mt-4 text-base leading-relaxed text-white/90 sm:text-lg">
+                <p className="reserved-reading-step-text mt-4 text-base leading-relaxed text-white/90 sm:text-lg">
                   {RESERVED_AREA_READING_STEPS[reservedReadingStep].text}
                 </p>
               </div>
@@ -1172,11 +1163,11 @@ function App() {
                     completeReservedAreaReading();
                   }
                 }}
-                className="mt-6 w-full rounded-xl bg-amber-400 px-5 py-4 text-base font-extrabold uppercase tracking-wide text-black shadow-lg transition hover:bg-amber-300 active:scale-[0.99]"
+                className="reserved-reading-button mt-6 w-full rounded-xl bg-amber-400 px-5 py-4 text-base font-extrabold uppercase tracking-wide text-black shadow-lg transition hover:bg-amber-300 active:scale-[0.99]"
               >
                 {reservedReadingStep < RESERVED_AREA_READING_STEPS.length - 1 ? 'HO LETTO — CONTINUA' : 'HO LETTO E CAPITO'}
               </button>
-              <p className="mt-3 text-center text-xs leading-relaxed text-white/50">
+              <p className="reserved-reading-footer mt-3 text-center text-xs leading-relaxed text-white/50">
                 Al termine troverai i pulsanti per leggere le modalità di creazione del profilo e accedere all&apos;Area Riservata.
               </p>
             </div>
@@ -1213,6 +1204,10 @@ function App() {
                 <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
                   <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Intestazione conto</p>
                   <p className="mt-1 font-semibold">COMITATO PELLEGRINAGGI CNC PIEMONTE</p>
+                </div>
+                <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                  <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Indirizzo Comitato</p>
+                  <p className="mt-1 font-semibold">VIA PO, 16 - 10123 TORINO (TO)</p>
                 </div>
                 <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
                   <p className="text-xs font-bold uppercase tracking-wider text-gray-500">IBAN</p>
