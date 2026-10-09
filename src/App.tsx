@@ -87,7 +87,7 @@ const RESERVED_AREA_READING_STEPS = [
   },
   {
     title: '4. Prima rata: rende valida l’iscrizione',
-    text: 'L’iscrizione al pellegrinaggio non è valida senza il versamento della prima rata di 400,00 € per partecipante entro e non oltre il 20 ottobre 2026. La scadenza è inderogabile e la quota serve a bloccare il posto sul volo. Le rate successive saranno comunicate prossimamente.',
+    text: 'L’iscrizione al pellegrinaggio non è valida senza il versamento della prima rata di 400,00 € per partecipante entro e non oltre il 20 ottobre 2026. La scadenza è inderogabile e la quota serve a bloccare il posto sul volo. Dopo aver effettuato il bonifico, salva la ricevuta: dovrai poi caricarla nella sezione “Versamenti” dell’Area Riservata. Le rate successive saranno comunicate prossimamente.',
   },
 ];
 
@@ -275,6 +275,10 @@ function App() {
                 </p>
                 <div className="mt-3 space-y-2 text-sm leading-relaxed text-gray-900 sm:text-base">
                   <p className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2">
+                    <span className="font-extrabold text-amber-900">Partecipanti di 13 e 14 anni:</span>{' '}
+                    il pellegrinaggio è aperto anche ai ragazzi di 13 e 14 anni, a condizione che siano già inseriti in una comunità del Cammino Neocatecumenale. Per situazioni diverse o particolari, inviare una email all&apos;organizzazione all&apos;indirizzo <span className="font-bold">{SITE_CONFIG.email}</span>.
+                  </p>
+                  <p className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2">
                     <span className="font-extrabold text-amber-900">Partecipanti minorenni:</span>{' '}
                     poiché in Corea la maggiore età si raggiunge a 19 anni, anche i partecipanti di 18 anni dovranno presentare il modello firmato dai genitori.
                   </p>
@@ -343,6 +347,9 @@ function App() {
                       </p>
                       <p className="mt-2 text-sm font-semibold leading-relaxed sm:text-base">
                         La data è inderogabile e la quota serve a bloccare il posto sul volo. Senza il versamento entro la scadenza l&apos;iscrizione non può essere considerata completa.
+                      </p>
+                      <p className="mt-2 rounded-lg border border-red-300 bg-white/70 px-3 py-2 text-sm font-bold leading-relaxed text-red-950 sm:text-base">
+                        Dopo aver effettuato il bonifico, salva la ricevuta: sarà necessario caricarla nella sezione <span className="font-extrabold">“Versamenti”</span> dell&apos;Area Riservata.
                       </p>
                       <p className="mt-2 text-sm leading-relaxed sm:text-base">
                         Il costo complessivo del pellegrinaggio e il piano completo delle rate non sono ancora definitivi. Le rate successive saranno comunicate prossimamente.
@@ -438,6 +445,9 @@ function App() {
                     <p className="text-lg font-extrabold text-red-200">4. Versa la prima rata — 400,00 €</p>
                     <p className="mt-2 text-white/90 leading-relaxed">
                       L&apos;iscrizione al pellegrinaggio <span className="font-extrabold text-white">non è valida</span> senza il versamento della prima rata di <span className="font-extrabold text-white">400,00 € per partecipante entro e non oltre il 20 ottobre 2026</span>. La scadenza è inderogabile e la quota serve a bloccare il posto sul volo.
+                    </p>
+                    <p className="mt-2 font-bold leading-relaxed text-amber-200">
+                      Dopo il bonifico, salva la ricevuta: dovrai caricarla nella sezione “Versamenti” dell&apos;Area Riservata.
                     </p>
                   </article>
                 </div>
@@ -1071,6 +1081,9 @@ function App() {
                 <p className="mt-2 text-white/95">
                   Da versare entro e non oltre il <span className="font-extrabold text-white">20 ottobre 2026</span>. La scadenza è inderogabile: la quota serve a bloccare il posto sul volo e senza il versamento l&apos;iscrizione non può essere considerata completa.
                 </p>
+                <p className="mt-3 rounded-xl border border-amber-300/60 bg-amber-300/10 px-3 py-3 font-bold leading-relaxed text-amber-100">
+                  Dopo aver effettuato il bonifico, salva la ricevuta: sarà necessario caricarla nella sezione <span className="font-extrabold text-white">“Versamenti”</span> dell&apos;Area Riservata.
+                </p>
                 <p className="mt-2 text-sm text-white/80">
                   Il costo complessivo e il piano completo delle rate sono ancora in definizione. Le rate successive saranno comunicate prossimamente.
                 </p>
@@ -1113,10 +1126,19 @@ function App() {
               >
                 <div className="space-y-3 border-t border-amber-400/25 px-4 py-4 sm:px-5">
                   <p>
-                    Aggiungere 8,50 € di commissioni per ogni operazione.
+                    Per i bonifici dalla Svizzera aggiungere 8,50 € di commissioni per ogni operazione.
                   </p>
                   <p>
-                    Le ricevute non devono essere inviate via email: vanno caricate esclusivamente tramite l&apos;area personale dell&apos;iscritto oppure tramite il profilo che gestisce i versamenti, come genitore, collaboratore o responsabile.
+                    Se il pagamento parte da un conto in franchi svizzeri (CHF) e l&apos;importo viene convertito in euro, considerare anche 5,00 € per il cambio valuta: in questo caso la cifra complessiva da aggiungere è quindi di <strong>13,50 €</strong> (8,50 € + 5,00 €).
+                  </p>
+                  <p>
+                    Verificare comunque con la propria banca, prima di eseguire il bonifico, eventuali commissioni o costi aggiuntivi applicati.
+                  </p>
+                  <p className="font-semibold text-amber-100">
+                    È importante che l&apos;importo netto effettivamente accreditato sul conto del Comitato corrisponda esattamente alla quota richiesta.
+                  </p>
+                  <p>
+                    Dopo ogni bonifico, salva la ricevuta. Non deve essere inviata via email: va caricata nella sezione “Versamenti” dell&apos;Area Riservata tramite il profilo dell&apos;iscritto oppure tramite il profilo che gestisce i versamenti, come genitore, collaboratore o responsabile.
                   </p>
                   <p>
                     Per problemi tecnici con il bonifico o per richiedere informazioni sulla consegna delle quote in contanti, contattare l&apos;organizzazione.
@@ -1263,15 +1285,15 @@ function App() {
                   <p className="mt-1.5 text-sm leading-relaxed text-gray-800 sm:text-base">{cause}</p>
                   {title.includes('multiplo') ? (
                     <p className="mt-2 text-xs leading-relaxed text-gray-600 sm:text-sm">
-                      Dopo il versamento, caricare la ricevuta tramite l&apos;area riservata specificando i singoli nominativi.
+                      Dopo il versamento, salvare la ricevuta e caricarla nella sezione “Versamenti” dell&apos;Area Riservata specificando i singoli nominativi.
                     </p>
                   ) : null}
                 </article>
               ))}
 
               <div className="space-y-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-3 text-sm leading-relaxed text-amber-950 sm:px-4 sm:py-4 sm:text-base">
-                <p><span className="font-bold">Bonifici dalla Svizzera:</span> aggiungere 8,50 € di commissioni per ogni operazione.</p>
-                <p><span className="font-bold">Ricevute:</span> non inviarle via email. Caricarle esclusivamente tramite l&apos;area personale o tramite il profilo che gestisce i versamenti.</p>
+                <p><span className="font-bold">Bonifici dalla Svizzera:</span> aggiungere 8,50 € di commissioni per ogni operazione. Se il pagamento parte da un conto in franchi svizzeri (CHF) e viene convertito in euro, considerare anche 5,00 € per il cambio valuta: in questo caso la cifra complessiva da aggiungere è <span className="font-bold">13,50 €</span> (8,50 € + 5,00 €). Verificare comunque con la propria banca, prima di eseguire il bonifico, eventuali commissioni o costi aggiuntivi. <span className="font-bold">È importante che l&apos;importo netto effettivamente accreditato sul conto del Comitato corrisponda esattamente alla quota richiesta.</span></p>
+                <p><span className="font-bold">Ricevute:</span> dopo ogni bonifico, salvarle. Non inviarle via email: caricarle nella sezione <span className="font-bold">“Versamenti”</span> dell&apos;Area Riservata tramite il profilo personale o il profilo che gestisce i versamenti.</p>
                 <p><span className="font-bold">Contanti:</span> per problemi tecnici con il bonifico e per ricevere informazioni, contattare l&apos;organizzazione.</p>
               </div>
             </div>

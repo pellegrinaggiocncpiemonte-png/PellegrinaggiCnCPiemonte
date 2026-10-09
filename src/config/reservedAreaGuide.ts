@@ -16,7 +16,7 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
     title: 'Partecipante',
     icon: '🏃',
     description:
-      'È il profilo obbligatorio per chi partecipa personalmente al pellegrinaggio. L’iscrizione a Korea 2027 deve essere effettuata sempre entrando con il profilo Partecipante, anche quando si possiede anche un profilo aggiuntivo di Accompagnatore / Catechista / Collaboratore o Responsabile di comunità.',
+      'È il profilo obbligatorio per chi partecipa personalmente al pellegrinaggio. Anche un Accompagnatore / Catechista / Collaboratore che partecipa deve registrarsi come Partecipante. Il suo profilo Partecipante viene gestito come quello di qualsiasi altro partecipante: per completare l’iscrizione a Korea 2027 deve compilare le sezioni richieste e poi effettuare l’iscrizione nella sezione “Iscrizione Pellegrinaggi”.',
     bullets: [
       'Giovani minori e maggiorenni.',
       'Accompagnatori, catechisti e collaboratori che partecipano al pellegrinaggio.',
@@ -25,7 +25,7 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
       'Presbiteri che partecipano al pellegrinaggio.',
     ],
     note:
-      'Chi partecipa al pellegrinaggio deve sempre risultare registrato come Partecipante. Il profilo Partecipante è quello da usare anche per completare l’iscrizione al pellegrinaggio.',
+      'Chi partecipa al pellegrinaggio deve sempre risultare registrato come Partecipante e completare da questo profilo tutti i passaggi richiesti, esattamente come gli altri partecipanti. Avere anche un profilo Accompagnatore / Catechista / Collaboratore non sostituisce e non completa l’iscrizione al pellegrinaggio.',
   },
   {
     id: 'responsabile',
@@ -41,9 +41,9 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
     title: 'Accompagnatore / Catechista / Collaboratore',
     icon: '🤝',
     description:
-      'È il profilo aggiuntivo per accompagnatori, catechisti e collaboratori che svolgono un ruolo di supporto e gestione organizzativa.',
+      'È un profilo aggiuntivo riservato ad accompagnatori, catechisti e collaboratori. Serve per la gestione e la supervisione di tutti gli iscritti con profilo Partecipante e per le attività organizzative assegnate all’accompagnatore.',
     note:
-      'Se partecipi al pellegrinaggio devi avere anche il profilo Partecipante, creato con la stessa email e la stessa password. L’iscrizione al pellegrinaggio va sempre effettuata entrando come Partecipante.',
+      'Questo profilo non serve per iscrivere se stessi al pellegrinaggio. Se partecipi anche tu, devi creare anche il profilo Partecipante con la stessa email e la stessa password, completare tutte le sezioni richieste come ogni altro partecipante e iscriverti a Korea 2027 entrando come Partecipante.',
   },
   {
     id: 'presbiteri',
@@ -109,6 +109,6 @@ export const RESERVED_AREA_GUIDE_ITEMS: ReservedAreaGuideItem[] = [
     description:
       'L’Area Riservata è una web app. Sul telefono puoi quindi creare un accesso rapido molto comodo dalla schermata Home.',
     note:
-      'In sintesi: l’iscrizione al pellegrinaggio va sempre fatta con il profilo Partecipante. Accompagnatore / Catechista / Collaboratore e Responsabile di comunità sono profili aggiuntivi e non sostituiscono il profilo Partecipante.',
+      'In sintesi: l’iscrizione al pellegrinaggio va sempre fatta e completata con il profilo Partecipante. Il profilo Accompagnatore / Catechista / Collaboratore serve invece alla gestione e supervisione di tutti gli iscritti partecipanti e non sostituisce il proprio profilo Partecipante. Anche Responsabile di comunità è un profilo aggiuntivo.',
   },
 ];
