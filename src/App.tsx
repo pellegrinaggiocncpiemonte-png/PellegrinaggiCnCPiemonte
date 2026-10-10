@@ -276,7 +276,7 @@ function App() {
                 <div className="mt-3 space-y-2 text-sm leading-relaxed text-gray-900 sm:text-base">
                   <p className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2">
                     <span className="font-extrabold text-amber-900">Partecipanti di 13 e 14 anni:</span>{' '}
-                    il pellegrinaggio è aperto anche ai ragazzi di 13 e 14 anni, a condizione che siano già inseriti in una comunità del Cammino Neocatecumenale. Per situazioni diverse o particolari, inviare una email all&apos;organizzazione all&apos;indirizzo <span className="font-bold">{SITE_CONFIG.email}</span>.
+                    il pellegrinaggio è aperto anche ai ragazzi di 13 e 14 anni, a condizione che siano già inseriti in una comunità del Cammino Neocatecumenale. Per situazioni diverse o particolari, inviare una email all&apos;organizzazione all&apos;indirizzo <span className="font-bold break-all sm:break-words">{SITE_CONFIG.email}</span>.
                   </p>
                   <p className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2">
                     <span className="font-extrabold text-amber-900">Partecipanti minorenni:</span>{' '}
