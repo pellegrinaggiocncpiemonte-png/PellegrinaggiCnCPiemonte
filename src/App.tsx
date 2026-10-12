@@ -130,7 +130,10 @@ function App() {
   };
 
   const continueAfterPassportReading = () => {
-    document.getElementById('reserved-area-actions')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const section = document.getElementById('area-riservata');
+    if (section) {
+      window.scrollTo({ top: section.offsetTop - 88, behavior: 'smooth' });
+    }
   };
 
   const completeReservedProfileGuide = () => {
@@ -520,7 +523,7 @@ function App() {
               <div className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 px-5 py-4 text-base md:text-lg leading-relaxed text-white">
                 <p className="font-bold text-amber-200">⚠️ LEGGI CON ATTENZIONE PRIMA DI ACCEDERE</p>
                 <p className="mt-1 text-white/90">
-                  Se premi <span className="font-extrabold text-amber-200">“Area riservata”</span> nel menu, il sito ti accompagna in ordine: prima la guida con i passaggi principali, poi gli <span className="font-extrabold text-amber-200">avvisi sul passaporto</span>, quindi il pulsante <span className="font-extrabold text-amber-200">“LEGGI PRIMA DI REGISTRARTI”</span>. Solo dopo potrai entrare nell&apos;Area Riservata.
+                  Se premi <span className="font-extrabold text-amber-200">“Area riservata”</span> nel menu, il sito ti accompagna in ordine: prima la guida con i passaggi principali, poi gli <span className="font-extrabold text-amber-200">avvisi sul passaporto</span>. Dopo averli confermati tornerai qui, all&apos;inizio della sezione <span className="font-extrabold text-amber-200">Area Riservata</span>, per leggere le altre indicazioni; proseguendo troverai il pulsante <span className="font-extrabold text-amber-200">“LEGGI PRIMA DI REGISTRARTI”</span> e infine l&apos;accesso.
                 </p>
               </div>
 
@@ -1311,7 +1314,7 @@ function App() {
                 {reservedReadingStep < RESERVED_AREA_READING_STEPS.length - 1 ? 'HO LETTO — CONTINUA' : 'HO LETTO E CAPITO'}
               </button>
               <p className="reserved-reading-footer mt-3 text-center text-xs leading-relaxed text-white/50">
-                Al termine verrai portato agli avvisi importanti sul passaporto. Dopo averli letti, continuerai verso “LEGGI PRIMA DI REGISTRARTI” e infine all&apos;accesso.
+                Al termine verrai portato agli avvisi importanti sul passaporto. Dopo averli letti e confermati, tornerai all&apos;inizio della sezione Area Riservata per leggere le altre indicazioni; proseguendo troverai “LEGGI PRIMA DI REGISTRARTI” e infine l&apos;accesso.
               </p>
             </div>
           </div>

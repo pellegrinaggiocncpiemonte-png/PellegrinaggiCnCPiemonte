@@ -1,0 +1,3 @@
+Modifica chirurgica del flusso Area Riservata / Passaporti.
+
+Dopo il pulsante 'HO LETTO GLI AVVISI — CONTINUA' nella sezione Passaporto, il sito torna all'inizio della sezione Area Riservata, non direttamente al pulsante 'LEGGI PRIMA DI REGISTRARTI'. In questo modo l'utente legge prima le altre indicazioni della sezione Area Riservata e, scorrendo, arriva poi a 'LEGGI PRIMA DI REGISTRARTI' e infine all'accesso.
