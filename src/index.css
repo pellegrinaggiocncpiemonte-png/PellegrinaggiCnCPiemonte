@@ -1761,3 +1761,71 @@ body {
     line-height: 1.25;
   }
 }
+
+
+/* Avvisi passaporto Korea 2027: evidenti nel menu e leggibili senza parole spezzate su mobile. */
+@keyframes passport-important-blink {
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, .24); }
+  50% { opacity: .68; transform: scale(1.04); box-shadow: 0 0 0 5px rgba(220, 38, 38, 0); }
+}
+
+.passport-nav-badge,
+.passport-important-badge {
+  animation: passport-important-blink 1.25s ease-in-out infinite;
+}
+
+.passport-alerts,
+.passport-alerts p,
+.passport-alerts li,
+.passport-alerts h2,
+.passport-alerts h3,
+.passport-alerts a,
+.passport-alerts strong {
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: none;
+}
+
+.passport-alert-card,
+.passport-alert-card > *,
+.passport-alert-card div,
+.passport-alert-card p,
+.passport-alert-card li {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.passport-source-link {
+  white-space: normal;
+}
+
+@media (max-width: 639px) {
+  .passport-alerts {
+    overflow-x: hidden;
+  }
+
+  .passport-alert-card {
+    width: 100%;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .passport-alert-card h3 {
+    font-size: 1.08rem;
+    line-height: 1.35;
+  }
+
+  .passport-alert-card p,
+  .passport-alert-card li,
+  .passport-source-link {
+    font-size: .94rem;
+    line-height: 1.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .passport-nav-badge,
+  .passport-important-badge {
+    animation: none !important;
+  }
+}

@@ -41,6 +41,7 @@ const Navigation = () => {
               { id: 'wyd-seul', label: 'WYD Seoul 2027' },
               { id: 'sezione-video', label: 'Video promo JMJ 2027' },
               { id: 'canti-in-coreano', label: 'Canti in coreano' },
+              { id: 'passaporti', label: 'Avvisi passaporto' },
               { id: 'gmg-2027-iscrizione', label: 'Iscrizione JMJ Seoul 2027' },
             ],
           },
@@ -178,6 +179,11 @@ const Navigation = () => {
       {id === 'gmg-2027-iscrizione' ? (
         <span className="shrink-0 animate-pulse rounded-full bg-red-600 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
           APERTE
+        </span>
+      ) : null}
+      {id === 'passaporti' ? (
+        <span className="passport-nav-badge shrink-0 rounded-full bg-red-600 px-1.5 py-0.5 text-[8px] font-extrabold leading-none tracking-wide text-white shadow-sm">
+          IMPORTANTE
         </span>
       ) : null}
       {id === 'telegram' ? (

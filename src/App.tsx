@@ -122,7 +122,21 @@ function App() {
   const completeReservedAreaReading = () => {
     setIsReservedReadingOpen(false);
     window.setTimeout(() => {
-      document.getElementById('reserved-area-actions')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const passportSection = document.getElementById('passaporti');
+      if (passportSection) {
+        window.scrollTo({ top: passportSection.offsetTop - 88, behavior: 'smooth' });
+      }
+    }, 120);
+  };
+
+  const continueAfterPassportReading = () => {
+    document.getElementById('reserved-area-actions')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  const completeReservedProfileGuide = () => {
+    setIsReservedGuideOpen(false);
+    window.setTimeout(() => {
+      document.getElementById('reserved-area-entry')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 120);
   };
 
@@ -276,7 +290,13 @@ function App() {
                 <div className="mt-3 space-y-2 text-sm leading-relaxed text-gray-900 sm:text-base">
                   <p className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2">
                     <span className="font-extrabold text-amber-900">Partecipanti di 13 e 14 anni:</span>{' '}
-                    il pellegrinaggio è aperto anche ai ragazzi di 13 e 14 anni, a condizione che siano già inseriti in una comunità del Cammino Neocatecumenale. Per situazioni diverse o particolari, inviare una email all&apos;organizzazione all&apos;indirizzo <span className="font-bold break-all sm:break-words">{SITE_CONFIG.email}</span>.
+                    il pellegrinaggio è aperto anche ai ragazzi di 13 e 14 anni, a condizione che siano già inseriti in una comunità del Cammino Neocatecumenale. Per situazioni diverse o particolari, inviare una email all&apos;organizzazione all&apos;indirizzo:
+                    <span
+                      className="mt-1 block whitespace-nowrap font-bold"
+                      style={{ fontSize: 'clamp(9.5px, 2.8vw, 16px)', letterSpacing: '-0.02em' }}
+                    >
+                      {SITE_CONFIG.email}
+                    </span>
                   </p>
                   <p className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2">
                     <span className="font-extrabold text-amber-900">Partecipanti minorenni:</span>{' '}
@@ -391,6 +411,97 @@ function App() {
         </div>
       </section>
 
+      <section id="passaporti" className="content-section passport-alerts py-16 md:py-20 bg-slate-950 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.16),transparent_45%)]" aria-hidden="true" />
+        <div className="container relative mx-auto px-4">
+          <div className="mx-auto max-w-5xl">
+            <div className="text-center">
+              <span className="passport-important-badge inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-xs font-extrabold tracking-wider text-white shadow-lg">
+                AVVISO IMPORTANTE
+              </span>
+              <h2 className="mt-4 text-3xl md:text-5xl font-serif font-bold tracking-wide text-white">
+                🛂 PASSAPORTO — KOREA 2027
+              </h2>
+              <div className="mt-4 h-1 w-32 bg-amber-500 mx-auto" />
+              <p className="mt-5 text-base md:text-lg leading-relaxed text-white/85">
+                Leggi con attenzione queste indicazioni prima di completare i dati nell&apos;Area Riservata.
+              </p>
+            </div>
+
+            <div className="mt-9 grid gap-6 lg:grid-cols-2">
+              <article className="passport-alert-card rounded-3xl border-2 border-amber-400/70 bg-white px-5 py-6 shadow-2xl sm:px-7 sm:py-8">
+                <h3 className="text-xl sm:text-2xl font-extrabold leading-snug text-slate-950">
+                  🛂 IMPORTANTE – Validità del passaporto per Korea 2027
+                </h3>
+                <div className="mt-5 space-y-4 text-[15px] sm:text-base leading-relaxed text-slate-800">
+                  <p>
+                    Per entrare in Corea del Sud, <strong>non è sufficiente che il passaporto sia valido durante il viaggio</strong>.
+                  </p>
+                  <p>
+                    Secondo le attuali indicazioni della Farnesina, per i cittadini italiani che viaggiano senza visto è richiesta una <strong>validità residua del passaporto di almeno 3 mesi</strong>.
+                  </p>
+                  <p>
+                    Per maggiore sicurezza, considerando eventuali scali internazionali, richieste delle compagnie aeree o imprevisti, <strong>si raccomanda una validità residua di almeno 6 mesi dalla data di rientro</strong>.
+                  </p>
+                  <p>
+                    Per il pellegrinaggio <strong>Korea 2027</strong>, considerando il rientro entro il 12 agosto 2027:
+                  </p>
+                  <ul className="list-disc space-y-2 pl-5">
+                    <li><strong>Scadenza minima consigliata:</strong> 12 febbraio 2028 (6 mesi).</li>
+                    <li>Chi ha un passaporto con scadenza precedente è invitato a verificarne i requisiti ed eventualmente provvedere al rinnovo.</li>
+                  </ul>
+                  <p>
+                    <strong>Attenzione:</strong> per i partecipanti con cittadinanza diversa da quella italiana potrebbero essere previste condizioni differenti.
+                  </p>
+                  <p>Le disposizioni saranno soggette a verifica prima della partenza.</p>
+                  <p className="pt-1 font-semibold">
+                    Fonte ufficiale:{' '}
+                    <a
+                      href="https://www.viaggiaresicuri.it/find-country/country/KOR"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="passport-source-link text-blue-700 underline decoration-2 underline-offset-2 hover:text-blue-900"
+                    >
+                      Farnesina – Viaggiare Sicuri, Corea del Sud
+                    </a>
+                  </p>
+                </div>
+              </article>
+
+              <article className="passport-alert-card rounded-3xl border-2 border-red-400/70 bg-white px-5 py-6 shadow-2xl sm:px-7 sm:py-8">
+                <h3 className="text-xl sm:text-2xl font-extrabold leading-snug text-slate-950">
+                  🛂 IMPORTANTE – Inserimento dati del passaporto
+                </h3>
+                <div className="mt-5 space-y-4 text-[15px] sm:text-base leading-relaxed text-slate-800">
+                  <p>
+                    Per una corretta organizzazione del pellegrinaggio <strong>Korea 2027</strong>, invitiamo tutti i partecipanti a inserire quanto prima i dati del proprio passaporto nell&apos;<strong>Area Riservata</strong>.
+                  </p>
+                  <p className="rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 font-extrabold text-slate-950">
+                    Prima vengono inseriti i dati, meglio sarà possibile organizzare e gestire le prenotazioni dei voli e le pratiche di viaggio.
+                  </p>
+                  <p>
+                    Si raccomanda pertanto di provvedere il prima possibile e <strong>comunque non oltre il 30 aprile 2027</strong>.
+                  </p>
+                  <p>
+                    Chi deve richiedere o rinnovare il passaporto è invitato ad attivarsi tempestivamente, considerando i tempi necessari per il rilascio.
+                  </p>
+                  <p className="font-bold text-slate-950">
+                    La collaborazione di tutti è fondamentale per evitare ritardi o difficoltà nell&apos;organizzazione del viaggio.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={continueAfterPassportReading}
+                  className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-amber-400 px-5 py-3 text-center text-sm sm:text-base font-extrabold text-black shadow-lg transition-transform hover:scale-[1.02] hover:bg-amber-300 active:scale-[.98]"
+                >
+                  HO LETTO GLI AVVISI — CONTINUA
+                </button>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="area-riservata" className="content-section section-private py-20 bg-black relative">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-8">
@@ -409,7 +520,7 @@ function App() {
               <div className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 px-5 py-4 text-base md:text-lg leading-relaxed text-white">
                 <p className="font-bold text-amber-200">⚠️ LEGGI CON ATTENZIONE PRIMA DI ACCEDERE</p>
                 <p className="mt-1 text-white/90">
-                  Se arrivi a questa sezione dal menu <span className="font-extrabold text-amber-200">“Area riservata”</span>, leggerai prima una breve guida con i passaggi principali. Poi potrai usare <span className="font-extrabold text-amber-200">“LEGGI PRIMA DI REGISTRARTI”</span> oppure <span className="font-extrabold text-amber-200">“ACCEDI”</span>.
+                  Se premi <span className="font-extrabold text-amber-200">“Area riservata”</span> nel menu, il sito ti accompagna in ordine: prima la guida con i passaggi principali, poi gli <span className="font-extrabold text-amber-200">avvisi sul passaporto</span>, quindi il pulsante <span className="font-extrabold text-amber-200">“LEGGI PRIMA DI REGISTRARTI”</span>. Solo dopo potrai entrare nell&apos;Area Riservata.
                 </p>
               </div>
 
@@ -472,7 +583,7 @@ function App() {
                 </div>
               </div>
 
-              <div className="w-full max-w-md">
+              <div id="reserved-area-entry" className="w-full max-w-md">
                 <p className="reserved-area-entry-title text-center font-serif font-bold tracking-wider text-white">
                   Entra nell&apos;area riservata
                 </p>
@@ -973,6 +1084,16 @@ function App() {
                 ))}
               </div>
             </div>
+
+            <div className="shrink-0 border-t border-gray-200 bg-white px-3 py-3 sm:px-5 sm:py-4">
+              <button
+                type="button"
+                onClick={completeReservedProfileGuide}
+                className="w-full rounded-xl bg-amber-400 px-5 py-3.5 text-sm font-extrabold uppercase tracking-wide text-black shadow-lg transition hover:bg-amber-300 active:scale-[0.99] sm:text-base"
+              >
+                HO LETTO — VAI ALL&apos;ACCESSO
+              </button>
+            </div>
           </div>
         </div>
       ) : null}
@@ -1190,7 +1311,7 @@ function App() {
                 {reservedReadingStep < RESERVED_AREA_READING_STEPS.length - 1 ? 'HO LETTO — CONTINUA' : 'HO LETTO E CAPITO'}
               </button>
               <p className="reserved-reading-footer mt-3 text-center text-xs leading-relaxed text-white/50">
-                Al termine troverai i pulsanti per leggere le modalità di creazione del profilo e accedere all&apos;Area Riservata.
+                Al termine verrai portato agli avvisi importanti sul passaporto. Dopo averli letti, continuerai verso “LEGGI PRIMA DI REGISTRARTI” e infine all&apos;accesso.
               </p>
             </div>
           </div>
