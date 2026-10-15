@@ -1,0 +1,34 @@
+CORRETTO 36 - 15/10/2026
+
+Modifiche richieste applicate senza intervenire sulle altre funzioni del sito:
+
+1) CANTI IN COREANO
+- Aggiornato "Benedetta sei tu, Maria" con il nuovo testo/accordi fornito.
+- Inseriti i testi/accordi forniti per:
+  • Andate ed annunziate ai miei fratelli
+  • Gerusalemme ricostruita
+  • Guardate come è bello
+  • Le onde della morte mi avvolgevano
+  • Salve Regina dei cieli
+- "Una donna vestita di sole" resta indicata come TESTO - IN ARRIVO.
+- Il video di "Andate ed annunziate ai miei fratelli" resta VIDEO - IN ARRIVO.
+
+2) AREA RISERVATA
+- Aggiornato il collegamento a: https://cnc-ios-push-418227988544.web.app/
+- Aggiunta, prima dell'accesso, una nota visibile con rimando alle istruzioni di installazione su iOS e Android.
+
+3) INSTALLAZIONE WEB APP E NOTIFICHE
+- Rimossa dal sito la sezione Telegram e i relativi richiami nel menu/header/footer.
+- Al suo posto inserita la sezione "Installa l'Area Riservata sul cellulare".
+- Spiegato che la web app può essere usata anche senza installazione.
+- Spiegato che, installandola, si ottiene l'icona sulla Home e dopo il login si possono attivare le notifiche push.
+- Inseriti loghi/indicatori iOS e Android.
+- Inseriti due video tutorial locali: iOS e Android.
+
+4) WHATSAPP
+- Aggiunto un pulsante separato per entrare nel gruppo WhatsApp partecipanti:
+  https://chat.whatsapp.com/JZf6cGEv5I3Icd948kE3Bf?mode=gi_t
+- Specificato che il gruppo WhatsApp è separato dalle notifiche push della web app.
+
+VERIFICA
+- Controllo TypeScript completato senza errori (tsc --noEmit).

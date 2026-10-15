@@ -1,4 +1,4 @@
-import { Mail, Phone, Menu, X, MessageCircle, ExternalLink, ChevronDown, Send } from 'lucide-react';
+import { Mail, Phone, Menu, X, MessageCircle, ExternalLink, ChevronDown, Smartphone } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { QUICK_ACTIONS, SITE_CONFIG } from '../config/siteConfig';
 
@@ -48,10 +48,10 @@ const Navigation = () => {
         ],
       },
       {
-        id: 'telegram',
-        label: 'Telegram',
+        id: 'installa-app',
+        label: 'App sul cellulare',
         type: 'link',
-        items: [{ id: 'telegram', label: 'Telegram' }],
+        items: [{ id: 'installa-app', label: 'App sul cellulare' }],
       },
       {
         id: 'donazioni',
@@ -186,8 +186,8 @@ const Navigation = () => {
           IMPORTANTE
         </span>
       ) : null}
-      {id === 'telegram' ? (
-        <span className="shrink-0 animate-pulse rounded-full bg-sky-500 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
+      {id === 'installa-app' ? (
+        <span className="shrink-0 animate-pulse rounded-full bg-emerald-600 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
           NUOVO
         </span>
       ) : null}
@@ -260,13 +260,13 @@ const Navigation = () => {
           key={action.id}
           onClick={() => scrollToSection(action.targetId)}
           className={`relative ${wrapperClass}`}
-          aria-label="Vai alla sezione Telegram"
+          aria-label="Vai alle istruzioni per installare la web app"
           title={action.label}
         >
-          <span className={`absolute animate-pulse rounded-full bg-sky-500 font-bold leading-none text-white shadow-md ${mobile ? '-right-0.5 -top-1 min-w-[13px] px-1 py-0.5 text-[8px]' : '-right-1 -top-2 px-1.5 py-0.5 text-[8px]'}`}>
+          <span className={`absolute animate-pulse rounded-full bg-emerald-600 font-bold leading-none text-white shadow-md ${mobile ? '-right-0.5 -top-1 min-w-[13px] px-1 py-0.5 text-[8px]' : '-right-1 -top-2 px-1.5 py-0.5 text-[8px]'}`}>
             {mobile ? '!' : 'NUOVO'}
           </span>
-          <Send size={mobile ? 18 : 20} className={iconClass} />
+          <Smartphone size={mobile ? 18 : 20} className={iconClass} />
           <span className={captionClass}>{action.label}</span>
         </button>
       );

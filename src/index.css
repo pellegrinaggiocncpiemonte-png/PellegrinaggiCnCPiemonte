@@ -864,7 +864,7 @@ body.cinematic-intro-active iframe[title*="chat" i] {
 .theme-verso-la-luce #giorni-alla-partenza,
 .theme-verso-la-luce #wyd-seul,
 .theme-verso-la-luce #sezione-video,
-.theme-verso-la-luce #telegram,
+.theme-verso-la-luce #installa-app,
 .theme-verso-la-luce #gmg-2027-iscrizione,
 .theme-verso-la-luce #area-riservata,
 .theme-verso-la-luce #donazioni {
@@ -900,18 +900,18 @@ body.cinematic-intro-active iframe[title*="chat" i] {
 .theme-verso-la-luce #donazioni h2 { color: #fff; }
 .theme-verso-la-luce #wyd-seul > .container > .grid > div:first-child h2 { color: #fff; }
 .theme-verso-la-luce #wyd-seul > .container > .grid > div:first-child p { color: rgba(232,242,255,.84); }
-.theme-verso-la-luce #telegram > .container > .max-w-6xl > .text-center h2,
+.theme-verso-la-luce #installa-app > .container > .max-w-6xl > .text-center h2,
 .theme-verso-la-luce #gmg-2027-iscrizione > .container > .max-w-5xl > .text-center h2 { color: #fff; }
-.theme-verso-la-luce #telegram > .container > .max-w-6xl > .text-center p { color: rgba(232,242,255,.82); }
+.theme-verso-la-luce #installa-app > .container > .max-w-6xl > .text-center p { color: rgba(232,242,255,.82); }
 
 /* Le schede originali rimangono chiare: testo scuro e leggibile. */
-.theme-verso-la-luce #telegram .bg-white,
+.theme-verso-la-luce #installa-app .bg-white,
 .theme-verso-la-luce #gmg-2027-iscrizione .bg-white {
   color: #111827;
   border-color: rgba(151,177,208,.42);
   box-shadow: 0 28px 76px rgba(0,0,0,.3), 0 0 34px rgba(46,120,203,.08);
 }
-.theme-verso-la-luce #telegram .bg-sky-50 { background: #f0f9ff; }
+.theme-verso-la-luce #installa-app .bg-sky-50 { background: #f0f9ff; }
 .theme-verso-la-luce #gmg-2027-iscrizione .bg-amber-50 { background: #fffbeb; color: #451a03; }
 .theme-verso-la-luce #wyd-seul img,
 .theme-verso-la-luce #area-riservata img { filter: drop-shadow(0 20px 48px rgba(25,99,179,.28)); }
@@ -1390,7 +1390,7 @@ body {
 }
 
 .section-registration > .container > div > .bg-white,
-.section-telegram > .container > div > .bg-white {
+.section-app-install > .container > div > .bg-white {
   border: 1px solid rgba(189, 214, 241, .24) !important;
   border-radius: 2rem !important;
   background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(241,247,253,.95)) !important;
@@ -1451,7 +1451,7 @@ body {
   letter-spacing: .24em;
 }
 
-.section-telegram .rounded-\[2rem\] {
+.section-app-install .rounded-\[2rem\] {
   border-radius: 50% !important;
   box-shadow: 0 18px 55px rgba(14, 154, 219, .2);
 }
@@ -1547,7 +1547,7 @@ body {
   }
 
   .section-registration > .container > div > .bg-white,
-  .section-telegram > .container > div > .bg-white {
+  .section-app-install > .container > div > .bg-white {
     border-radius: 1.4rem !important;
     padding: 1.25rem !important;
   }

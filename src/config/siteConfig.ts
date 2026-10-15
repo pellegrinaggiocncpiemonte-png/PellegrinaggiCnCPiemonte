@@ -3,8 +3,12 @@ export const SITE_CONFIG = {
   browserOgTitle: 'Pellegrinaggi CnC Piemonte',
   heroTitleLines: ['Pellegrinaggi', 'CnC', 'Piemonte - Svizzera'],
   email: 'pellegrinaggio.cnc.piemonte@gmail.com',
-  reservedAreaUrl:
-    'https://script.google.com/macros/s/AKfycbxoay9uqD-q6EaLwTHJm119BJ2XZbaMcg63l1PH5EJMQfrr-AUOjph2E0Tv9QZIU74b/exec',
+  reservedAreaUrl: 'https://cnc-ios-push-418227988544.web.app/',
+  whatsappGroupUrl: 'https://chat.whatsapp.com/JZf6cGEv5I3Icd948kE3Bf?mode=gi_t',
+  iosTutorialUrl: '/tutorial/tutorial-ios.mp4',
+  iosGuideUrl: '/tutorial/guida-ios.pdf',
+  androidTutorialUrl: '/tutorial/tutorial-android.mp4',
+  androidGuideUrl: '/tutorial/guida-android.pdf',
   assistanceUrl: 'https://tawk.to/chat/65fdae1ba0c6737bd123b4bd/1hpjf07eo',
   contactPeople: [
     {
@@ -45,10 +49,10 @@ export const QUICK_ACTIONS = [
     href: SITE_CONFIG.reservedAreaUrl,
   },
   {
-    id: 'telegram',
-    label: 'Telegram',
+    id: 'installa-app',
+    label: 'Installa app',
     type: 'section' as const,
-    targetId: 'telegram',
+    targetId: 'installa-app',
   },
   {
     id: 'contact',

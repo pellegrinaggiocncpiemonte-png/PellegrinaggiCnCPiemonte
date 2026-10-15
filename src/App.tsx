@@ -1,5 +1,5 @@
 import Navigation from './components/Navigation';
-import { ChevronDown, FileText, Landmark, Play, X } from 'lucide-react';
+import { Bell, ChevronDown, FileText, Landmark, Play, Smartphone, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import FlipCountdown from './components/FlipCountdown';
 import { SITE_CONFIG } from './config/siteConfig';
@@ -15,6 +15,12 @@ type KoreanSong = {
   note?: string;
   videoSrc?: string;
   sheetSrc?: string;
+};
+
+type TutorialViewer = {
+  type: 'video' | 'pdf';
+  title: string;
+  src: string;
 };
 
 const getGoogleDrivePreviewUrl = (url: string) => {
@@ -42,29 +48,34 @@ const KOREAN_SONGS: KoreanSong[] = [
     titleIt: 'Le onde della morte mi avvolgevano',
     titleKr: '죽음의 물결이 나를 에워쌌네',
     videoSrc: 'https://drive.google.com/file/d/1bdP3iOYPpwH9OElYkkFr3vUFL6Vs9KB7/view?usp=sharing',
+    sheetSrc: '/canti/le-onde-della-morte-mi-avvolgevano-testo-accordi.png',
   },
   {
     id: 4,
     titleIt: 'Guardate come è bello',
     titleKr: '보라, 얼마나 아름다운가',
     videoSrc: 'https://drive.google.com/file/d/17Cu2oZWRT_qLxq3j93MRWtbQELjgQxlg/view?usp=sharing',
+    sheetSrc: '/canti/guardate-come-e-bello-testo-accordi.png',
   },
   {
     id: 5,
     titleIt: 'Gerusalemme ricostruita',
     titleKr: '재건된 예루살렘',
     videoSrc: 'https://drive.google.com/file/d/1S6a4PqvvlpTc_pMUK7hIiN2r74NLWfK_/view?usp=sharing',
+    sheetSrc: '/canti/gerusalemme-ricostruita-testo-accordi.png',
   },
   {
     id: 6,
     titleIt: 'Andate ed annunziate ai miei fratelli',
     titleKr: '가서 내 형제들에게 전하여라',
+    sheetSrc: '/canti/andate-ed-annunziate-ai-miei-fratelli-testo-accordi.png',
   },
   {
     id: 7,
     titleIt: 'Salve Regina dei cieli',
     titleKr: '하늘의 모후님',
     videoSrc: 'https://drive.google.com/file/d/1dx3jsOhpjlw-kNExA8q25tgIVHQue3yH/view?usp=sharing',
+    sheetSrc: '/canti/salve-regina-dei-cieli-testo-accordi.png',
   },
 ];
 
@@ -96,14 +107,12 @@ function App() {
   const [isReservedGuideOpen, setIsReservedGuideOpen] = useState(false);
   const [isReservedReadingOpen, setIsReservedReadingOpen] = useState(false);
   const [reservedReadingStep, setReservedReadingStep] = useState(0);
-  const [isTelegramGuideOpen, setIsTelegramGuideOpen] = useState(false);
-  const [isTelegramDetailsOpen, setIsTelegramDetailsOpen] = useState(false);
   const [isBankDetailsOpen, setIsBankDetailsOpen] = useState(false);
   const [isPaymentInstructionsOpen, setIsPaymentInstructionsOpen] = useState(false);
   const [isPaymentNoticeOpen, setIsPaymentNoticeOpen] = useState(false);
   const [openVideoId, setOpenVideoId] = useState<number | null>(1);
-  const [comingSoonKey, setComingSoonKey] = useState<string | null>(null);
   const [songViewer, setSongViewer] = useState<{ type: 'video' | 'sheet'; title: string; src: string } | null>(null);
+  const [tutorialViewer, setTutorialViewer] = useState<TutorialViewer | null>(null);
   const [sheetZoom, setSheetZoom] = useState(1);
   const sheetViewportRef = useRef<HTMLDivElement | null>(null);
   const sheetPointersRef = useRef(new Map<number, { x: number; y: number }>());
@@ -158,19 +167,18 @@ function App() {
     };
   }, [isReservedReadingOpen]);
 
-  const showComingSoon = (key: string) => {
-    setComingSoonKey(key);
-    window.setTimeout(() => {
-      setComingSoonKey((current) => (current === key ? null : current));
-    }, 2000);
-  };
+  useEffect(() => {
+    if (!tutorialViewer) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [tutorialViewer]);
 
   const openSongViewer = (type: 'video' | 'sheet', song: KoreanSong) => {
     const src = type === 'video' ? song.videoSrc : song.sheetSrc;
-    if (!src) {
-      showComingSoon(`song-${song.id}-${type}`);
-      return;
-    }
+    if (!src) return;
     setSheetZoom(1);
     sheetPointersRef.current.clear();
     sheetPinchStartRef.current = null;
@@ -586,6 +594,24 @@ function App() {
                 </div>
               </div>
 
+              <div className="w-full max-w-2xl rounded-2xl border border-emerald-400/60 bg-emerald-500/10 px-4 py-4 text-center text-white sm:px-5">
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  <img src="/images/ios.jpg" alt="iOS" className="h-10 w-10 rounded-xl bg-white object-contain p-1 shadow-sm" />
+                  <img src="/images/android.jpg" alt="Android" className="h-10 w-10 rounded-xl bg-white object-contain p-1 shadow-sm" />
+                  <p className="font-extrabold text-emerald-200">Puoi installare l&apos;Area Riservata sul cellulare</p>
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-white/90 sm:text-base">
+                  Avrai l&apos;icona sulla schermata Home e, dopo l&apos;accesso, potrai attivare le notifiche push. Se preferisci, puoi comunque continuare a usarla dal browser senza installarla.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => document.getElementById('installa-app')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  className="mt-3 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-emerald-700 sm:text-base"
+                >
+                  <Smartphone size={18} /> Vedi istruzioni iOS e Android
+                </button>
+              </div>
+
               <div id="reserved-area-entry" className="w-full max-w-md">
                 <p className="reserved-area-entry-title text-center font-serif font-bold tracking-wider text-white">
                   Entra nell&apos;area riservata
@@ -613,110 +639,126 @@ function App() {
         </div>
       </section>
 
-      <section id="telegram" className="content-section section-telegram py-20 bg-stone-100">
+      <section id="installa-app" className="content-section section-app-install py-20 bg-stone-100">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="max-w-[92vw] mx-auto px-4 text-center font-serif font-bold uppercase leading-[0.95] tracking-tight text-[clamp(1.7rem,6.2vw,3.2rem)] sm:text-[clamp(2.8rem,7vw,5rem)] mb-4">
-                <span className="block whitespace-nowrap">RICEVI</span>
-                <span className="block whitespace-nowrap">COMUNICAZIONI</span>
-                <span className="block whitespace-nowrap">SU TELEGRAM</span>
+          <div className="mx-auto max-w-6xl">
+            <div className="text-center mb-10">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-lg">
+                <Smartphone size={30} />
+              </div>
+              <h2 className="mx-auto max-w-4xl font-serif text-3xl font-bold uppercase leading-tight text-black sm:text-4xl md:text-5xl">
+                Installa l&apos;Area Riservata sul cellulare
               </h2>
-              <span className="inline-flex animate-pulse rounded-full bg-sky-500 px-3 py-1 text-xs font-bold tracking-wider text-white shadow-lg">
-                ATTIVA TELEGRAM
+              <span className="mt-4 inline-flex animate-pulse rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold tracking-wider text-white shadow-lg">
+                APP + NOTIFICHE PUSH
               </span>
               <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
-              <p className="mt-6 text-lg md:text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-                Servizio riservato agli utenti registrati all&apos;area riservata.
-                Le comunicazioni dell&apos;organizzazione potranno arrivare su Telegram tramite il bot dedicato.
+              <p className="mx-auto mt-6 max-w-4xl text-lg leading-relaxed text-gray-700 md:text-xl">
+                L&apos;Area Riservata è una web app: puoi continuare a utilizzarla normalmente anche dal browser senza installarla. Installandola, però, avrai l&apos;icona direttamente sul cellulare e, dopo l&apos;accesso, potrai attivare le notifiche push come in una normale app.
+              </p>
+              <p className="mx-auto mt-3 max-w-4xl text-base font-semibold leading-relaxed text-gray-800 md:text-lg">
+                Questo sistema è stato introdotto per avere un canale diretto e affidabile per la consegna delle comunicazioni importanti dell&apos;organizzazione.
               </p>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 md:p-12">
-              <div className="grid lg:grid-cols-[220px,1fr] gap-8 lg:gap-12 items-center">
-                <div className="flex justify-center lg:justify-start">
-                  <div className="rounded-[2rem] bg-sky-50 border border-sky-100 p-5 shadow-sm">
-                    <img
-                      src="/images/telegram-app.jpg"
-                      alt="Logo Telegram"
-                      className="w-36 h-36 sm:w-40 sm:h-40 object-contain"
-                    />
+            <div className="grid gap-6 lg:grid-cols-2">
+              <article className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xl sm:p-8">
+                <div className="flex items-center gap-4">
+                  <img src="/images/ios.jpg" alt="Logo iOS" className="h-16 w-16 shrink-0 rounded-2xl bg-white object-contain p-1 shadow-sm sm:h-20 sm:w-20" />
+                  <div>
+                    <p className="text-2xl font-serif font-bold text-black">iPhone / iPad</p>
+                    <p className="text-sm font-semibold text-gray-500">Installa da Safari</p>
                   </div>
                 </div>
+                <ol className="mt-6 space-y-3 text-left text-base leading-relaxed text-gray-700">
+                  <li><span className="font-bold text-black">1.</span> Apri l&apos;Area Riservata con <span className="font-bold">Safari</span>.</li>
+                  <li><span className="font-bold text-black">2.</span> Tocca <span className="font-bold">Condividi</span> e scegli <span className="font-bold">“Aggiungi alla schermata Home”</span>.</li>
+                  <li><span className="font-bold text-black">3.</span> Lascia attivo <span className="font-bold">“Apri come app web”</span> e conferma con <span className="font-bold">“Aggiungi”</span>.</li>
+                  <li><span className="font-bold text-black">4.</span> Apri l&apos;icona dalla Home, accedi e <span className="font-bold">attiva le notifiche</span> quando richiesto.</li>
+                </ol>
+                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => setTutorialViewer({ type: 'video', title: 'Video tutorial iOS', src: SITE_CONFIG.iosTutorialUrl })}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-black px-5 py-4 font-bold text-white transition-colors hover:bg-gray-800"
+                  >
+                    <Play size={19} /> Guarda video
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTutorialViewer({ type: 'pdf', title: 'Guida iOS passo passo', src: SITE_CONFIG.iosGuideUrl })}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-black bg-white px-5 py-4 font-bold text-black transition-colors hover:bg-gray-100"
+                  >
+                    <FileText size={19} /> Apri guida PDF
+                  </button>
+                </div>
+              </article>
 
-                <div className="space-y-6 text-center lg:text-left">
-                  <div className="space-y-3">
-                    <div className="flex flex-col items-center gap-3 lg:items-start">
-                      <p className="text-2xl md:text-3xl font-serif font-bold text-black">
-                        Solo per utenti registrati all&apos;area riservata
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => setIsTelegramDetailsOpen((prev) => !prev)}
-                        aria-expanded={isTelegramDetailsOpen}
-                        aria-controls="telegram-details-content"
-                        aria-label={isTelegramDetailsOpen ? 'Nascondi dettagli Telegram' : 'Mostra dettagli Telegram'}
-                        title={isTelegramDetailsOpen ? 'Nascondi dettagli' : 'Mostra dettagli'}
-                        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-800 shadow-sm transition-colors hover:bg-gray-50"
-                      >
-                        <ChevronDown
-                          className={`h-5 w-5 transition-transform duration-300 ${isTelegramDetailsOpen ? 'rotate-180' : ''}`}
-                        />
-                      </button>
-                    </div>
-
-                    <div
-                      id="telegram-details-content"
-                      className={`overflow-hidden transition-all duration-300 ease-in-out ${isTelegramDetailsOpen ? 'max-h-[900px] opacity-100 pt-1' : 'max-h-0 opacity-0'}`}
-                    >
-                      <div className="space-y-3">
-                        <p className="text-lg text-gray-700 leading-relaxed">
-                          Dopo la registrazione all&apos;area riservata, per poter ricevere anche le notifiche su Telegram,
-                          sarà prima necessario attendere che <span className="font-semibold text-black">l&apos;amministrazione attivi il tuo link personale Telegram</span>.
-                          Per questo motivo, dovrai entrare nella sezione
-                          <span className="font-semibold text-black"> “Ricevi notifiche Telegram”</span> presente nel tuo profilo e verificare se il collegamento è stato attivato.
-                          Quando il link sarà disponibile, potrai cliccarlo direttamente dalla sezione: si aprirà l&apos;app Telegram,
-                          che dovrà essere già installata sul tuo cellulare. All&apos;interno di Telegram dovrai premere
-                          <span className="font-semibold text-black"> Start</span> una sola volta. Poi torna nella sezione Ricevi notifiche Telegram dell&apos;area riservata e premi su
-                          <span className="font-semibold text-black"> Verifica collegamento</span>. Se tutto è corretto, vedrai in verde
-                          <span className="font-semibold text-green-700"> “Notifiche Telegram attivate correttamente.”</span>.
-                        </p>
-                        <p className="text-base text-gray-600 leading-relaxed">
-                          In caso di messaggi particolarmente lunghi, il testo completo resterà leggibile
-                          all&apos;interno dell&apos;area riservata.
-                        </p>
-                      </div>
-                    </div>
+              <article className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xl sm:p-8">
+                <div className="flex items-center gap-4">
+                  <img src="/images/android.jpg" alt="Logo Android" className="h-16 w-16 shrink-0 rounded-2xl bg-white object-contain p-1 shadow-sm sm:h-20 sm:w-20" />
+                  <div>
+                    <p className="text-2xl font-serif font-bold text-black">Android</p>
+                    <p className="text-sm font-semibold text-gray-500">Installa da Chrome</p>
                   </div>
+                </div>
+                <ol className="mt-6 space-y-3 text-left text-base leading-relaxed text-gray-700">
+                  <li><span className="font-bold text-black">1.</span> Apri l&apos;Area Riservata con <span className="font-bold">Chrome</span>.</li>
+                  <li><span className="font-bold text-black">2.</span> Tocca il menu <span className="font-bold">⋮</span> e scegli <span className="font-bold">“Installa app”</span> oppure <span className="font-bold">“Aggiungi a schermata Home”</span>.</li>
+                  <li><span className="font-bold text-black">3.</span> Conferma l&apos;installazione e apri la nuova icona dalla schermata Home.</li>
+                  <li><span className="font-bold text-black">4.</span> Accedi con le tue credenziali e <span className="font-bold">attiva le notifiche</span> quando richiesto.</li>
+                </ol>
+                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => setTutorialViewer({ type: 'video', title: 'Video tutorial Android', src: SITE_CONFIG.androidTutorialUrl })}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-4 font-bold text-white transition-colors hover:bg-emerald-700"
+                  >
+                    <Play size={19} /> Guarda video
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTutorialViewer({ type: 'pdf', title: 'Guida Android passo passo', src: SITE_CONFIG.androidGuideUrl })}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-emerald-600 bg-white px-5 py-4 font-bold text-emerald-800 transition-colors hover:bg-emerald-50"
+                  >
+                    <FileText size={19} /> Apri guida PDF
+                  </button>
+                </div>
+              </article>
+            </div>
 
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                    <button
-                      type="button"
-                      onClick={() => setIsTelegramGuideOpen(true)}
-                      className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
-                    >
-                      Istruzioni
-                    </button>
-                    <a
-                      href="https://telegram.org/apps?setln=it"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center bg-sky-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-sky-600 transition-colors"
-                    >
-                      Scarica Telegram
-                    </a>
-                    <a
-                      href={SITE_CONFIG.reservedAreaUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-lg font-semibold border border-gray-300 hover:bg-gray-50 transition-colors"
-                    >
-                      Vai all&apos;area riservata
-                    </a>
-                  </div>
+            <div className="mt-6 rounded-3xl border-2 border-amber-400 bg-amber-50 p-5 text-amber-950 shadow-sm sm:p-6">
+              <div className="flex items-start gap-3">
+                <Bell className="mt-0.5 h-6 w-6 shrink-0" />
+                <div className="text-left">
+                  <p className="font-extrabold">Importante per le notifiche</p>
+                  <p className="mt-1 leading-relaxed">
+                    L&apos;attivazione delle notifiche avviene <span className="font-bold">dopo l&apos;accesso</span> alla web app. Se scegli di non installarla, puoi comunque continuare a utilizzare l&apos;Area Riservata dal link del sito.
+                  </p>
                 </div>
               </div>
             </div>
+
+            <article className="mt-8 rounded-3xl border-2 border-emerald-500 bg-white p-6 shadow-xl sm:p-8">
+              <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:text-left">
+                <img src="/images/whatsapp.jpg" alt="Logo WhatsApp" className="h-20 w-20 shrink-0 rounded-2xl object-cover shadow-sm" />
+                <div className="flex-1">
+                  <h3 className="text-2xl font-serif font-bold text-black">Gruppo WhatsApp partecipanti</h3>
+                  <p className="mt-2 text-base leading-relaxed text-gray-700">
+                    Il gruppo WhatsApp è <span className="font-bold">separato dalle notifiche della web app</span>. L&apos;amministrazione lo utilizzerà per inviare comunicazioni a tutti i partecipanti che hanno scelto di aggiungersi al gruppo.
+                  </p>
+                </div>
+                <a
+                  href={SITE_CONFIG.whatsappGroupUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded-xl bg-[#25D366] px-5 py-4 text-center text-sm font-extrabold text-white shadow-lg transition-transform hover:scale-[1.02] sm:w-auto sm:px-6 sm:text-base"
+                >
+                  <img src="/images/whatsapp.jpg" alt="" aria-hidden="true" className="h-7 w-7 rounded-md object-cover" />
+                  Unisciti al gruppo WhatsApp
+                </a>
+              </div>
+            </article>
           </div>
         </div>
       </section>
@@ -865,7 +907,6 @@ function App() {
 
           <div className="mx-auto max-w-4xl space-y-4">
             {KOREAN_SONGS.map((song, index) => {
-              const sheetKey = `song-${song.id}-sheet`;
               return (
                 <div key={song.id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
                   <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -892,10 +933,12 @@ function App() {
                       <button
                         type="button"
                         onClick={() => openSongViewer('sheet', song)}
-                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-600 px-5 py-3 font-semibold text-white transition-colors hover:bg-amber-700"
+                        disabled={!song.sheetSrc}
+                        className={`inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 font-semibold text-white transition-colors ${song.sheetSrc ? 'bg-amber-600 hover:bg-amber-700' : 'cursor-not-allowed bg-gray-500/90'}`}
+                        title={song.sheetSrc ? `Apri testo e accordi di ${song.titleIt}` : 'Testo e accordi in arrivo'}
                       >
                         <FileText size={18} />
-                        {song.sheetSrc ? 'Testo e accordi' : comingSoonKey === sheetKey ? 'In arrivo' : 'Testo e accordi'}
+                        {song.sheetSrc ? 'Testo e accordi' : 'TESTO — IN ARRIVO'}
                       </button>
                     </div>
                   </div>
@@ -905,6 +948,64 @@ function App() {
           </div>
         </div>
       </section>
+
+      {tutorialViewer ? (
+        <div
+          className="fixed inset-0 z-[130] flex items-center justify-center bg-black/80 p-2 sm:p-5"
+          role="dialog"
+          aria-modal="true"
+          aria-label={tutorialViewer.title}
+          onClick={() => setTutorialViewer(null)}
+        >
+          <div
+            className="flex h-[94vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl sm:h-[92vh]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 py-3 sm:px-5">
+              <div className="min-w-0">
+                <p className="truncate font-serif text-base font-bold text-black sm:text-xl">{tutorialViewer.title}</p>
+                <p className="text-xs font-semibold text-gray-500 sm:text-sm">
+                  {tutorialViewer.type === 'video' ? 'Riproduzione dentro il sito' : 'Istruzioni PDF dentro il sito'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTutorialViewer(null)}
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-black transition-colors hover:bg-gray-200"
+                aria-label="Chiudi tutorial"
+                title="Chiudi"
+              >
+                <X size={22} />
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-hidden bg-neutral-900">
+              {tutorialViewer.type === 'video' ? (
+                <div className="flex h-full w-full items-center justify-center p-2 sm:p-4">
+                  <video
+                    key={tutorialViewer.src}
+                    src={tutorialViewer.src}
+                    controls
+                    autoPlay
+                    playsInline
+                    preload="metadata"
+                    className="max-h-full w-full rounded-lg bg-black object-contain"
+                  >
+                    Il tuo browser non supporta la riproduzione video.
+                  </video>
+                </div>
+              ) : (
+                <iframe
+                  key={tutorialViewer.src}
+                  src={tutorialViewer.src}
+                  title={tutorialViewer.title}
+                  className="h-full w-full bg-white"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {songViewer ? (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-2 sm:p-5">
@@ -1096,83 +1197,6 @@ function App() {
               >
                 HO LETTO — VAI ALL&apos;ACCESSO
               </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
-
-      {isTelegramGuideOpen ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6">
-          <button
-            type="button"
-            className="absolute inset-0 bg-black/75 backdrop-blur-sm"
-            onClick={() => setIsTelegramGuideOpen(false)}
-            aria-label="Chiudi istruzioni Telegram"
-          />
-
-          <div className="relative z-10 w-full max-w-4xl max-h-[82vh] overflow-y-auto rounded-2xl border border-white/20 bg-white text-black shadow-2xl sm:max-h-[86vh]">
-            <div className="sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-gray-200 bg-white/95 px-4 py-4 backdrop-blur sm:px-5 md:px-6">
-              <div className="min-w-0">
-                <h3 className="text-xl sm:text-2xl md:text-[1.75rem] font-serif font-bold leading-tight">
-                  Ricevi comunicazioni su Telegram
-                </h3>
-                <p className="mt-1.5 text-xs sm:text-sm md:text-[0.95rem] text-gray-700 max-w-2xl leading-relaxed">
-                  Procedura guidata per attivare il collegamento Telegram dedicato agli utenti registrati all&apos;area riservata.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsTelegramGuideOpen(false)}
-                className="shrink-0 rounded-full border border-gray-300 px-3 py-1.5 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-gray-100 active:scale-95 transition-all duration-200"
-              >
-                Chiudi
-              </button>
-            </div>
-
-            <div className="p-4 sm:p-5 md:p-6 space-y-4">
-              {[
-                'Registrati all’area riservata.',
-                'Scarica l’app Telegram sul tuo cellulare.',
-                'Dopo la registrazione, attendi che l’amministrazione attivi il tuo link personale Telegram.',
-                'Entra nel tuo profilo, nella sezione “Ricevi notifiche Telegram”, e verifica se il link è stato attivato.',
-                'Quando il link risulta disponibile, cliccalo per aprire l’app Telegram.',
-                'Dentro Telegram, premi il pulsante Start una sola volta.',
-                'Torna nell’area riservata e apri di nuovo la sezione “Ricevi notifiche Telegram”.',
-                'Premi su “Verifica collegamento” per controllare che l’attivazione sia andata a buon fine.',
-                'Se il collegamento è corretto, vedrai in verde la scritta: “Notifiche Telegram attivate correttamente.”',
-                'Da quel momento potrai ricevere le comunicazioni dell’organizzazione anche su Telegram dal contatto “Pellegrinaggio CnC Piemonte e Svizzera Bot”.',
-                'Se un messaggio è troppo lungo, potrai leggerlo integralmente all’interno dell’area riservata.',
-                'La chat Telegram è in modalità broadcast, quindi potrai solo leggere i messaggi inviati dall’organizzazione.',
-              ].map((step, index) => (
-                <article key={step} className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 sm:px-5">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-500 text-sm font-bold text-white shadow-sm">
-                      {index + 1}
-                    </div>
-                    <p className="pt-1 text-sm sm:text-base text-gray-800 leading-relaxed">{step}</p>
-                  </div>
-                </article>
-              ))}
-
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <a
-                  href="https://telegram.org/apps?setln=it"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center bg-sky-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-sky-600 transition-colors"
-                >
-                  Scarica Telegram
-                </a>
-                <a
-                  href={SITE_CONFIG.reservedAreaUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
-                >
-                  Vai all&apos;area riservata
-                </a>
-              </div>
             </div>
           </div>
         </div>
@@ -1431,7 +1455,7 @@ function App() {
             <a href="#home" className="hover:text-amber-500 transition-colors">Home Page</a>
             <a href="#wyd-seul" className="hover:text-amber-500 transition-colors">WYD Seoul 2027</a>
             <a href="#gmg-2027-iscrizione" className="hover:text-amber-500 transition-colors">Iscrizione JMJ Seoul 2027</a>
-            <a href="#telegram" className="hover:text-amber-500 transition-colors">Telegram</a>
+            <a href="#installa-app" className="hover:text-amber-500 transition-colors">App sul cellulare</a>
             <a href="#donazioni" className="hover:text-amber-500 transition-colors">Versamenti e Donazioni</a>
           </div>
 
