@@ -1,0 +1,19 @@
+CORRETTO 42 — 20/10/2026
+
+Modifiche richieste:
+1. Rimosso il popup automatico sulle causali che si apriva durante l'ingresso/navigazione del sito.
+2. La voce menu "Versamenti e donazioni" resta evidenziata IMPORTANTE e, quando viene scelta dal menu, dopo lo scorrimento apre le indicazioni/causali attuali: l'utente viene così accompagnato alla lettura senza popup automatico all'ingresso.
+3. Inserita subito dopo "PASSAPORTO — KOREA 2027" la nuova sezione "VISTI E PASSAPORTI — KOREA 2027".
+4. Aggiunta nel menu WYD Seoul 2027 la voce "Visti e richiesta passaporto" con badge NUOVO.
+5. La nuova sezione contiene due riquadri:
+   - Visto per entrare in Corea del Sud, con distinzione visto/K-ETA/e-Arrival Card e attenzione ai passaporti esteri.
+   - Richiesta del passaporto presso uffici postali abilitati, con indicazioni operative e rimando a Poste Italiane.
+6. Inserite nel progetto le due guide PDF fornite:
+   - public/documenti/Guida_Visti_Passaporti_Esteri_Korea_2027.pdf
+   - public/documenti/Guida_Passaporto_Piemonte_Korea_2027.pdf
+   I PDF si aprono dentro il sito tramite il visualizzatore già presente.
+7. Nel percorso guidato verso l'Area Riservata, dopo gli avvisi passaporto si passa alla nuova sezione Visti e Passaporti; da lì il pulsante continua all'Area Riservata.
+8. Nessuna modifica alle altre funzioni non richieste.
+
+Controllo TypeScript eseguito con esito positivo.
+Pacchetto destinato a Visual Studio Code su Mac e pubblicazione GitHub: node_modules e dist non inclusi.

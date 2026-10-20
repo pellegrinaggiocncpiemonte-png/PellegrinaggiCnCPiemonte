@@ -1,0 +1,7 @@
+CORRETTO 39 - 20/10/2026
+
+Modifiche richieste:
+- aggiunto nel menu principale un badge lampeggiante con scadenza iscrizioni 30/10 ore 23:59;
+- nella voce Iscrizione JMJ Seoul 2027 il badge indica CHIUSURA 30/10 · 23:59;
+- ripetuto l'avviso di chiusura iscrizioni in un box sottile subito sotto il box/pulsante “Vedi istruzioni iOS e Android” e prima dell'accesso all'Area Riservata;
+- nessun'altra funzione o contenuto modificato.

@@ -1,0 +1,12 @@
+CORRETTO 40 — 20/10/2026
+
+Modifiche richieste esclusivamente alla sezione Versamenti e donazioni:
+- evidenziata come IMPORTANTE nel menu e nella sezione;
+- aggiunto avviso lampeggiante che chiede di usare esattamente le causali indicate;
+- spiegato che i controlli dei bonifici sono in fase di automazione e che causali diverse, aggiunte o abbreviazioni possono creare problemi di abbinamento;
+- aggiunto popup informativo automatico, mostrato una volta per sessione di navigazione, con accesso diretto alle causali corrette;
+- chiarito in più punti che le ricevute NON devono essere inviate via email;
+- le ricevute devono essere salvate e caricate nella sezione “Versamenti” dell’Area Riservata;
+- istruzione esplicita valida per partecipanti, genitori e responsabili che eseguono i versamenti.
+
+Nessun'altra sezione o funzionalità è stata modificata.

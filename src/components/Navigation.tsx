@@ -42,6 +42,7 @@ const Navigation = () => {
               { id: 'sezione-video', label: 'Video promo JMJ 2027' },
               { id: 'canti-in-coreano', label: 'Canti in coreano' },
               { id: 'passaporti', label: 'Avvisi passaporto' },
+              { id: 'visti-passaporti', label: 'Visti e richiesta passaporto' },
               { id: 'gmg-2027-iscrizione', label: 'Iscrizione JMJ Seoul 2027' },
             ],
           },
@@ -145,6 +146,15 @@ const Navigation = () => {
     setMobileMenuOpen(false);
     setOpenDropdown(null);
     setOpenSubmenu(null);
+
+    // Le causali non vengono più mostrate automaticamente all'ingresso del sito.
+    // Quando l'utente sceglie volontariamente "Versamenti e donazioni" dal menu,
+    // viene accompagnato direttamente alla lettura delle indicazioni aggiornate.
+    if (id === 'donazioni') {
+      window.setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('payment-instructions:open'));
+      }, 420);
+    }
   };
 
   const isGroupActive = (groupId: string) => {
@@ -162,9 +172,14 @@ const Navigation = () => {
     <span className="inline-flex min-w-0 items-center gap-1.5">
       <span className="min-w-0 break-words whitespace-normal leading-snug">{label}</span>
       {id === 'eventi' ? (
-        <span className="nav-status-badge nav-status-badge-new shrink-0 rounded-full bg-amber-600 px-1.5 py-0.5 text-[8px] font-extrabold leading-none tracking-wide text-white shadow-sm">
-          NOVITÀ
-        </span>
+        <>
+          <span className="nav-status-badge nav-status-badge-new shrink-0 rounded-full bg-amber-600 px-1.5 py-0.5 text-[8px] font-extrabold leading-none tracking-wide text-white shadow-sm">
+            NOVITÀ
+          </span>
+          <span className="shrink-0 animate-pulse whitespace-nowrap rounded-full bg-red-600 px-1.5 py-0.5 text-[8px] font-extrabold leading-none tracking-wide text-white shadow-sm">
+            30/10 23:59
+          </span>
+        </>
       ) : null}
       {id === 'wyd-submenu' ? (
         <span className="nav-status-badge shrink-0 rounded-full bg-sky-500 px-1.5 py-0.5 text-[8px] font-extrabold leading-none tracking-wide text-white shadow-sm">
@@ -172,18 +187,23 @@ const Navigation = () => {
         </span>
       ) : null}
       {id === 'donazioni' ? (
-        <span className="shrink-0 animate-pulse rounded-full bg-emerald-600 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
-          ATTIVO
+        <span className="shrink-0 animate-pulse rounded-full bg-red-600 px-1.5 py-0.5 text-[8px] font-extrabold leading-none tracking-wide text-white shadow-sm">
+          IMPORTANTE
         </span>
       ) : null}
       {id === 'gmg-2027-iscrizione' ? (
-        <span className="shrink-0 animate-pulse rounded-full bg-red-600 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
-          APERTE
+        <span className="shrink-0 animate-pulse whitespace-nowrap rounded-full bg-red-600 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
+          CHIUSURA 30/10 · 23:59
         </span>
       ) : null}
       {id === 'passaporti' ? (
         <span className="passport-nav-badge shrink-0 rounded-full bg-red-600 px-1.5 py-0.5 text-[8px] font-extrabold leading-none tracking-wide text-white shadow-sm">
           IMPORTANTE
+        </span>
+      ) : null}
+      {id === 'visti-passaporti' ? (
+        <span className="passport-nav-badge shrink-0 rounded-full bg-sky-600 px-1.5 py-0.5 text-[8px] font-extrabold leading-none tracking-wide text-white shadow-sm">
+          NUOVO
         </span>
       ) : null}
       {id === 'installa-app' ? (

@@ -1,0 +1,9 @@
+CORRETTO 38 - 20/10/2026
+
+Modifica richiesta: evidenziare la chiusura delle iscrizioni Korea 2027.
+
+- Inserito avviso ben visibile nella sezione "ISCRIZIONI JMJ SEOUL 2027".
+- Inserito lo stesso avviso nella sezione "AREA RISERVATA", prima delle istruzioni di accesso.
+- Inserito l'avviso come primo passaggio della guida che si apre cliccando "Area riservata" nel menu, così è visibile anche a chi tenta di accedere direttamente.
+- Testo: chiusura iscrizioni il 30 ottobre 2026 alle ore 23:59.
+- Nessun'altra funzione o contenuto è stato modificato.

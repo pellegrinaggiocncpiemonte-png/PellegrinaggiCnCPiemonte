@@ -81,6 +81,10 @@ const KOREAN_SONGS: KoreanSong[] = [
 
 const RESERVED_AREA_READING_STEPS = [
   {
+    title: '⏰ IMPORTANTE – Chiusura iscrizioni Korea 2027',
+    text: 'Le iscrizioni al pellegrinaggio Korea 2027 sono aperte fino al 30 ottobre 2026 alle ore 23:59. Dopo questa scadenza le iscrizioni saranno chiuse.',
+  },
+  {
     title: 'ATTENZIONE: creare l’account non basta',
     text: 'Registrarsi all’Area Riservata serve solo per creare l’accesso personale. NON significa essere iscritti alla JMJ Seoul 2027. Dopo l’accesso devi continuare fino alla sezione “Iscrizione Pellegrinaggi”.',
   },
@@ -139,6 +143,13 @@ function App() {
   };
 
   const continueAfterPassportReading = () => {
+    const section = document.getElementById('visti-passaporti');
+    if (section) {
+      window.scrollTo({ top: section.offsetTop - 88, behavior: 'smooth' });
+    }
+  };
+
+  const continueAfterVisaPassportInfo = () => {
     const section = document.getElementById('area-riservata');
     if (section) {
       window.scrollTo({ top: section.offsetTop - 88, behavior: 'smooth' });
@@ -175,6 +186,12 @@ function App() {
       document.body.style.overflow = previousOverflow;
     };
   }, [tutorialViewer]);
+
+  useEffect(() => {
+    const openPaymentInstructions = () => setIsPaymentInstructionsOpen(true);
+    window.addEventListener('payment-instructions:open', openPaymentInstructions);
+    return () => window.removeEventListener('payment-instructions:open', openPaymentInstructions);
+  }, []);
 
   const openSongViewer = (type: 'video' | 'sheet', song: KoreanSong) => {
     const src = type === 'video' ? song.videoSrc : song.sheetSrc;
@@ -293,6 +310,15 @@ function App() {
                 Iscrizioni aperte: JMJ Seoul 2027<br />
                 Giovani del Cammino Neocatecumenale di Piemonte e Svizzera.
               </p>
+
+              <div className="mx-auto max-w-3xl rounded-2xl border-2 border-red-600 bg-red-50 px-4 py-4 text-center shadow-md sm:px-6 sm:py-5">
+                <p className="text-sm font-extrabold uppercase tracking-wide text-red-700 sm:text-base">
+                  ⏰ Importante – Chiusura iscrizioni
+                </p>
+                <p className="mt-2 text-lg font-extrabold leading-relaxed text-red-950 sm:text-xl md:text-2xl">
+                  Le iscrizioni al pellegrinaggio Korea 2027 saranno chiuse il <span className="whitespace-nowrap">30 ottobre 2026</span> alle ore <span className="whitespace-nowrap">23:59</span>.
+                </p>
+              </div>
 
               <div className="mx-auto max-w-3xl rounded-xl border-2 border-red-500 bg-red-50 px-3 py-3 text-left shadow-sm sm:px-4 sm:py-4">
                 <p className="whitespace-nowrap text-center text-sm font-extrabold uppercase leading-tight tracking-wide text-red-800 sm:text-base md:text-lg">
@@ -513,6 +539,120 @@ function App() {
         </div>
       </section>
 
+      <section id="visti-passaporti" className="content-section passport-alerts py-16 md:py-20 bg-slate-100 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(14,165,233,0.12),transparent_42%)]" aria-hidden="true" />
+        <div className="container relative mx-auto px-4">
+          <div className="mx-auto max-w-6xl">
+            <div className="text-center">
+              <span className="passport-important-badge inline-flex items-center rounded-full bg-sky-700 px-3 py-1 text-xs font-extrabold tracking-wider text-white shadow-lg">
+                NUOVA SEZIONE · INFORMAZIONI IMPORTANTI
+              </span>
+              <h2 className="mt-4 text-3xl md:text-5xl font-serif font-bold tracking-wide text-slate-950">
+                🛂 VISTI E PASSAPORTI — KOREA 2027
+              </h2>
+              <div className="mt-4 h-1 w-32 bg-sky-600 mx-auto" />
+              <p className="mx-auto mt-5 max-w-4xl text-base md:text-lg leading-relaxed text-slate-700">
+                Informazioni operative per chi parte dall&apos;Italia o dalla Svizzera e per chi deve richiedere o rinnovare il passaporto. Le regole di ingresso possono cambiare: prima della partenza verranno ricontrollate sulle fonti ufficiali.
+              </p>
+            </div>
+
+            <div className="mt-9 grid gap-6 lg:grid-cols-2">
+              <article className="passport-alert-card rounded-3xl border-2 border-sky-300 bg-white px-5 py-6 shadow-xl sm:px-7 sm:py-8">
+                <h3 className="text-xl sm:text-2xl font-extrabold leading-snug text-slate-950">
+                  🌏 Visto per entrare in Corea del Sud
+                </h3>
+                <div className="mt-5 space-y-4 text-[15px] sm:text-base leading-relaxed text-slate-800">
+                  <p>
+                    <strong>Conta la cittadinanza indicata dal passaporto con cui si viaggia.</strong> Vivere o partire dall&apos;Italia o dalla Svizzera non elimina da solo un eventuale obbligo di visto.
+                  </p>
+                  <p>
+                    Per i normali soggiorni brevi, i passaporti italiani e svizzeri rientrano normalmente tra quelli esenti dal visto sudcoreano. Per altre cittadinanze le condizioni possono essere diverse e, in alcuni casi, è necessario un visto consolare.
+                  </p>
+                  <div className="rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-amber-950">
+                    <p className="font-extrabold">Visto e K-ETA non sono la stessa cosa.</p>
+                    <p className="mt-1">
+                      Il K-ETA può riguardare soltanto chi ha già diritto all&apos;ingresso senza visto. L&apos;esenzione temporanea K-ETA per varie cittadinanze, tra cui Italia e Svizzera, risulta attualmente valida fino al <strong>31 dicembre 2026</strong>; per agosto 2027 la situazione dovrà essere verificata nuovamente.
+                    </p>
+                  </div>
+                  <p>
+                    Quando prevista, la <strong>e-Arrival Card</strong> è distinta dal K-ETA. Chi vive in Italia o Svizzera con un passaporto straniero deve inoltre controllare il proprio titolo di soggiorno, il diritto di rientro e le regole degli eventuali Paesi di transito.
+                  </p>
+                  <p className="font-semibold text-slate-950">
+                    Per passaporti non italiani o svizzeri, non basarti soltanto sul Paese di residenza: verifica sempre la cittadinanza effettiva e le regole applicabili al passaporto utilizzato.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setTutorialViewer({ type: 'pdf', title: 'Guida visti e passaporti esteri — Korea 2027', src: '/documenti/Guida_Visti_Passaporti_Esteri_Korea_2027.pdf' })}
+                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-sky-700 px-5 py-3 font-extrabold text-white shadow-md transition hover:bg-sky-800"
+                >
+                  <FileText size={19} /> APRI LA GUIDA COMPLETA PDF
+                </button>
+              </article>
+
+              <article className="passport-alert-card rounded-3xl border-2 border-emerald-300 bg-white px-5 py-6 shadow-xl sm:px-7 sm:py-8">
+                <h3 className="text-xl sm:text-2xl font-extrabold leading-snug text-slate-950">
+                  📮 Richiesta del passaporto presso gli uffici postali
+                </h3>
+                <div className="mt-5 space-y-4 text-[15px] sm:text-base leading-relaxed text-slate-800">
+                  <p>
+                    Il passaporto elettronico può essere richiesto anche presso gli <strong>uffici postali abilitati di Poste Italiane</strong>, oltre che tramite i canali della Polizia di Stato. È una possibilità utile per cercare un appuntamento alternativo, ma non garantisce automaticamente tempi di rilascio più brevi.
+                  </p>
+                  <p>
+                    Chi è residente o domiciliato in un Comune abilitato può presentare la domanda in un ufficio postale abilitato del proprio Comune o della propria provincia. <strong>Prima di spostarsi bisogna verificare che il Comune e l&apos;ufficio scelto siano effettivamente abilitati.</strong>
+                  </p>
+                  <ul className="list-disc space-y-2 pl-5">
+                    <li>Il servizio è rivolto ai maggiorenni e ai genitori che presentano la domanda per un minorenne.</li>
+                    <li>Non è disponibile in alcuni casi particolari, tra cui iscritti AIRE, doppio passaporto o passaporto temporaneo.</li>
+                    <li>Per i minorenni sono richiesti documenti e consensi aggiuntivi; in alcune situazioni occorre rivolgersi direttamente alla Polizia di Stato.</li>
+                  </ul>
+                  <div className="rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-emerald-950">
+                    <p className="font-extrabold">Muoviti con largo anticipo.</p>
+                    <p className="mt-1">
+                      La guida consiglia di non attendere gli ultimi mesi: per Korea 2027 è opportuno attivarsi il prima possibile e, una volta ottenuto il passaporto, inserire tempestivamente i dati nell&apos;Area Riservata.
+                    </p>
+                  </div>
+                  <p>
+                    Per la domanda servono normalmente documento d&apos;identità e copia, codice fiscale, fototessera recente, contrassegno telematico, pagamento del contributo previsto e il vecchio passaporto se posseduto. Costi e modalità possono essere aggiornati dagli enti competenti.
+                  </p>
+                </div>
+                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => setTutorialViewer({ type: 'pdf', title: 'Guida passaporto presso uffici postali — Piemonte', src: '/documenti/Guida_Passaporto_Piemonte_Korea_2027.pdf' })}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 font-extrabold text-white shadow-md transition hover:bg-emerald-800"
+                  >
+                    <FileText size={19} /> APRI GUIDA PDF
+                  </button>
+                  <a
+                    href="https://www.poste.it/polis-passaporto-elettronico"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center rounded-xl border-2 border-emerald-700 px-4 py-3 text-center font-extrabold text-emerald-800 transition hover:bg-emerald-50"
+                  >
+                    VERIFICA SU POSTE ITALIANE
+                  </a>
+                </div>
+              </article>
+            </div>
+
+            <div className="mx-auto mt-8 max-w-4xl rounded-2xl border-2 border-amber-400 bg-amber-50 px-5 py-5 text-center text-slate-950 shadow-lg">
+              <p className="font-extrabold">⚠️ Informazioni soggette ad aggiornamento</p>
+              <p className="mt-2 text-sm leading-relaxed sm:text-base">
+                Le guide riportano le regole verificate a ottobre 2026. Per il viaggio di luglio/agosto 2027 sarà indispensabile una nuova verifica ufficiale di visto, K-ETA, e-Arrival Card, transiti e modalità di rilascio dei passaporti.
+              </p>
+              <button
+                type="button"
+                onClick={continueAfterVisaPassportInfo}
+                className="mt-4 inline-flex w-full max-w-xl items-center justify-center rounded-full bg-amber-400 px-5 py-3 text-sm font-extrabold text-black shadow-lg transition-transform hover:scale-[1.01] hover:bg-amber-300 active:scale-[.98] sm:text-base"
+              >
+                HO LETTO — CONTINUA ALL&apos;AREA RISERVATA
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="area-riservata" className="content-section section-private py-20 bg-black relative">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-8">
@@ -528,10 +668,19 @@ function App() {
                 Crea un account inserendo un&apos;e-mail valida e una password a tua scelta, oppure accedi per gestire il tuo profilo e le tue iscrizioni.
               </p>
 
+              <div className="rounded-2xl border-2 border-red-400 bg-red-500/15 px-4 py-4 text-center shadow-lg sm:px-5 sm:py-5">
+                <p className="text-sm font-extrabold uppercase tracking-wide text-red-200 sm:text-base">
+                  ⏰ Importante – Chiusura iscrizioni Korea 2027
+                </p>
+                <p className="mt-2 text-lg font-extrabold leading-relaxed text-white sm:text-xl md:text-2xl">
+                  Le iscrizioni saranno chiuse il <span className="whitespace-nowrap text-red-100">30 ottobre 2026</span> alle ore <span className="whitespace-nowrap text-red-100">23:59</span>.
+                </p>
+              </div>
+
               <div className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 px-5 py-4 text-base md:text-lg leading-relaxed text-white">
                 <p className="font-bold text-amber-200">⚠️ LEGGI CON ATTENZIONE PRIMA DI ACCEDERE</p>
                 <p className="mt-1 text-white/90">
-                  Se premi <span className="font-extrabold text-amber-200">“Area riservata”</span> nel menu, il sito ti accompagna in ordine: prima la guida con i passaggi principali, poi gli <span className="font-extrabold text-amber-200">avvisi sul passaporto</span>. Dopo averli confermati tornerai qui, all&apos;inizio della sezione <span className="font-extrabold text-amber-200">Area Riservata</span>, per leggere le altre indicazioni; proseguendo troverai il pulsante <span className="font-extrabold text-amber-200">“LEGGI PRIMA DI REGISTRARTI”</span> e infine l&apos;accesso.
+                  Se premi <span className="font-extrabold text-amber-200">“Area riservata”</span> nel menu, il sito ti accompagna in ordine: prima la guida con i passaggi principali, poi gli <span className="font-extrabold text-amber-200">avvisi sul passaporto</span> e quindi le informazioni su <span className="font-extrabold text-amber-200">visti e richiesta del passaporto presso gli uffici postali</span>. Dopo averle lette tornerai qui, all&apos;inizio della sezione <span className="font-extrabold text-amber-200">Area Riservata</span>, per leggere le altre indicazioni; proseguendo troverai il pulsante <span className="font-extrabold text-amber-200">“LEGGI PRIMA DI REGISTRARTI”</span> e infine l&apos;accesso.
                 </p>
               </div>
 
@@ -610,6 +759,12 @@ function App() {
                 >
                   <Smartphone size={18} /> Vedi istruzioni iOS e Android
                 </button>
+              </div>
+
+              <div className="w-full max-w-2xl rounded-xl border border-red-400/70 bg-red-500/15 px-3 py-2 text-center shadow-sm">
+                <p className="text-sm font-extrabold leading-snug text-red-100 sm:text-base">
+                  ⚠️ Iscrizioni Korea 2027: chiusura il <span className="whitespace-nowrap">30 ottobre 2026</span> alle ore <span className="whitespace-nowrap">23:59</span>.
+                </p>
               </div>
 
               <div id="reserved-area-entry" className="w-full max-w-md">
@@ -1209,8 +1364,8 @@ function App() {
               <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider text-white">
                 VERSAMENTI E DONAZIONI
               </h2>
-              <span className="animate-pulse rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold tracking-wider text-white shadow-lg">
-                SEZIONE ATTIVA
+              <span className="animate-pulse rounded-full bg-red-600 px-3 py-1 text-xs font-extrabold tracking-wider text-white shadow-lg shadow-red-600/30">
+                IMPORTANTE · CAUSALI ATTUALI
               </span>
             </div>
             <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
@@ -1224,13 +1379,32 @@ function App() {
               <p>
                 Le stesse informazioni saranno disponibili anche nell&apos;area riservata personale, nella sezione <span className="font-semibold text-white">“Rateizzo e situazione economica”</span>.
               </p>
+
+              <div className="animate-pulse rounded-2xl border-2 border-amber-300 bg-amber-300/10 px-4 py-4 text-left shadow-lg shadow-amber-400/10">
+                <p className="font-extrabold text-amber-200">⚠️ CAUSALI ATTUALI — VALIDE FINO AL CAMBIO PROCEDURA</p>
+                <p className="mt-2 text-white/95">
+                  Per favore, per ogni bonifico scrivete <span className="font-extrabold text-white">esattamente la causale che abbiamo indicato</span> per il vostro tipo di versamento. Le causali riportate adesso sono <span className="font-extrabold text-white">provvisorie ma obbligatorie fino all&apos;attivazione della nuova procedura</span>. Una causale scritta diversamente, con aggiunte, abbreviazioni o altro testo, può creare problemi nell&apos;abbinamento del pagamento.
+                </p>
+                <p className="mt-2 font-semibold text-amber-100">
+                  Prossimamente cambierà la procedura: dalla propria Area Riservata verrà generato un <span className="font-extrabold text-white">codice bonifico</span> che dovrà essere riportato nella causale. Il codice sarà previsto per <span className="font-extrabold text-white">Quote singole, Versamento multiplo figli e Versamento multiplo comunitario</span>. Fino a quando la nuova procedura non sarà attiva, continuate a usare esattamente le causali attuali.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setIsPaymentInstructionsOpen(true)}
+                  className="mt-3 inline-flex items-center justify-center gap-2 rounded-lg bg-amber-400 px-4 py-2.5 text-sm font-extrabold text-black shadow transition hover:bg-amber-300"
+                >
+                  <FileText size={17} />
+                  Vedi causali attuali
+                </button>
+              </div>
+
               <div className="rounded-2xl border-2 border-red-400 bg-red-500/10 px-4 py-4 text-left">
                 <p className="font-extrabold text-red-200">PRIMA RATA JMJ SEOUL 2027 — 400,00 € PER PARTECIPANTE</p>
                 <p className="mt-2 text-white/95">
                   Da versare entro e non oltre il <span className="font-extrabold text-white">20 ottobre 2026</span>. La scadenza è inderogabile: la quota serve a bloccare il posto sul volo e senza il versamento l&apos;iscrizione non può essere considerata completa.
                 </p>
                 <p className="mt-3 rounded-xl border border-amber-300/60 bg-amber-300/10 px-3 py-3 font-bold leading-relaxed text-amber-100">
-                  Dopo aver effettuato il bonifico, salva la ricevuta: sarà necessario caricarla nella sezione <span className="font-extrabold text-white">“Versamenti”</span> dell&apos;Area Riservata.
+                  Dopo aver effettuato il bonifico, salva la ricevuta: <span className="font-extrabold text-white">non inviarla via email</span>. Deve essere caricata nella sezione <span className="font-extrabold text-white">“Versamenti”</span> dell&apos;Area Riservata. Questa indicazione vale per partecipanti, genitori e responsabili che eseguono i versamenti.
                 </p>
                 <p className="mt-2 text-sm text-white/80">
                   Il costo complessivo e il piano completo delle rate sono ancora in definizione. Le rate successive saranno comunicate prossimamente.
@@ -1250,10 +1424,10 @@ function App() {
               <button
                 type="button"
                 onClick={() => setIsPaymentInstructionsOpen(true)}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-600 px-6 py-3.5 font-semibold text-white transition-colors hover:bg-amber-700"
+                className="inline-flex animate-pulse items-center justify-center gap-2 rounded-lg bg-amber-500 px-6 py-3.5 font-extrabold text-black shadow-lg shadow-amber-500/20 transition-colors hover:bg-amber-400"
               >
                 <FileText size={19} />
-                Indicazioni e causali
+                IMPORTANTE · Causali attuali
               </button>
             </div>
 
@@ -1286,7 +1460,7 @@ function App() {
                     È importante che l&apos;importo netto effettivamente accreditato sul conto del Comitato corrisponda esattamente alla quota richiesta.
                   </p>
                   <p>
-                    Dopo ogni bonifico, salva la ricevuta. Non deve essere inviata via email: va caricata nella sezione “Versamenti” dell&apos;Area Riservata tramite il profilo dell&apos;iscritto oppure tramite il profilo che gestisce i versamenti, come genitore, collaboratore o responsabile.
+                    Dopo ogni bonifico, salva la ricevuta. <strong>Non deve essere inviata via email.</strong> Va caricata esclusivamente nella sezione “Versamenti” dell&apos;Area Riservata. Vale per il partecipante che esegue il proprio versamento, per il genitore che versa per uno o più figli e per il responsabile che esegue versamenti per i partecipanti che gestisce.
                   </p>
                   <p>
                     Per problemi tecnici con il bonifico o per richiedere informazioni sulla consegna delle quote in contanti, contattare l&apos;organizzazione.
@@ -1338,7 +1512,7 @@ function App() {
                 {reservedReadingStep < RESERVED_AREA_READING_STEPS.length - 1 ? 'HO LETTO — CONTINUA' : 'HO LETTO E CAPITO'}
               </button>
               <p className="reserved-reading-footer mt-3 text-center text-xs leading-relaxed text-white/50">
-                Al termine verrai portato agli avvisi importanti sul passaporto. Dopo averli letti e confermati, tornerai all&apos;inizio della sezione Area Riservata per leggere le altre indicazioni; proseguendo troverai “LEGGI PRIMA DI REGISTRARTI” e infine l&apos;accesso.
+                Al termine verrai portato agli avvisi importanti sul passaporto e, subito dopo, alle informazioni su visti e richiesta del passaporto presso gli uffici postali. Dopo averle lette tornerai all&apos;inizio della sezione Area Riservata per proseguire fino a “LEGGI PRIMA DI REGISTRARTI” e all&apos;accesso.
               </p>
             </div>
           </div>
@@ -1405,7 +1579,7 @@ function App() {
             <div className="shrink-0 flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-3.5 sm:px-5 sm:py-4">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 sm:text-xs">JMJ Seoul 2027</p>
-                <h3 className="text-lg font-serif font-bold sm:text-2xl">Indicazioni e causali</h3>
+                <h3 className="text-lg font-serif font-bold sm:text-2xl">Indicazioni e causali attuali</h3>
               </div>
               <button
                 type="button"
@@ -1418,9 +1592,18 @@ function App() {
             </div>
 
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3 sm:p-5">
-              <p className="rounded-xl border border-blue-200 bg-blue-50 px-3 py-3 text-sm leading-relaxed text-blue-950 sm:px-4 sm:text-base">
-                Scrivere esclusivamente la causale indicata, senza aggiungere altro testo.
-              </p>
+              <div className="space-y-2 rounded-xl border-2 border-red-300 bg-red-50 px-3 py-3 text-sm leading-relaxed text-red-950 sm:px-4 sm:text-base">
+                <p className="font-extrabold">⚠️ CAUSALI ATTUALI — PROVVISORIE FINO AL CAMBIO PROCEDURA</p>
+                <p>
+                  Per favore scrivete <span className="font-extrabold">esattamente la causale riportata qui sotto</span>, senza aggiungere, togliere o modificare parole e senza inserire altro testo. Queste sono le causali da utilizzare <span className="font-extrabold">fino all&apos;attivazione della nuova procedura</span>.
+                </p>
+                <p>
+                  Stiamo automatizzando i controlli dei versamenti: se la causale viene scritta diversamente ci create un problema e il pagamento può non essere abbinato correttamente o richiedere una verifica manuale.
+                </p>
+                <p className="font-semibold">
+                  Prossimamente la procedura cambierà: dalla propria Area Riservata verrà generato un <span className="font-extrabold">codice bonifico</span> che dovrà comparire nella causale. Il codice sarà previsto per <span className="font-extrabold">Quote singole, Versamento multiplo figli e Versamento multiplo comunitario</span>. Fino a quando questa funzione non sarà attiva, non aggiungete alcun codice e continuate a usare le causali attuali esattamente come indicate.
+                </p>
+              </div>
 
               {[
                 ['Singola quota', 'Cognome, Nome x JMJ Seoul 2027'],
@@ -1433,7 +1616,7 @@ function App() {
                   <p className="mt-1.5 text-sm leading-relaxed text-gray-800 sm:text-base">{cause}</p>
                   {title.includes('multiplo') ? (
                     <p className="mt-2 text-xs leading-relaxed text-gray-600 sm:text-sm">
-                      Dopo il versamento, salvare la ricevuta e caricarla nella sezione “Versamenti” dell&apos;Area Riservata specificando i singoli nominativi.
+                      Dopo il versamento, salvare la ricevuta e caricarla nella sezione “Versamenti” dell&apos;Area Riservata specificando i singoli nominativi. Non inviare la ricevuta via email.
                     </p>
                   ) : null}
                 </article>
@@ -1441,7 +1624,7 @@ function App() {
 
               <div className="space-y-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-3 text-sm leading-relaxed text-amber-950 sm:px-4 sm:py-4 sm:text-base">
                 <p><span className="font-bold">Bonifici dalla Svizzera:</span> aggiungere 8,50 € di commissioni per ogni operazione. Se il pagamento parte da un conto in franchi svizzeri (CHF) e viene convertito in euro, considerare anche 5,00 € per il cambio valuta: in questo caso la cifra complessiva da aggiungere è <span className="font-bold">13,50 €</span> (8,50 € + 5,00 €). Verificare comunque con la propria banca, prima di eseguire il bonifico, eventuali commissioni o costi aggiuntivi. <span className="font-bold">È importante che l&apos;importo netto effettivamente accreditato sul conto del Comitato corrisponda esattamente alla quota richiesta.</span></p>
-                <p><span className="font-bold">Ricevute:</span> dopo ogni bonifico, salvarle. Non inviarle via email: caricarle nella sezione <span className="font-bold">“Versamenti”</span> dell&apos;Area Riservata tramite il profilo personale o il profilo che gestisce i versamenti.</p>
+                <p><span className="font-bold">Ricevute:</span> dopo ogni bonifico, salvarle. <span className="font-bold">Non inviarle via email.</span> Caricarle esclusivamente nella sezione <span className="font-bold">“Versamenti”</span> della propria Area Riservata. Vale per partecipanti, genitori e responsabili che eseguono i versamenti; in caso di versamenti multipli, usare il profilo con cui si gestisce il pagamento e indicare i partecipanti interessati.</p>
                 <p><span className="font-bold">Contanti:</span> per problemi tecnici con il bonifico e per ricevere informazioni, contattare l&apos;organizzazione.</p>
               </div>
             </div>
