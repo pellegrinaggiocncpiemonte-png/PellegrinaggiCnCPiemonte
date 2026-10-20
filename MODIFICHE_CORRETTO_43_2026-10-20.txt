@@ -1,0 +1,9 @@
+CORRETTO 43 — 20/10/2026
+
+Modifiche richieste:
+- Tolto il badge “APERTE” accanto al titolo ISCRIZIONI JMJ SEOUL 2027.
+- Modificata la frase “Iscrizioni aperte: JMJ Seoul 2027” in “Iscrizioni JmJ Seoul 2027”.
+- Aggiunta nel menu WYD Seoul 2027 la voce “Incontro vocazionale · 9 agosto”, con badge NUOVO.
+- Aggiunta nuova sezione “INCONTRO VOCAZIONALE” relativa al 9 agosto 2027 a Seoul, presso KINTEX, con Kiko Argüello e l’Équipe Internazionale.
+- Inserito nella nuova sezione il video YouTube richiesto, incorporato nel sito e senza riproduzione automatica (in pausa fino alla pressione di Play).
+- Nessun’altra sezione o funzione del sito modificata.

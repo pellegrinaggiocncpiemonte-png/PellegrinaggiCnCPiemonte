@@ -39,6 +39,7 @@ const Navigation = () => {
             children: [
               { id: 'giorni-alla-partenza', label: 'Giorni alla GMG' },
               { id: 'wyd-seul', label: 'WYD Seoul 2027' },
+              { id: 'incontro-vocazionale', label: 'Incontro vocazionale · 9 agosto' },
               { id: 'sezione-video', label: 'Video promo JMJ 2027' },
               { id: 'canti-in-coreano', label: 'Canti in coreano' },
               { id: 'passaporti', label: 'Avvisi passaporto' },
@@ -203,6 +204,11 @@ const Navigation = () => {
       ) : null}
       {id === 'visti-passaporti' ? (
         <span className="passport-nav-badge shrink-0 rounded-full bg-sky-600 px-1.5 py-0.5 text-[8px] font-extrabold leading-none tracking-wide text-white shadow-sm">
+          NUOVO
+        </span>
+      ) : null}
+      {id === 'incontro-vocazionale' ? (
+        <span className="shrink-0 animate-pulse rounded-full bg-amber-600 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
           NUOVO
         </span>
       ) : null}

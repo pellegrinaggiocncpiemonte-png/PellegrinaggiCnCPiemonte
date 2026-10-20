@@ -294,20 +294,17 @@ function App() {
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
-              <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <div className="flex items-center justify-center">
                 <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider">
                   ISCRIZIONI JMJ SEOUL 2027
                 </h2>
-                <span className="animate-pulse rounded-full bg-red-600 px-3 py-1 text-xs font-bold tracking-wider text-white shadow-lg">
-                  APERTE
-                </span>
               </div>
               <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
             </div>
 
             <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-6 sm:p-8 md:p-12 space-y-6 text-center">
               <p className="text-2xl font-bold leading-snug text-gray-700 md:text-3xl">
-                Iscrizioni aperte: JMJ Seoul 2027<br />
+                Iscrizioni JmJ Seoul 2027<br />
                 Giovani del Cammino Neocatecumenale di Piemonte e Svizzera.
               </p>
 
@@ -962,6 +959,50 @@ function App() {
                   />
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="incontro-vocazionale" className="content-section py-20 bg-amber-50">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-10 text-center">
+              <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider text-slate-950">
+                INCONTRO VOCAZIONALE
+              </h2>
+              <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
+              <p className="mt-4 text-xl font-extrabold text-amber-800 md:text-2xl">9 AGOSTO 2027 · SEOUL</p>
+            </div>
+
+            <div className="rounded-3xl border border-amber-200 bg-white p-5 shadow-xl sm:p-8 md:p-10">
+              <p className="text-lg leading-relaxed text-slate-700 sm:text-xl">
+                L&apos;<strong>Incontro Vocazionale del Cammino Neocatecumenale</strong> con{' '}
+                <a
+                  href="https://www.google.com/search?kgmid=%2Fm%2F098yzs&q=Kiko+Arg%C3%BCello"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold text-amber-800 underline decoration-amber-500 underline-offset-4 hover:text-amber-950"
+                >
+                  Kiko Argüello
+                </a>{' '}
+                e l&apos;<strong>Équipe Internazionale</strong> si terrà a Seoul il <strong>9 agosto 2027</strong> presso il centro espositivo <strong>KINTEX</strong>.
+              </p>
+
+              <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-black shadow-2xl">
+                <div className="aspect-video w-full">
+                  <iframe
+                    className="h-full w-full"
+                    src="https://www.youtube.com/embed/8Oe72bPA1OA?autoplay=0&rel=0"
+                    title="Incontro Vocazionale del Cammino Neocatecumenale"
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+              <p className="mt-3 text-center text-sm text-slate-500">Il video resta in pausa finché non premi Play.</p>
             </div>
           </div>
         </div>
