@@ -1,0 +1,10 @@
+CORRETTO 44 — 21/10/2026
+
+Modifica richiesta esclusivamente agli avvisi sulla chiusura delle iscrizioni Korea 2027.
+
+- Sostituito il precedente testo sintetico con la nuova comunicazione completa sulla chiusura definitiva del 30 ottobre.
+- Specificato che chi si iscrive dal 20/10 deve completare registrazione e relativo versamento entro il 30/10, pena la non accettazione della domanda.
+- Specificato che per chi si è iscritto prima del 20/10 restano valide le scadenze già comunicate, fermo restando il termine ultimo e improrogabile del 30/10.
+- Aggiunta la motivazione organizzativa e contrattuale della chiusura e l'impossibilità di prorogare i termini.
+- Aggiornati coerentemente: riquadro Iscrizioni, riquadro Area Riservata, primo passaggio della guida Area Riservata e richiamo sottile prima del pulsante di accesso.
+- Nessun'altra parte del sito modificata.

@@ -41,10 +41,10 @@ const Navigation = () => {
               { id: 'wyd-seul', label: 'WYD Seoul 2027' },
               { id: 'incontro-vocazionale', label: 'Incontro vocazionale · 9 agosto' },
               { id: 'sezione-video', label: 'Video promo JMJ 2027' },
-              { id: 'canti-in-coreano', label: 'Canti in coreano' },
+              { id: 'canti-in-coreano', label: 'Canti pellegrinaggio 2027' },
               { id: 'passaporti', label: 'Avvisi passaporto' },
               { id: 'visti-passaporti', label: 'Visti e richiesta passaporto' },
-              { id: 'gmg-2027-iscrizione', label: 'Iscrizione JMJ Seoul 2027' },
+              { id: 'gmg-2027-iscrizione', label: 'Iscrizione pellegrinaggio vocazionale' },
             ],
           },
         ],
@@ -178,7 +178,7 @@ const Navigation = () => {
             NOVITÀ
           </span>
           <span className="shrink-0 animate-pulse whitespace-nowrap rounded-full bg-red-600 px-1.5 py-0.5 text-[8px] font-extrabold leading-none tracking-wide text-white shadow-sm">
-            30/10 23:59
+            PELLEGRINAGGIO 30/10
           </span>
         </>
       ) : null}
@@ -194,7 +194,7 @@ const Navigation = () => {
       ) : null}
       {id === 'gmg-2027-iscrizione' ? (
         <span className="shrink-0 animate-pulse whitespace-nowrap rounded-full bg-red-600 px-1.5 py-0.5 text-[8px] font-bold leading-none tracking-wide text-white shadow-sm">
-          CHIUSURA 30/10 · 23:59
+          GRUPPO · 30/10 23:59
         </span>
       ) : null}
       {id === 'passaporti' ? (

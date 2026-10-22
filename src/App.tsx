@@ -28,6 +28,100 @@ const getGoogleDrivePreviewUrl = (url: string) => {
   return match ? `https://drive.google.com/file/d/${match[1]}/preview` : url;
 };
 
+type PilgrimageSong = {
+  id: number;
+  title: string;
+  subtitle: string;
+  duration: string;
+  audioSrc: string;
+  textPdfSrc: string;
+  textImageSrc: string;
+};
+
+const PILGRIMAGE_SONGS: PilgrimageSong[] = [
+  {
+    id: 2,
+    title: 'Per amore dei miei fratelli',
+    subtitle: 'Per amore dei miei fratelli',
+    duration: '3:39',
+    audioSrc: 'https://wyd2027way.com/canto/2/file/4?download=true',
+    textPdfSrc: 'https://wyd2027way.com/canto/2/file/5?download=true',
+    textImageSrc: 'https://wyd2027way.com/canto/2/file/6?download=true',
+  },
+  {
+    id: 3,
+    title: 'Andate e annunciate',
+    subtitle: 'Andate e annunciate',
+    duration: '3:13',
+    audioSrc: 'https://wyd2027way.com/canto/3/file/7?download=true',
+    textPdfSrc: 'https://wyd2027way.com/canto/3/file/8?download=true',
+    textImageSrc: 'https://wyd2027way.com/canto/3/file/9?download=true',
+  },
+  {
+    id: 4,
+    title: 'Voglio andare a Gerusalemme',
+    subtitle: 'Voglio andare a Gerusalemme',
+    duration: '4:11',
+    audioSrc: 'https://wyd2027way.com/canto/4/file/10?download=true',
+    textPdfSrc: 'https://wyd2027way.com/canto/4/file/11?download=true',
+    textImageSrc: 'https://wyd2027way.com/canto/4/file/12?download=true',
+  },
+  {
+    id: 5,
+    title: 'Un grande segno',
+    subtitle: 'Una gran señal',
+    duration: '6:32',
+    audioSrc: 'https://wyd2027way.com/canto/5/file/13?download=true',
+    textPdfSrc: 'https://wyd2027way.com/canto/5/file/14?download=true',
+    textImageSrc: 'https://wyd2027way.com/canto/5/file/15?download=true',
+  },
+  {
+    id: 6,
+    title: 'Che belle sono le tue tende',
+    subtitle: 'Che belle sono le tue tende',
+    duration: '5:55',
+    audioSrc: 'https://wyd2027way.com/canto/6/file/16?download=true',
+    textPdfSrc: 'https://wyd2027way.com/canto/6/file/17?download=true',
+    textImageSrc: 'https://wyd2027way.com/canto/6/file/18?download=true',
+  },
+  {
+    id: 7,
+    title: 'Tu sei più bello',
+    subtitle: 'Tu sei più bello',
+    duration: '4:43',
+    audioSrc: 'https://wyd2027way.com/canto/7/file/19?download=true',
+    textPdfSrc: 'https://wyd2027way.com/canto/7/file/20?download=true',
+    textImageSrc: 'https://wyd2027way.com/canto/7/file/21?download=true',
+  },
+  {
+    id: 8,
+    title: 'Grazie a Jahwè',
+    subtitle: 'Grazie a Jahwè',
+    duration: '6:07',
+    audioSrc: 'https://wyd2027way.com/canto/8/file/22?download=true',
+    textPdfSrc: 'https://wyd2027way.com/canto/8/file/23?download=true',
+    textImageSrc: 'https://wyd2027way.com/canto/8/file/24?download=true',
+  },
+  {
+    id: 9,
+    title: 'Gloria, gloria, gloria',
+    subtitle: 'Io vengo a riunire',
+    duration: '4:18',
+    audioSrc: 'https://wyd2027way.com/canto/9/file/25?download=true',
+    textPdfSrc: 'https://wyd2027way.com/canto/9/file/26?download=true',
+    textImageSrc: 'https://wyd2027way.com/canto/9/file/27?download=true',
+  },
+  {
+    id: 10,
+    title: 'Risuscitò',
+    subtitle: 'Risuscitò',
+    duration: '5:45',
+    audioSrc: 'https://wyd2027way.com/canto/10/file/28?download=true',
+    textPdfSrc: 'https://wyd2027way.com/canto/10/file/29?download=true',
+    textImageSrc: 'https://wyd2027way.com/canto/10/file/30?download=true',
+  },
+];
+
 const KOREAN_SONGS: KoreanSong[] = [
   {
     id: 1,
@@ -81,19 +175,19 @@ const KOREAN_SONGS: KoreanSong[] = [
 
 const RESERVED_AREA_READING_STEPS = [
   {
-    title: '⏰ IMPORTANTE – Chiusura iscrizioni Korea 2027',
-    text: 'Le iscrizioni al pellegrinaggio Korea 2027 sono aperte fino al 30 ottobre 2026 alle ore 23:59. Dopo questa scadenza le iscrizioni saranno chiuse.',
+    title: '⏰ IMPORTANTE – Chiusura iscrizioni del pellegrinaggio vocazionale Piemonte e Svizzera',
+    text: 'Questo avviso riguarda esclusivamente l’iscrizione al pellegrinaggio vocazionale Korea 2027 organizzato dal Cammino Neocatecumenale per il gruppo Piemonte e Svizzera; non riguarda la chiusura delle iscrizioni internazionali alla GMG di Seoul 2027. Le iscrizioni al nostro pellegrinaggio si chiuderanno definitivamente il 30 ottobre 2026. Per chi si iscrive a partire dal 20/10, la registrazione e il relativo versamento della quota devono essere effettuati tassativamente entro il 30/10, pena la non accettazione della domanda. Per chi si è invece iscritto prima del 20/10, restano valide le scadenze precedentemente comunicate, fermo restando il termine ultimo e improrogabile del 30/10. La chiusura è necessaria per definire il costo finale del pellegrinaggio e rispettare gli accordi contrattuali già assunti; non sarà quindi possibile prorogare i termini.',
   },
   {
     title: 'ATTENZIONE: creare l’account non basta',
-    text: 'Registrarsi all’Area Riservata serve solo per creare l’accesso personale. NON significa essere iscritti alla JMJ Seoul 2027. Dopo l’accesso devi continuare fino alla sezione “Iscrizione Pellegrinaggi”.',
+    text: 'Registrarsi all’Area Riservata serve solo per creare l’accesso personale. NON significa essere iscritti al pellegrinaggio Korea 2027. Dopo l’accesso devi continuare fino alla sezione “Iscrizione Pellegrinaggi”.',
   },
   {
     title: '1. Scegli e completa il profilo',
     text: 'Premi “Leggi prima di registrarti”, scegli il profilo corretto e completa i dati anagrafici richiesti. Il profilo è importante, ma da solo non costituisce iscrizione al pellegrinaggio.',
   },
   {
-    title: '2. Iscriviti alla JMJ',
+    title: '2. Iscriviti al pellegrinaggio',
     text: 'Dopo aver creato o aperto il profilo, vai nella sezione “Iscrizione Pellegrinaggi”, scegli Korea 2027 e completa l’iscrizione.',
   },
   {
@@ -115,6 +209,7 @@ function App() {
   const [isPaymentInstructionsOpen, setIsPaymentInstructionsOpen] = useState(false);
   const [isPaymentNoticeOpen, setIsPaymentNoticeOpen] = useState(false);
   const [openVideoId, setOpenVideoId] = useState<number | null>(1);
+  const [expandedSongKey, setExpandedSongKey] = useState<string | null>(null);
   const [songViewer, setSongViewer] = useState<{ type: 'video' | 'sheet'; title: string; src: string } | null>(null);
   const [tutorialViewer, setTutorialViewer] = useState<TutorialViewer | null>(null);
   const [sheetZoom, setSheetZoom] = useState(1);
@@ -290,13 +385,53 @@ function App() {
         </div>
       </section>
 
+      <section id="giorni-alla-partenza" className="content-section section-countdown py-20 bg-black">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <h2 className="text-4xl md:text-5xl font-serif text-white font-bold tracking-wider mb-4">
+              Giorni alla GMG internazionale
+            </h2>
+            <p className="text-white/80 mt-4 text-lg md:text-xl">
+              Il conto alla rovescia indica l&apos;inizio della GMG internazionale a Seoul, previsto per il <span className="font-bold text-white">3 agosto 2027</span>. Le date di partenza dei gruppi restano invece in definizione.
+            </p>
+            <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
+          </div>
+
+          <div className="flex justify-center">
+            <FlipCountdown target={new Date('2027-08-03T00:00:00+02:00')} />
+          </div>
+        </div>
+      </section>
+
+
       <section id="gmg-2027-iscrizione" className="content-section section-registration py-20 bg-stone-100">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
+            <div className="mx-auto mb-12 max-w-4xl overflow-hidden rounded-2xl border-2 border-amber-500 bg-gradient-to-br from-amber-50 via-white to-sky-50 text-left shadow-lg">
+              <div className="px-4 py-4 sm:px-6 sm:py-5">
+                <p className="text-center text-sm font-extrabold uppercase tracking-wide text-amber-800 sm:text-base">
+                  Invito del Santo Padre alla GMG Seoul 2027
+                </p>
+                <p className="mt-3 text-center text-base font-semibold leading-relaxed text-gray-800 md:text-[15px] lg:whitespace-nowrap lg:text-lg">
+                  Il <strong>22 ottobre 2026</strong> si aprono ufficialmente le iscrizioni internazionali alla GMG di Seoul 2027.
+                </p>
+              </div>
+              <div className="aspect-video w-full bg-black">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/yr_PK5uBjMM?autoplay=0&rel=0&playsinline=1"
+                  title="Invito del Santo Padre ai giovani per la GMG Seoul 2027"
+                  className="h-full w-full"
+                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              </div>
+            </div>
+
             <div className="text-center mb-12">
               <div className="flex items-center justify-center">
                 <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider">
-                  ISCRIZIONI JMJ SEOUL 2027
+                  ISCRIZIONI AL PELLEGRINAGGIO VOCAZIONALE KOREA 2027
                 </h2>
               </div>
               <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
@@ -304,20 +439,42 @@ function App() {
 
             <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-6 sm:p-8 md:p-12 space-y-6 text-center">
               <p className="text-2xl font-bold leading-snug text-gray-700 md:text-3xl">
-                Iscrizioni JmJ Seoul 2027<br />
-                Giovani del Cammino Neocatecumenale di Piemonte e Svizzera.
+                Gruppo Piemonte e Svizzera<br />
+                Cammino Neocatecumenale
               </p>
 
-              <div className="mx-auto max-w-3xl rounded-2xl border-2 border-red-600 bg-red-50 px-4 py-4 text-center shadow-md sm:px-6 sm:py-5">
-                <p className="text-sm font-extrabold uppercase tracking-wide text-red-700 sm:text-base">
-                  ⏰ Importante – Chiusura iscrizioni
+              <div className="mx-auto max-w-3xl rounded-2xl border border-sky-300 bg-sky-50 px-4 py-4 text-left shadow-sm sm:px-6 sm:py-5">
+                <p className="text-center text-sm font-extrabold uppercase tracking-wide text-sky-800 sm:text-base">
+                  Iscrizione al nostro pellegrinaggio
                 </p>
-                <p className="mt-2 text-lg font-extrabold leading-relaxed text-red-950 sm:text-xl md:text-2xl">
-                  Le iscrizioni al pellegrinaggio Korea 2027 saranno chiuse il <span className="whitespace-nowrap">30 ottobre 2026</span> alle ore <span className="whitespace-nowrap">23:59</span>.
-                </p>
+                <div className="mt-3 space-y-3 text-base leading-relaxed text-sky-950 sm:text-lg">
+                  <p>
+                    Questa sezione riguarda <strong>esclusivamente l&apos;iscrizione al pellegrinaggio vocazionale Korea 2027 organizzato per il gruppo Piemonte e Svizzera del Cammino Neocatecumenale</strong>. È distinta dall&apos;iscrizione internazionale alla GMG di Seoul 2027, che si apre ufficialmente il <strong>22 ottobre 2026</strong>.
+                  </p>
+                  <p>
+                    Il nostro pellegrinaggio si svolge nello stesso periodo della GMG e comprende un cammino di preparazione, la partecipazione alla <strong>Veglia con il Santo Padre del 7 agosto</strong>, alla <strong>Santa Messa dell&apos;8 agosto</strong> e all&apos;<strong>Incontro Vocazionale del 9 agosto 2027</strong> con gli iniziatori e l&apos;Équipe Internazionale del Cammino Neocatecumenale.
+                  </p>
+                </div>
               </div>
 
-              <div className="mx-auto max-w-3xl rounded-xl border-2 border-red-500 bg-red-50 px-3 py-3 text-left shadow-sm sm:px-4 sm:py-4">
+              <div className="mx-auto max-w-3xl rounded-2xl border-2 border-red-600 bg-red-50 px-4 py-4 text-left shadow-md sm:px-6 sm:py-5">
+                <p className="text-center text-sm font-extrabold uppercase tracking-wide text-red-700 sm:text-base">
+                  ⏰ Importante – Chiusura iscrizioni del pellegrinaggio vocazionale Piemonte e Svizzera
+                </p>
+                <div className="mt-3 space-y-3 text-base font-semibold leading-relaxed text-red-950 sm:text-lg">
+                  <p>
+                    Si ricorda che le iscrizioni al <strong>pellegrinaggio vocazionale Korea 2027 del gruppo Piemonte e Svizzera</strong> si chiuderanno definitivamente il <strong>30 ottobre 2026</strong>. Questa scadenza riguarda il nostro pellegrinaggio organizzato dal Cammino Neocatecumenale e <strong>non la registrazione internazionale alla GMG</strong>.
+                  </p>
+                  <p>
+                    Per chi si iscrive a partire dal <strong>20/10</strong>, la registrazione e il relativo versamento della quota devono essere effettuati tassativamente entro il <strong>30/10</strong>, pena la non accettazione della domanda. Per chi si è invece iscritto prima del <strong>20/10</strong>, restano valide le scadenze precedentemente comunicate, fermo restando il termine ultimo e improrogabile del <strong>30/10</strong>.
+                  </p>
+                  <p>
+                    La chiusura è necessaria per definire il costo finale del pellegrinaggio e rispettare gli accordi contrattuali già assunti. Il mancato rispetto delle scadenze comporterebbe un aumento dei costi per tutti i partecipanti; per questo motivo, <strong>non sarà possibile in alcun modo prorogare i termini</strong>.
+                  </p>
+                </div>
+              </div>
+
+                <div className="mx-auto max-w-3xl rounded-xl border-2 border-red-500 bg-red-50 px-3 py-3 text-left shadow-sm sm:px-4 sm:py-4">
                 <p className="whitespace-nowrap text-center text-sm font-extrabold uppercase leading-tight tracking-wide text-red-800 sm:text-base md:text-lg">
                   Informazioni
                 </p>
@@ -423,24 +580,6 @@ function App() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="giorni-alla-partenza" className="content-section section-countdown py-20 bg-black">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <h2 className="text-4xl md:text-5xl font-serif text-white font-bold tracking-wider mb-4">
-              Giorni alla GMG internazionale
-            </h2>
-            <p className="text-white/80 mt-4 text-lg md:text-xl">
-              Il conto alla rovescia indica l&apos;inizio della GMG internazionale a Seoul, previsto per il <span className="font-bold text-white">3 agosto 2027</span>. Le date di partenza dei gruppi restano invece in definizione.
-            </p>
-            <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
-          </div>
-
-          <div className="flex justify-center">
-            <FlipCountdown target={new Date('2027-08-03T00:00:00+02:00')} />
           </div>
         </div>
       </section>
@@ -665,13 +804,21 @@ function App() {
                 Crea un account inserendo un&apos;e-mail valida e una password a tua scelta, oppure accedi per gestire il tuo profilo e le tue iscrizioni.
               </p>
 
-              <div className="rounded-2xl border-2 border-red-400 bg-red-500/15 px-4 py-4 text-center shadow-lg sm:px-5 sm:py-5">
-                <p className="text-sm font-extrabold uppercase tracking-wide text-red-200 sm:text-base">
-                  ⏰ Importante – Chiusura iscrizioni Korea 2027
+              <div className="rounded-2xl border-2 border-red-400 bg-red-500/15 px-4 py-4 text-left shadow-lg sm:px-5 sm:py-5">
+                <p className="text-center text-sm font-extrabold uppercase tracking-wide text-red-200 sm:text-base">
+                  ⏰ Importante – Chiusura iscrizioni del pellegrinaggio vocazionale Piemonte e Svizzera
                 </p>
-                <p className="mt-2 text-lg font-extrabold leading-relaxed text-white sm:text-xl md:text-2xl">
-                  Le iscrizioni saranno chiuse il <span className="whitespace-nowrap text-red-100">30 ottobre 2026</span> alle ore <span className="whitespace-nowrap text-red-100">23:59</span>.
-                </p>
+                <div className="mt-3 space-y-3 text-base font-semibold leading-relaxed text-white sm:text-lg">
+                  <p>
+                    Questo avviso riguarda le iscrizioni al <strong className="text-red-100">pellegrinaggio vocazionale Korea 2027 del gruppo Piemonte e Svizzera</strong>, non la registrazione internazionale alla GMG. Le iscrizioni al nostro pellegrinaggio si chiuderanno definitivamente il <strong className="text-red-100">30 ottobre 2026</strong>.
+                  </p>
+                  <p>
+                    Per chi si iscrive a partire dal <strong className="text-red-100">20/10</strong>, la registrazione e il relativo versamento della quota devono essere effettuati tassativamente entro il <strong className="text-red-100">30/10</strong>, pena la non accettazione della domanda. Per chi si è invece iscritto prima del <strong className="text-red-100">20/10</strong>, restano valide le scadenze precedentemente comunicate, fermo restando il termine ultimo e improrogabile del <strong className="text-red-100">30/10</strong>.
+                  </p>
+                  <p>
+                    La chiusura è necessaria per definire il costo finale del pellegrinaggio e rispettare gli accordi contrattuali già assunti; per questo motivo, <strong className="text-red-100">non sarà possibile prorogare i termini</strong>.
+                  </p>
+                </div>
               </div>
 
               <div className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 px-5 py-4 text-base md:text-lg leading-relaxed text-white">
@@ -695,7 +842,7 @@ function App() {
                   </article>
 
                   <article className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 px-4 py-5 shadow-lg">
-                    <p className="text-xl font-extrabold text-amber-200">2. ISCRIVITI ALLA JMJ</p>
+                    <p className="text-xl font-extrabold text-amber-200">2. ISCRIVITI AL PELLEGRINAGGIO</p>
                     <p className="mt-2 text-white leading-relaxed">
                       Questa è l&apos;operazione fondamentale. Nell&apos;Area Riservata apri <span className="font-extrabold">“Iscrizione Pellegrinaggi”</span>, seleziona <span className="font-extrabold">Korea 2027</span> e completa la procedura.
                     </p>
@@ -760,7 +907,7 @@ function App() {
 
               <div className="w-full max-w-2xl rounded-xl border border-red-400/70 bg-red-500/15 px-3 py-2 text-center shadow-sm">
                 <p className="text-sm font-extrabold leading-snug text-red-100 sm:text-base">
-                  ⚠️ Iscrizioni Korea 2027: chiusura il <span className="whitespace-nowrap">30 ottobre 2026</span> alle ore <span className="whitespace-nowrap">23:59</span>.
+                  ⚠️ Per il <strong>pellegrinaggio vocazionale Korea 2027 del gruppo Piemonte e Svizzera</strong>, le iscrizioni si chiuderanno definitivamente il <span className="whitespace-nowrap">30 ottobre 2026</span>. Questa scadenza non riguarda la registrazione internazionale alla GMG.
                 </p>
               </div>
 
@@ -1093,54 +1240,175 @@ function App() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider mb-4 text-black">
-              CANTI IN COREANO
+              CANTI PELLEGRINAGGIO 2027
             </h2>
             <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
             <p className="mx-auto mt-6 max-w-3xl text-lg text-gray-700 leading-relaxed">
-              In preparazione alla Giornata Mondiale della Gioventù di Seoul 2027, qui trovi i canti in coreano da imparare insieme in vista del pellegrinaggio.
+              Raccolta unificata dei canti per il pellegrinaggio: audio, testi con accordi e video karaoke in coreano. Apri un canto per visualizzare i materiali disponibili direttamente nella pagina.
             </p>
           </div>
 
-          <div className="mx-auto max-w-4xl space-y-4">
-            {KOREAN_SONGS.map((song, index) => {
-              return (
-                <div key={song.id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
-                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                    <div className="min-w-0">
-                      <p className="text-lg font-serif font-bold text-black leading-snug">
-                        {index + 1}. {song.titleIt}
-                      </p>
-                      <p className="text-base text-gray-600 leading-snug">
-                        {song.titleKr}
-                        {song.note ? <span className="text-sm text-gray-500"> — {song.note}</span> : null}
-                      </p>
-                    </div>
-                    <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-                      <button
-                        type="button"
-                        onClick={() => openSongViewer('video', song)}
-                        disabled={!song.videoSrc}
-                        className={`inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 font-semibold text-white transition-colors ${song.videoSrc ? 'bg-black hover:bg-gray-800' : 'cursor-not-allowed bg-gray-500/90'}`}
-                        title={song.videoSrc ? `Apri il video di ${song.titleIt}` : 'Video in arrivo'}
-                      >
-                        <Play size={18} />
-                        {song.videoSrc ? 'Video (voce e testi)' : 'VIDEO — IN ARRIVO'}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => openSongViewer('sheet', song)}
-                        disabled={!song.sheetSrc}
-                        className={`inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 font-semibold text-white transition-colors ${song.sheetSrc ? 'bg-amber-600 hover:bg-amber-700' : 'cursor-not-allowed bg-gray-500/90'}`}
-                        title={song.sheetSrc ? `Apri testo e accordi di ${song.titleIt}` : 'Testo e accordi in arrivo'}
-                      >
-                        <FileText size={18} />
-                        {song.sheetSrc ? 'Testo e accordi' : 'TESTO — IN ARRIVO'}
-                      </button>
-                    </div>
-                  </div>
+          <div className="mx-auto max-w-5xl space-y-10">
+            <div>
+              <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-emerald-700">Raccolta canti</p>
+                  <h3 className="mt-1 font-serif text-2xl font-bold text-gray-900 sm:text-3xl">Audio, testi e accordi</h3>
                 </div>
-              );
-            })}
+                <p className="max-w-xl text-sm leading-relaxed text-gray-600 sm:text-base">
+                  Premi sul titolo del canto: si apre il lettore audio e puoi consultare l&apos;anteprima del testo o il PDF.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {PILGRIMAGE_SONGS.map((song) => {
+                  const songKey = `raccolta-${song.id}`;
+                  const expanded = expandedSongKey === songKey;
+                  return (
+                    <article
+                      key={songKey}
+                      className="overflow-hidden rounded-2xl border border-slate-200 bg-white/95 shadow-[0_10px_30px_rgba(34,55,73,0.08)]"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setExpandedSongKey(expanded ? null : songKey)}
+                        className="flex w-full items-center gap-3 px-4 py-4 text-left transition-colors hover:bg-slate-50 sm:gap-4 sm:px-5"
+                        aria-expanded={expanded}
+                      >
+                        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-emerald-700 to-blue-600 text-white shadow-md">
+                          <Play size={18} fill="currentColor" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-base font-bold leading-snug text-slate-900 sm:text-lg">{song.title}</span>
+                          <span className="mt-1 block text-xs leading-snug text-slate-500 sm:text-sm">{song.subtitle}</span>
+                        </span>
+                        <span className="shrink-0 rounded-lg border border-orange-200 bg-orange-50 px-2.5 py-1.5 text-xs font-extrabold text-orange-700">
+                          {song.duration}
+                        </span>
+                        <ChevronDown className={`h-5 w-5 shrink-0 text-slate-400 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      {expanded ? (
+                        <div className="border-t border-slate-200 px-4 pb-5 pt-4 sm:px-5">
+                          <audio
+                            src={song.audioSrc}
+                            controls
+                            preload="none"
+                            className="h-12 w-full"
+                            aria-label={`Audio ${song.title}`}
+                          >
+                            Il browser non supporta il lettore audio.
+                          </audio>
+
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setTutorialViewer({ type: 'pdf', title: `Testo e accordi – ${song.title}`, src: `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(song.textPdfSrc)}` })}
+                              className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-800 shadow-sm transition-colors hover:bg-slate-50"
+                            >
+                              <FileText size={16} /> Apri PDF nella pagina
+                            </button>
+                          </div>
+
+                          <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-2 sm:p-3">
+                            <img
+                              src={song.textImageSrc}
+                              alt={`Testo e accordi del canto ${song.title}`}
+                              loading="lazy"
+                              className="mx-auto block h-auto w-full rounded-lg bg-white object-contain"
+                            />
+                          </div>
+                        </div>
+                      ) : null}
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-amber-700">Coreano</p>
+                  <h3 className="mt-1 font-serif text-2xl font-bold text-gray-900 sm:text-3xl">Video karaoke e testi</h3>
+                </div>
+                <p className="max-w-xl text-sm leading-relaxed text-gray-600 sm:text-base">
+                  I canti già presenti sono ora organizzati nello stesso stile. Dove il materiale non è ancora disponibile resta indicato “in arrivo”.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {KOREAN_SONGS.map((song) => {
+                  const songKey = `coreano-${song.id}`;
+                  const expanded = expandedSongKey === songKey;
+                  return (
+                    <article
+                      key={songKey}
+                      className="overflow-hidden rounded-2xl border border-slate-200 bg-white/95 shadow-[0_10px_30px_rgba(34,55,73,0.08)]"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setExpandedSongKey(expanded ? null : songKey)}
+                        className="flex w-full items-center gap-3 px-4 py-4 text-left transition-colors hover:bg-slate-50 sm:gap-4 sm:px-5"
+                        aria-expanded={expanded}
+                      >
+                        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-emerald-700 to-blue-600 text-white shadow-md">
+                          <Play size={18} fill="currentColor" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-base font-bold leading-snug text-slate-900 sm:text-lg">{song.titleIt}</span>
+                          <span className="mt-1 block text-xs leading-snug text-slate-500 sm:text-sm">
+                            {song.titleKr}{song.note ? ` — ${song.note}` : ''}
+                          </span>
+                        </span>
+                        <span className="shrink-0 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-[11px] font-extrabold uppercase tracking-wide text-amber-800 sm:text-xs">
+                          Karaoke
+                        </span>
+                        <ChevronDown className={`h-5 w-5 shrink-0 text-slate-400 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      {expanded ? (
+                        <div className="border-t border-slate-200 px-4 pb-5 pt-4 sm:px-5">
+                          <div className="flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              onClick={() => openSongViewer('video', song)}
+                              disabled={!song.videoSrc}
+                              className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold text-white transition-colors ${song.videoSrc ? 'bg-slate-900 hover:bg-slate-700' : 'cursor-not-allowed bg-slate-400'}`}
+                            >
+                              <Play size={16} /> {song.videoSrc ? 'Apri video karaoke' : 'VIDEO — IN ARRIVO'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => openSongViewer('sheet', song)}
+                              disabled={!song.sheetSrc}
+                              className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold text-white transition-colors ${song.sheetSrc ? 'bg-amber-600 hover:bg-amber-700' : 'cursor-not-allowed bg-slate-400'}`}
+                            >
+                              <FileText size={16} /> {song.sheetSrc ? 'Apri testo a tutto schermo' : 'TESTO — IN ARRIVO'}
+                            </button>
+                          </div>
+
+                          {song.sheetSrc ? (
+                            <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-2 sm:p-3">
+                              <img
+                                src={song.sheetSrc}
+                                alt={`Testo e accordi del canto ${song.titleIt}`}
+                                loading="lazy"
+                                className="mx-auto block h-auto w-full rounded-lg bg-white object-contain"
+                              />
+                            </div>
+                          ) : (
+                            <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm font-semibold text-slate-500">
+                              Testo e accordi in arrivo.
+                            </div>
+                          )}
+                        </div>
+                      ) : null}
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -1678,7 +1946,7 @@ function App() {
           <div className="flex flex-wrap justify-center gap-6 mb-8">
             <a href="#home" className="hover:text-amber-500 transition-colors">Home Page</a>
             <a href="#wyd-seul" className="hover:text-amber-500 transition-colors">WYD Seoul 2027</a>
-            <a href="#gmg-2027-iscrizione" className="hover:text-amber-500 transition-colors">Iscrizione JMJ Seoul 2027</a>
+            <a href="#gmg-2027-iscrizione" className="hover:text-amber-500 transition-colors">Iscrizione pellegrinaggio vocazionale</a>
             <a href="#installa-app" className="hover:text-amber-500 transition-colors">App sul cellulare</a>
             <a href="#donazioni" className="hover:text-amber-500 transition-colors">Versamenti e Donazioni</a>
           </div>

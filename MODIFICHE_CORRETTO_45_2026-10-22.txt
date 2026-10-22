@@ -1,0 +1,18 @@
+CORRETTO 45 - 22/10/2026
+
+Modifiche richieste applicate senza intervenire sulle altre sezioni:
+
+1. ISCRIZIONI JMJ SEOUL 2027
+- Inserito vicino agli avvisi di iscrizione il video YouTube indicato dall'organizzazione:
+  https://youtu.be/yr_PK5uBjMM?si=pe5Y-tUmBOd141Ha
+- Il video è incorporato direttamente nel sito e non parte automaticamente: si avvia solo premendo Play.
+- Inserito avviso relativo all'apertura ufficiale delle iscrizioni internazionali del 22 ottobre 2026 e alla registrazione già effettuata del gruppo Piemonte e Svizzera.
+
+2. CANTI PELLEGRINAGGIO 2027
+- Integrati i 9 canti presenti nel file Canti_Pellegrinaggio_2027-3.html, mantenendo l'ordine del file allegato.
+- Per i nuovi canti: scheda apribile, durata, lettore audio nella pagina, anteprima testo/accordi e apertura PDF dentro il sito.
+- I canti in coreano già presenti sono stati mantenuti, con i rispettivi video karaoke e testi, ma uniformati graficamente allo stesso stile delle nuove schede.
+- I materiali non ancora disponibili restano indicati come IN ARRIVO.
+- Aggiornata la voce menu da “Canti in coreano” a “Canti pellegrinaggio 2027”.
+
+Il pacchetto finale per GitHub non include node_modules né dist.

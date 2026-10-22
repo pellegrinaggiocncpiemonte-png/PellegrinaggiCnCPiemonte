@@ -1,0 +1,8 @@
+CORRETTO 49 – 22 ottobre 2026
+
+- Chiarita la distinzione tra apertura delle iscrizioni internazionali alla GMG Seoul 2027 e chiusura delle iscrizioni al pellegrinaggio vocazionale Korea 2027 del gruppo Piemonte e Svizzera del Cammino Neocatecumenale.
+- Rinominata la sezione e la voce menu in “Iscrizione pellegrinaggio vocazionale”.
+- Specificato che il pellegrinaggio comprende preparazione, Veglia con il Santo Padre il 7 agosto, Santa Messa l’8 agosto e Incontro Vocazionale il 9 agosto 2027.
+- Aggiornati gli avvisi di scadenza del 30 ottobre 2026 per indicare chiaramente che riguardano il gruppo Piemonte e Svizzera e non le iscrizioni internazionali alla GMG.
+- La frase sull’apertura internazionale del 22 ottobre resta su una sola riga su PC e si adatta ordinatamente sui dispositivi mobili.
+- Nessun’altra sezione o funzione modificata.
