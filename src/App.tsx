@@ -7,6 +7,8 @@ import { RESERVED_AREA_GUIDE_ITEMS, RESERVED_AREA_GUIDE_TITLE } from './config/r
 import VisitCounterBadge from './components/VisitCounterBadge';
 import FloatingAssistance from './components/FloatingAssistance';
 import SiteMotion from './components/SiteMotion';
+import PageIntro from './components/PageIntro';
+import { getSitePageFromPath, navigateToSection, SitePage } from './config/sitePages';
 
 type KoreanSong = {
   id: number;
@@ -195,13 +197,14 @@ const RESERVED_AREA_READING_STEPS = [
     text: 'I documenti richiesti sono necessari e vanno caricati nella sezione dedicata. Se al momento non li hai disponibili, puoi aggiungerli successivamente: non fermarti per questo e completa comunque l’iscrizione al pellegrinaggio.',
   },
   {
-    title: '4. Prima rata: rende valida l’iscrizione',
-    text: 'L’iscrizione al pellegrinaggio non è valida senza il versamento della prima rata di 400,00 € per partecipante entro e non oltre il 20 ottobre 2026. La scadenza è inderogabile e la quota serve a bloccare il posto sul volo. Dopo aver effettuato il bonifico, salva la ricevuta: dovrai poi caricarla nella sezione “Versamenti” dell’Area Riservata. Le rate successive saranno comunicate prossimamente.',
+    title: '4. Bonifico: genera prima il codice',
+    text: 'La nuova procedura è attiva. Prima di effettuare un versamento delle quote entra nell’Area Riservata, apri “Bonifici e versamenti”, scegli il pellegrinaggio e premi “Genera codice bonifico”. Il codice generato deve comparire nella causale del bonifico; puoi aggiungere altro testo, ma il codice non deve essere modificato. Dopo il bonifico salva la ricevuta e caricala nella stessa sezione, indicando i partecipanti interessati e le relative quote. Non inviare la ricevuta via email: questa procedura serve ad automatizzare i controlli.',
   },
 ];
 
 
 function App() {
+  const [currentPage, setCurrentPage] = useState<SitePage>(() => getSitePageFromPath());
   const [isReservedGuideOpen, setIsReservedGuideOpen] = useState(false);
   const [isReservedReadingOpen, setIsReservedReadingOpen] = useState(false);
   const [reservedReadingStep, setReservedReadingStep] = useState(0);
@@ -218,44 +221,55 @@ function App() {
   const sheetPinchStartRef = useRef<{ distance: number; zoom: number } | null>(null);
   const sheetPanLastRef = useRef<{ x: number; y: number } | null>(null);
 
-  const startReservedAreaReading = () => {
-    const section = document.getElementById('area-riservata');
-    if (section) {
-      window.scrollTo({ top: section.offsetTop - 88, behavior: 'smooth' });
+  useEffect(() => {
+    const syncRoute = () => setCurrentPage(getSitePageFromPath());
+    window.addEventListener('popstate', syncRoute);
+    window.addEventListener('site-route-change', syncRoute as EventListener);
+    return () => {
+      window.removeEventListener('popstate', syncRoute);
+      window.removeEventListener('site-route-change', syncRoute as EventListener);
+    };
+  }, []);
+
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (!hash) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      return;
     }
+    const timer = window.setTimeout(() => {
+      const target = document.getElementById(hash);
+      if (target) window.scrollTo({ top: Math.max(0, target.offsetTop - 92), behavior: 'auto' });
+    }, 80);
+    return () => window.clearTimeout(timer);
+  }, [currentPage]);
+
+  const startReservedAreaReading = () => {
+    navigateToSection('area-riservata');
     setReservedReadingStep(0);
-    window.setTimeout(() => setIsReservedReadingOpen(true), 450);
+    window.setTimeout(() => setIsReservedReadingOpen(true), 360);
   };
 
   const completeReservedAreaReading = () => {
     setIsReservedReadingOpen(false);
-    window.setTimeout(() => {
-      const passportSection = document.getElementById('passaporti');
-      if (passportSection) {
-        window.scrollTo({ top: passportSection.offsetTop - 88, behavior: 'smooth' });
-      }
-    }, 120);
+    window.setTimeout(() => navigateToSection('passaporti'), 120);
   };
 
   const continueAfterPassportReading = () => {
-    const section = document.getElementById('visti-passaporti');
-    if (section) {
-      window.scrollTo({ top: section.offsetTop - 88, behavior: 'smooth' });
-    }
+    navigateToSection('visti-passaporti');
   };
 
   const continueAfterVisaPassportInfo = () => {
-    const section = document.getElementById('area-riservata');
-    if (section) {
-      window.scrollTo({ top: section.offsetTop - 88, behavior: 'smooth' });
-    }
+    navigateToSection('area-riservata');
+  };
+
+  const openReservedAreaChoice = () => {
+    window.dispatchEvent(new CustomEvent('reserved-area-choice:open'));
   };
 
   const completeReservedProfileGuide = () => {
     setIsReservedGuideOpen(false);
-    window.setTimeout(() => {
-      document.getElementById('reserved-area-entry')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 120);
+    window.setTimeout(() => navigateToSection('reserved-area-entry'), 120);
   };
 
   useEffect(() => {
@@ -313,9 +327,10 @@ function App() {
   }, [songViewer]);
 
   return (
-    <div className="min-h-screen site-shell theme-verso-la-luce">
+    <div className={`min-h-screen site-shell theme-verso-la-luce site-page site-page-${currentPage}`}>
       <SiteMotion />
       <Navigation />
+      <PageIntro page={currentPage} />
 
       {/* ✅ Pulsante chat custom (Tawk launcher nascosto) */}
      
@@ -323,7 +338,7 @@ function App() {
       
 
 
-      <section id="home" className="hero-section min-h-screen relative flex items-center justify-center">
+      <section id="home" data-page="home" className="page-section hero-section min-h-screen relative flex items-center justify-center">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -385,7 +400,7 @@ function App() {
         </div>
       </section>
 
-      <section id="giorni-alla-partenza" className="content-section section-countdown py-20 bg-black">
+      <section id="giorni-alla-partenza" data-page="home" className="page-section content-section section-countdown py-20 bg-black">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
             <h2 className="text-4xl md:text-5xl font-serif text-white font-bold tracking-wider mb-4">
@@ -404,15 +419,48 @@ function App() {
       </section>
 
 
-      <section id="gmg-2027-iscrizione" className="content-section section-registration py-20 bg-stone-100">
+      <section id="home-sezioni" data-page="home" className="page-section home-sections-hub">
+        <div className="container mx-auto px-4">
+          <div className="home-hub-heading">
+            <p>Informazioni principali</p>
+            <h2>Scegli cosa vuoi consultare</h2>
+          </div>
+          <div className="home-hub-grid">
+            {[
+              ['Pellegrinaggio Korea 2027', 'Iscrizione del gruppo, GMG e incontro vocazionale', 'gmg-2027-iscrizione'],
+              ['Passaporti e visti', 'Documenti, validità e indicazioni per l’ingresso in Corea', 'passaporti'],
+              ['Area Riservata', 'Profilo, iscrizione, documenti e versamenti personali', 'area-riservata'],
+              ['Installa la web app', 'Icona sul cellulare, tutorial e notifiche push', 'installa-app'],
+              ['Canti 2027', 'Audio, testi, accordi e video karaoke', 'canti-in-coreano'],
+              ['Versamenti', 'Codice bonifico, dati bancari e caricamento ricevute', 'donazioni'],
+            ].map(([title, description, target], index) => (
+              <button
+                key={target}
+                type="button"
+                className="home-hub-card"
+                onClick={() => target === 'area-riservata' ? openReservedAreaChoice() : navigateToSection(target)}
+              >
+                <span className="home-hub-index">{String(index + 1).padStart(2, '0')}</span>
+                <span className="home-hub-card-copy">
+                  <strong>{title}</strong>
+                  <small>{description}</small>
+                </span>
+                <span className="home-hub-arrow" aria-hidden="true">→</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="gmg-2027-iscrizione" data-page="pellegrinaggio" className="page-section content-section section-registration py-20 bg-stone-100">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
-            <div className="mx-auto mb-12 max-w-4xl overflow-hidden rounded-2xl border-2 border-amber-500 bg-gradient-to-br from-amber-50 via-white to-sky-50 text-left shadow-lg">
+            <div className="papal-invitation-card mx-auto mb-12 max-w-4xl overflow-hidden rounded-2xl border-2 border-amber-500 bg-gradient-to-br from-amber-50 via-white to-sky-50 text-left shadow-lg">
               <div className="px-4 py-4 sm:px-6 sm:py-5">
-                <p className="text-center text-sm font-extrabold uppercase tracking-wide text-amber-800 sm:text-base">
+                <p className="papal-invitation-title text-center text-sm font-extrabold uppercase tracking-wide text-amber-800 sm:text-base">
                   Invito del Santo Padre alla GMG Seoul 2027
                 </p>
-                <p className="mt-3 text-center text-base font-semibold leading-relaxed text-gray-800 md:text-[15px] lg:whitespace-nowrap lg:text-lg">
+                <p className="papal-invitation-copy mt-3 text-center text-base font-semibold leading-relaxed text-gray-800">
                   Il <strong>22 ottobre 2026</strong> si aprono ufficialmente le iscrizioni internazionali alla GMG di Seoul 2027.
                 </p>
               </div>
@@ -560,7 +608,7 @@ function App() {
                         La data è inderogabile e la quota serve a bloccare il posto sul volo. Senza il versamento entro la scadenza l&apos;iscrizione non può essere considerata completa.
                       </p>
                       <p className="mt-2 rounded-lg border border-red-300 bg-white/70 px-3 py-2 text-sm font-bold leading-relaxed text-red-950 sm:text-base">
-                        Dopo aver effettuato il bonifico, salva la ricevuta: sarà necessario caricarla nella sezione <span className="font-extrabold">“Versamenti”</span> dell&apos;Area Riservata.
+                        Prima del bonifico entra nell&apos;Area Riservata, apri <span className="font-extrabold">“Bonifici e versamenti”</span>, scegli il pellegrinaggio e genera il <span className="font-extrabold">codice bonifico</span>. Il codice deve comparire nella causale. Dopo il pagamento salva la ricevuta e caricala nella stessa sezione associando i partecipanti e le relative quote.
                       </p>
                       <p className="mt-2 text-sm leading-relaxed sm:text-base">
                         Il costo complessivo del pellegrinaggio e il piano completo delle rate non sono ancora definitivi. Le rate successive saranno comunicate prossimamente.
@@ -572,7 +620,7 @@ function App() {
                 <div className="flex justify-center">
                   <button
                     type="button"
-                    onClick={startReservedAreaReading}
+                    onClick={() => navigateToSection('area-riservata')}
                     className="inline-flex items-center justify-center bg-amber-600 text-white px-8 py-4 rounded-lg font-semibold transition-colors hover:bg-amber-700"
                   >
                     Iscriviti dall&apos;area riservata
@@ -584,7 +632,7 @@ function App() {
         </div>
       </section>
 
-      <section id="passaporti" className="content-section passport-alerts py-16 md:py-20 bg-slate-950 relative overflow-hidden">
+      <section id="passaporti" data-page="documenti" className="page-section content-section passport-alerts py-16 md:py-20 bg-slate-950 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.16),transparent_45%)]" aria-hidden="true" />
         <div className="container relative mx-auto px-4">
           <div className="mx-auto max-w-5xl">
@@ -675,7 +723,7 @@ function App() {
         </div>
       </section>
 
-      <section id="visti-passaporti" className="content-section passport-alerts py-16 md:py-20 bg-slate-100 relative overflow-hidden">
+      <section id="visti-passaporti" data-page="documenti" className="page-section content-section passport-alerts py-16 md:py-20 bg-slate-100 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(14,165,233,0.12),transparent_42%)]" aria-hidden="true" />
         <div className="container relative mx-auto px-4">
           <div className="mx-auto max-w-6xl">
@@ -789,7 +837,7 @@ function App() {
         </div>
       </section>
 
-      <section id="area-riservata" className="content-section section-private py-20 bg-black relative">
+      <section id="area-riservata" data-page="area-riservata" className="page-section content-section section-private py-20 bg-black relative">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-8">
             <h2 className="text-4xl md:text-5xl font-serif text-white font-bold tracking-wider">
@@ -821,11 +869,23 @@ function App() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 px-5 py-4 text-base md:text-lg leading-relaxed text-white">
-                <p className="font-bold text-amber-200">⚠️ LEGGI CON ATTENZIONE PRIMA DI ACCEDERE</p>
-                <p className="mt-1 text-white/90">
-                  Se premi <span className="font-extrabold text-amber-200">“Area riservata”</span> nel menu, il sito ti accompagna in ordine: prima la guida con i passaggi principali, poi gli <span className="font-extrabold text-amber-200">avvisi sul passaporto</span> e quindi le informazioni su <span className="font-extrabold text-amber-200">visti e richiesta del passaporto presso gli uffici postali</span>. Dopo averle lette tornerai qui, all&apos;inizio della sezione <span className="font-extrabold text-amber-200">Area Riservata</span>, per leggere le altre indicazioni; proseguendo troverai il pulsante <span className="font-extrabold text-amber-200">“LEGGI PRIMA DI REGISTRARTI”</span> e infine l&apos;accesso.
+              <div className="rounded-2xl border border-amber-300/60 bg-amber-300/10 px-5 py-5 text-base md:text-lg leading-relaxed text-white">
+                <p className="font-bold text-amber-200">Se devi iscriverti, parti da qui</p>
+                <p className="mt-2 text-white/90">
+                  Leggi i passaggi qui sotto prima di aprire l&apos;Area Riservata: spiegano come creare il profilo, completare l&apos;iscrizione al pellegrinaggio, gestire i documenti e utilizzare la nuova procedura dei bonifici.
                 </p>
+                <p className="mt-2 text-sm text-white/75 sm:text-base">
+                  Se preferisci, puoi anche usare il percorso guidato con le informazioni su passaporti e visti. <span className="font-bold text-white">Non è obbligatorio.</span>
+                </p>
+                <div className="mt-4 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={startReservedAreaReading}
+                    className="inline-flex items-center justify-center rounded-xl border border-amber-300 bg-amber-300/10 px-5 py-3 font-extrabold text-amber-100 transition hover:bg-amber-300/20"
+                  >
+                    Avvia percorso guidato (facoltativo)
+                  </button>
+                </div>
               </div>
 
               <div className="rounded-3xl border border-amber-300/50 bg-white/10 px-4 py-5 sm:px-6 sm:py-6">
@@ -856,13 +916,13 @@ function App() {
                     </p>
                   </article>
 
-                  <article className="rounded-2xl border-2 border-red-400 bg-red-500/10 px-4 py-5">
-                    <p className="text-lg font-extrabold text-red-200">4. Versa la prima rata — 400,00 €</p>
+                  <article className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 px-4 py-5">
+                    <p className="text-lg font-extrabold text-amber-200">4. Genera il codice bonifico prima di pagare</p>
                     <p className="mt-2 text-white/90 leading-relaxed">
-                      L&apos;iscrizione al pellegrinaggio <span className="font-extrabold text-white">non è valida</span> senza il versamento della prima rata di <span className="font-extrabold text-white">400,00 € per partecipante entro e non oltre il 20 ottobre 2026</span>. La scadenza è inderogabile e la quota serve a bloccare il posto sul volo.
+                      Nell&apos;Area Riservata apri <span className="font-extrabold text-white">“Bonifici e versamenti”</span>, scegli il pellegrinaggio e premi <span className="font-extrabold text-white">“Genera codice bonifico”</span>. Il codice generato deve comparire nella causale. Puoi scrivere liberamente il resto della causale, ma il codice deve rimanere presente e invariato.
                     </p>
                     <p className="mt-2 font-bold leading-relaxed text-amber-200">
-                      Dopo il bonifico, salva la ricevuta: dovrai caricarla nella sezione “Versamenti” dell&apos;Area Riservata.
+                      Dopo il bonifico salva la ricevuta e, nella stessa sezione, allegala indicando i partecipanti interessati e le relative quote. Non inviare la ricevuta via email: questo passaggio permette di automatizzare i controlli.
                     </p>
                   </article>
                 </div>
@@ -894,7 +954,7 @@ function App() {
                   <p className="font-extrabold text-emerald-200">Puoi installare l&apos;Area Riservata sul cellulare</p>
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-white/90 sm:text-base">
-                  Avrai l&apos;icona sulla schermata Home e, dopo l&apos;accesso, potrai attivare le notifiche push. Se preferisci, puoi comunque continuare a usarla dal browser senza installarla.
+                  Se sei già iscritto, ti consigliamo di aprire l&apos;Area Riservata direttamente dall&apos;icona installata sul cellulare: in questo modo puoi utilizzare correttamente anche le notifiche push. Dal sito puoi comunque accedere con il browser, ma le funzioni delle notifiche non sono complete come nella web app installata.
                 </p>
                 <button
                   type="button"
@@ -938,7 +998,7 @@ function App() {
         </div>
       </section>
 
-      <section id="installa-app" className="content-section section-app-install py-20 bg-stone-100">
+      <section id="installa-app" data-page="app" className="page-section content-section section-app-install py-20 bg-stone-100">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-6xl">
             <div className="text-center mb-10">
@@ -1062,7 +1122,7 @@ function App() {
         </div>
       </section>
 
-      <section id="wyd-seul" className="content-section section-wyd py-20 bg-white">
+      <section id="wyd-seul" data-page="pellegrinaggio" className="page-section content-section section-wyd py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
             <div className="space-y-6">
@@ -1111,7 +1171,7 @@ function App() {
         </div>
       </section>
 
-      <section id="incontro-vocazionale" className="content-section py-20 bg-amber-50">
+      <section id="incontro-vocazionale" data-page="pellegrinaggio" className="page-section content-section py-20 bg-amber-50">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-5xl">
             <div className="mb-10 text-center">
@@ -1155,7 +1215,7 @@ function App() {
         </div>
       </section>
 
-      <section id="sezione-video" className="content-section section-videos py-20 bg-black">
+      <section id="sezione-video" data-page="video" className="page-section content-section section-videos py-20 bg-black">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-serif text-white font-bold tracking-wider mb-4">
@@ -1236,7 +1296,7 @@ function App() {
         </div>
       </section>
 
-      <section id="canti-in-coreano" className="content-section section-songs py-20 bg-stone-100">
+      <section id="canti-in-coreano" data-page="canti" className="page-section content-section section-songs py-20 bg-stone-100">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider mb-4 text-black">
@@ -1666,7 +1726,7 @@ function App() {
         </div>
       ) : null}
 
-      <section id="donazioni" className="content-section section-donations py-20 bg-black">
+      <section id="donazioni" data-page="versamenti" className="page-section content-section section-donations py-20 bg-black">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -1674,7 +1734,7 @@ function App() {
                 VERSAMENTI E DONAZIONI
               </h2>
               <span className="animate-pulse rounded-full bg-red-600 px-3 py-1 text-xs font-extrabold tracking-wider text-white shadow-lg shadow-red-600/30">
-                IMPORTANTE · CAUSALI ATTUALI
+                CODICE BONIFICO · ATTIVO
               </span>
             </div>
             <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
@@ -1683,19 +1743,22 @@ function App() {
           <div className="max-w-4xl mx-auto rounded-3xl border border-white/15 bg-white/10 p-6 text-white shadow-2xl backdrop-blur-sm sm:p-8 md:p-10">
             <div className="space-y-4 text-base leading-relaxed text-white/90 sm:text-lg">
               <p>
-                In questa sezione trovi le indicazioni per effettuare versamenti e donazioni destinati alla JMJ Seoul 2027.
+                In questa sezione trovi la procedura aggiornata per effettuare i versamenti delle quote del pellegrinaggio Korea 2027 e caricare correttamente le ricevute.
               </p>
               <p>
-                Le stesse informazioni saranno disponibili anche nell&apos;area riservata personale, nella sezione <span className="font-semibold text-white">“Rateizzo e situazione economica”</span>.
+                La procedura operativa si trova nella tua Area Riservata, nella sezione <span className="font-semibold text-white">“Bonifici e versamenti”</span>.
               </p>
 
-              <div className="animate-pulse rounded-2xl border-2 border-amber-300 bg-amber-300/10 px-4 py-4 text-left shadow-lg shadow-amber-400/10">
-                <p className="font-extrabold text-amber-200">⚠️ CAUSALI ATTUALI — VALIDE FINO AL CAMBIO PROCEDURA</p>
+              <div className="rounded-2xl border-2 border-amber-300 bg-amber-300/10 px-4 py-5 text-left shadow-lg shadow-amber-400/10">
+                <p className="font-extrabold text-amber-200">NUOVA PROCEDURA ATTIVA — CODICE BONIFICO</p>
                 <p className="mt-2 text-white/95">
-                  Per favore, per ogni bonifico scrivete <span className="font-extrabold text-white">esattamente la causale che abbiamo indicato</span> per il vostro tipo di versamento. Le causali riportate adesso sono <span className="font-extrabold text-white">provvisorie ma obbligatorie fino all&apos;attivazione della nuova procedura</span>. Una causale scritta diversamente, con aggiunte, abbreviazioni o altro testo, può creare problemi nell&apos;abbinamento del pagamento.
+                  Prima di effettuare un bonifico entra nella tua <span className="font-extrabold text-white">Area Riservata</span>, apri <span className="font-extrabold text-white">“Bonifici e versamenti”</span>, scegli il pellegrinaggio e premi <span className="font-extrabold text-white">“Genera codice bonifico”</span>.
                 </p>
                 <p className="mt-2 font-semibold text-amber-100">
-                  Prossimamente cambierà la procedura: dalla propria Area Riservata verrà generato un <span className="font-extrabold text-white">codice bonifico</span> che dovrà essere riportato nella causale. Il codice sarà previsto per <span className="font-extrabold text-white">Quote singole, Versamento multiplo figli e Versamento multiplo comunitario</span>. Fino a quando la nuova procedura non sarà attiva, continuate a usare esattamente le causali attuali.
+                  Il <span className="font-extrabold text-white">codice generato deve comparire nella causale</span>. Puoi scrivere come vuoi il resto della causale, ma il codice deve rimanere presente e non va modificato. La procedura vale per <span className="font-extrabold text-white">quota singola, versamento multiplo figli e versamento multiplo comunitario</span>.
+                </p>
+                <p className="mt-2 text-white/95">
+                  Dopo il bonifico salva la ricevuta, torna nella stessa sezione e <span className="font-extrabold text-white">allega la ricevuta del bonifico</span>, indicando i <span className="font-extrabold text-white">partecipanti e le relative quote</span>. Non inviare la ricevuta via email: questa procedura serve ad automatizzare i controlli.
                 </p>
                 <button
                   type="button"
@@ -1703,7 +1766,7 @@ function App() {
                   className="mt-3 inline-flex items-center justify-center gap-2 rounded-lg bg-amber-400 px-4 py-2.5 text-sm font-extrabold text-black shadow transition hover:bg-amber-300"
                 >
                   <FileText size={17} />
-                  Vedi causali attuali
+                  Vedi procedura codice bonifico
                 </button>
               </div>
 
@@ -1713,7 +1776,7 @@ function App() {
                   Da versare entro e non oltre il <span className="font-extrabold text-white">20 ottobre 2026</span>. La scadenza è inderogabile: la quota serve a bloccare il posto sul volo e senza il versamento l&apos;iscrizione non può essere considerata completa.
                 </p>
                 <p className="mt-3 rounded-xl border border-amber-300/60 bg-amber-300/10 px-3 py-3 font-bold leading-relaxed text-amber-100">
-                  Dopo aver effettuato il bonifico, salva la ricevuta: <span className="font-extrabold text-white">non inviarla via email</span>. Deve essere caricata nella sezione <span className="font-extrabold text-white">“Versamenti”</span> dell&apos;Area Riservata. Questa indicazione vale per partecipanti, genitori e responsabili che eseguono i versamenti.
+                  Prima del pagamento genera il codice nella sezione <span className="font-extrabold text-white">“Bonifici e versamenti”</span> dell&apos;Area Riservata e inseriscilo nella causale. Dopo il bonifico salva la ricevuta: <span className="font-extrabold text-white">non inviarla via email</span>. Torna nella stessa sezione, allega la ricevuta e indica i partecipanti con le relative quote.
                 </p>
                 <p className="mt-2 text-sm text-white/80">
                   Il costo complessivo e il piano completo delle rate sono ancora in definizione. Le rate successive saranno comunicate prossimamente.
@@ -1736,7 +1799,7 @@ function App() {
                 className="inline-flex animate-pulse items-center justify-center gap-2 rounded-lg bg-amber-500 px-6 py-3.5 font-extrabold text-black shadow-lg shadow-amber-500/20 transition-colors hover:bg-amber-400"
               >
                 <FileText size={19} />
-                IMPORTANTE · Causali attuali
+                Procedura codice bonifico
               </button>
             </div>
 
@@ -1769,7 +1832,7 @@ function App() {
                     È importante che l&apos;importo netto effettivamente accreditato sul conto del Comitato corrisponda esattamente alla quota richiesta.
                   </p>
                   <p>
-                    Dopo ogni bonifico, salva la ricevuta. <strong>Non deve essere inviata via email.</strong> Va caricata esclusivamente nella sezione “Versamenti” dell&apos;Area Riservata. Vale per il partecipante che esegue il proprio versamento, per il genitore che versa per uno o più figli e per il responsabile che esegue versamenti per i partecipanti che gestisce.
+                    Anche per i bonifici dalla Svizzera, prima del pagamento genera il <strong>codice bonifico</strong> dalla sezione “Bonifici e versamenti” dell&apos;Area Riservata e inseriscilo nella causale. Dopo il bonifico salva la ricevuta. <strong>Non deve essere inviata via email.</strong> Torna nella stessa sezione, allega la ricevuta e indica i partecipanti interessati con le relative quote.
                   </p>
                   <p>
                     Per problemi tecnici con il bonifico o per richiedere informazioni sulla consegna delle quote in contanti, contattare l&apos;organizzazione.
@@ -1882,13 +1945,13 @@ function App() {
             type="button"
             className="absolute inset-0 bg-black/75 backdrop-blur-sm"
             onClick={() => setIsPaymentInstructionsOpen(false)}
-            aria-label="Chiudi indicazioni e causali"
+            aria-label="Chiudi procedura codice bonifico"
           />
           <div className="relative z-10 flex h-[calc(100dvh-1rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white text-black shadow-2xl sm:h-auto sm:max-h-[88vh]">
             <div className="shrink-0 flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-3.5 sm:px-5 sm:py-4">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 sm:text-xs">JMJ Seoul 2027</p>
-                <h3 className="text-lg font-serif font-bold sm:text-2xl">Indicazioni e causali attuali</h3>
+                <h3 className="text-lg font-serif font-bold sm:text-2xl">Procedura codice bonifico</h3>
               </div>
               <button
                 type="button"
@@ -1901,39 +1964,38 @@ function App() {
             </div>
 
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3 sm:p-5">
-              <div className="space-y-2 rounded-xl border-2 border-red-300 bg-red-50 px-3 py-3 text-sm leading-relaxed text-red-950 sm:px-4 sm:text-base">
-                <p className="font-extrabold">⚠️ CAUSALI ATTUALI — PROVVISORIE FINO AL CAMBIO PROCEDURA</p>
+              <div className="space-y-3 rounded-xl border-2 border-amber-300 bg-amber-50 px-3 py-4 text-sm leading-relaxed text-amber-950 sm:px-4 sm:text-base">
+                <p className="font-extrabold">CODICE BONIFICO — PROCEDURA ATTIVA</p>
                 <p>
-                  Per favore scrivete <span className="font-extrabold">esattamente la causale riportata qui sotto</span>, senza aggiungere, togliere o modificare parole e senza inserire altro testo. Queste sono le causali da utilizzare <span className="font-extrabold">fino all&apos;attivazione della nuova procedura</span>.
-                </p>
-                <p>
-                  Stiamo automatizzando i controlli dei versamenti: se la causale viene scritta diversamente ci create un problema e il pagamento può non essere abbinato correttamente o richiedere una verifica manuale.
-                </p>
-                <p className="font-semibold">
-                  Prossimamente la procedura cambierà: dalla propria Area Riservata verrà generato un <span className="font-extrabold">codice bonifico</span> che dovrà comparire nella causale. Il codice sarà previsto per <span className="font-extrabold">Quote singole, Versamento multiplo figli e Versamento multiplo comunitario</span>. Fino a quando questa funzione non sarà attiva, non aggiungete alcun codice e continuate a usare le causali attuali esattamente come indicate.
+                  Per i versamenti delle quote non devi più copiare una causale fissa. Prima del bonifico genera il codice dalla tua Area Riservata: il <span className="font-extrabold">codice deve comparire nella causale</span>. Il resto della causale può essere scritto liberamente, purché il codice rimanga presente e invariato.
                 </p>
               </div>
 
               {[
-                ['Singola quota', 'Cognome, Nome x JMJ Seoul 2027'],
-                ['Donazione', 'Donazione: JMJ Seoul 2027'],
-                ['Versamento multiplo figli', 'Cognome famiglia, n° quote versate, x JMJ Seoul 2027'],
-                ['Versamento multiplo comunitario', 'Diocesi, parrocchia, n° quote versate x JMJ Seoul 2027'],
-              ].map(([title, cause]) => (
+                ['1. Entra nell’Area Riservata', 'Accedi con il profilo con cui devi gestire il pagamento.'],
+                ['2. Apri “Bonifici e versamenti”', 'Scegli il pellegrinaggio Korea 2027 e premi “Genera codice bonifico”.'],
+                ['3. Inserisci il codice nella causale', 'Copia il codice generato nella causale del bonifico. Puoi aggiungere altre parole, ma non eliminare o modificare il codice. La procedura vale per quota singola, versamento multiplo figli e versamento multiplo comunitario.'],
+                ['4. Esegui il bonifico e salva la ricevuta', 'Conserva il file o la foto della ricevuta. Non inviarla via email.'],
+                ['5. Carica la ricevuta nella stessa sezione', 'Torna in “Bonifici e versamenti”, allega la ricevuta del bonifico e indica tutti i partecipanti interessati con le relative quote. Questo permette al sistema di automatizzare i controlli.'],
+              ].map(([title, text]) => (
                 <article key={title} className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 sm:px-4 sm:py-4">
                   <h4 className="font-bold text-black">{title}</h4>
-                  <p className="mt-1.5 text-sm leading-relaxed text-gray-800 sm:text-base">{cause}</p>
-                  {title.includes('multiplo') ? (
-                    <p className="mt-2 text-xs leading-relaxed text-gray-600 sm:text-sm">
-                      Dopo il versamento, salvare la ricevuta e caricarla nella sezione “Versamenti” dell&apos;Area Riservata specificando i singoli nominativi. Non inviare la ricevuta via email.
-                    </p>
-                  ) : null}
+                  <p className="mt-1.5 text-sm leading-relaxed text-gray-800 sm:text-base">{text}</p>
                 </article>
               ))}
 
+              <a
+                href={SITE_CONFIG.reservedAreaUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-full items-center justify-center rounded-xl bg-black px-5 py-3.5 text-sm font-extrabold text-white transition hover:bg-gray-800 sm:text-base"
+              >
+                Entra nell&apos;Area Riservata e genera il codice
+              </a>
+
               <div className="space-y-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-3 text-sm leading-relaxed text-amber-950 sm:px-4 sm:py-4 sm:text-base">
                 <p><span className="font-bold">Bonifici dalla Svizzera:</span> aggiungere 8,50 € di commissioni per ogni operazione. Se il pagamento parte da un conto in franchi svizzeri (CHF) e viene convertito in euro, considerare anche 5,00 € per il cambio valuta: in questo caso la cifra complessiva da aggiungere è <span className="font-bold">13,50 €</span> (8,50 € + 5,00 €). Verificare comunque con la propria banca, prima di eseguire il bonifico, eventuali commissioni o costi aggiuntivi. <span className="font-bold">È importante che l&apos;importo netto effettivamente accreditato sul conto del Comitato corrisponda esattamente alla quota richiesta.</span></p>
-                <p><span className="font-bold">Ricevute:</span> dopo ogni bonifico, salvarle. <span className="font-bold">Non inviarle via email.</span> Caricarle esclusivamente nella sezione <span className="font-bold">“Versamenti”</span> della propria Area Riservata. Vale per partecipanti, genitori e responsabili che eseguono i versamenti; in caso di versamenti multipli, usare il profilo con cui si gestisce il pagamento e indicare i partecipanti interessati.</p>
+                <p><span className="font-bold">Ricevute:</span> dopo ogni bonifico, salvarle. <span className="font-bold">Non inviarle via email.</span> Caricarle nella stessa sezione <span className="font-bold">“Bonifici e versamenti”</span>, allegando la ricevuta e indicando i partecipanti interessati con le relative quote.</p>
                 <p><span className="font-bold">Contanti:</span> per problemi tecnici con il bonifico e per ricevere informazioni, contattare l&apos;organizzazione.</p>
               </div>
             </div>

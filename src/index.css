@@ -68,7 +68,7 @@
   height: 50%;
   display: block;
   overflow: hidden;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-family: var(--site-font, 'Inter', sans-serif);
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   font-size: 40px;
@@ -172,9 +172,7 @@
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
+    font-family: var(--site-font, 'Inter', sans-serif);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -411,7 +409,7 @@ body.cinematic-intro-active iframe[title*="chat" i] {
 .intro-region { margin: 0; text-align: left; }
 .intro-brand {
   color: #fff5d8;
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--site-font, 'Inter', sans-serif);
   font-size: clamp(1rem, 2vw, 1.35rem);
   font-weight: 700;
   letter-spacing: .03em;
@@ -429,7 +427,7 @@ body.cinematic-intro-active iframe[title*="chat" i] {
 .intro-copy h1 {
   margin: 0;
   color: #fff8e7;
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--site-font, 'Inter', sans-serif);
   font-size: clamp(3rem, 9vw, 7.4rem);
   line-height: .92;
   letter-spacing: .04em;
@@ -503,7 +501,7 @@ body.cinematic-intro-active iframe[title*="chat" i] {
   display: block;
   margin-top: 2px;
   color: #fff1c9;
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--site-font, 'Inter', sans-serif);
   font-size: 1.04rem;
 }
 
@@ -1827,5 +1825,413 @@ body {
   .passport-nav-badge,
   .passport-important-badge {
     animation: none !important;
+  }
+}
+
+/* ============================================================
+   2026-10-25 · NAVIGAZIONE A PAGINE + STILE WYD SEOUL
+   Ispirato ai principi visivi del sito ufficiale (tipografia
+   geometrica, ampi spazi, informazioni brevi, animazioni sobrie),
+   mantenendo colori, contenuti e identità del sito esistente.
+   ============================================================ */
+:root {
+  --site-font: 'Inter', sans-serif;
+  --wyd-red: #f32735;
+  --wyd-blue: #0047bb;
+  --wyd-yellow: #fbe126;
+  --site-ink: #101318;
+  --site-muted: #65707c;
+}
+
+html, body, button, input, textarea, select,
+.font-serif, .font-sans, .site-shell {
+  font-family: var(--site-font) !important;
+}
+
+body {
+  color: var(--site-ink);
+  font-weight: 500;
+  letter-spacing: -0.012em;
+}
+
+/* Più pagine: nel DOM restano le sezioni originali, ma viene mostrata
+   soltanto la pagina selezionata. Così non si tocca la logica interna. */
+.site-page .page-section { display: none !important; }
+.site-page-home .page-section[data-page~='home'],
+.site-page-pellegrinaggio .page-section[data-page~='pellegrinaggio'],
+.site-page-documenti .page-section[data-page~='documenti'],
+.site-page-area-riservata .page-section[data-page~='area-riservata'],
+.site-page-app .page-section[data-page~='app'],
+.site-page-video .page-section[data-page~='video'],
+.site-page-canti .page-section[data-page~='canti'],
+.site-page-versamenti .page-section[data-page~='versamenti'] {
+  display: block !important;
+}
+.site-page-home #home { display: flex !important; }
+
+/* Testata delle pagine interne */
+.page-intro {
+  position: relative;
+  z-index: 3;
+  padding: 150px 0 54px;
+  background: #fff;
+  color: var(--site-ink);
+  border-bottom: 1px solid #e7e9ec;
+}
+.page-intro-inner { max-width: 980px; }
+.page-intro-eyebrow {
+  margin: 0 0 14px;
+  color: var(--wyd-blue);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+.page-intro h1 {
+  margin: 0;
+  max-width: 900px;
+  font-size: clamp(2.25rem, 5vw, 4.7rem);
+  line-height: .98;
+  letter-spacing: -.055em;
+  font-weight: 700;
+}
+.page-intro-copy {
+  max-width: 760px;
+  margin: 24px 0 0;
+  color: var(--site-muted);
+  font-size: clamp(1rem, 1.7vw, 1.2rem);
+  line-height: 1.72;
+  letter-spacing: -.015em;
+}
+
+/* Home: accesso alle pagine principali in stile editoriale */
+.home-sections-hub {
+  position: relative;
+  z-index: 2;
+  padding: 82px 0 96px;
+  background: #fff;
+  color: var(--site-ink);
+}
+.home-hub-heading { max-width: 760px; margin-bottom: 34px; }
+.home-hub-heading > p {
+  color: var(--wyd-blue);
+  font-size: .76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  margin-bottom: 10px;
+}
+.home-hub-heading h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 1.03;
+  letter-spacing: -.045em;
+  font-weight: 700;
+}
+.home-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid #dfe3e8;
+}
+.home-hub-card {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 28px;
+  gap: 18px;
+  align-items: center;
+  min-height: 142px;
+  padding: 28px 24px;
+  border: 0;
+  border-bottom: 1px solid #dfe3e8;
+  background: transparent;
+  color: var(--site-ink);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color .22s ease, transform .22s ease;
+}
+.home-hub-card:nth-child(odd) { border-right: 1px solid #dfe3e8; }
+.home-hub-card:hover,
+.home-hub-card:focus-visible { background: #f6f8fb; }
+.home-hub-card:active { transform: translateY(1px); }
+.home-hub-index { color: var(--wyd-red); font-size: .76rem; font-weight: 700; letter-spacing: .08em; }
+.home-hub-card-copy { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.home-hub-card-copy strong { font-size: clamp(1.05rem, 2vw, 1.35rem); line-height: 1.18; letter-spacing: -.025em; }
+.home-hub-card-copy small { color: var(--site-muted); font-size: .91rem; line-height: 1.55; font-weight: 500; }
+.home-hub-arrow { font-size: 1.35rem; transition: transform .2s ease; }
+.home-hub-card:hover .home-hub-arrow,
+.home-hub-card:focus-visible .home-hub-arrow { transform: translateX(4px); }
+
+/* Tipografia uniforme: niente mix serif/sans e niente spaziature troppo dure. */
+.content-section h1,
+.content-section h2,
+.content-section h3,
+.content-section h4,
+.content-section .font-serif {
+  font-family: var(--site-font) !important;
+  letter-spacing: -.035em !important;
+  line-height: 1.08;
+}
+.content-section h2 { font-weight: 700 !important; }
+.content-section h3 { font-weight: 700 !important; }
+.content-section p,
+.content-section li {
+  line-height: 1.72;
+  letter-spacing: -.01em;
+}
+.content-section .tracking-wider,
+.content-section .tracking-wide { letter-spacing: -.018em !important; }
+
+/* Avvisi: più leggibili, meno “allarme continuo”. Restano le gerarchie e i badge importanti. */
+.content-section .bg-red-50,
+.content-section .bg-amber-50,
+.content-section .bg-yellow-50 {
+  background-color: #fff !important;
+}
+.content-section .border-red-500,
+.content-section .border-red-400,
+.content-section .border-red-300,
+.content-section .border-amber-500,
+.content-section .border-amber-400,
+.content-section .border-amber-300 {
+  border-color: #dfe3e8 !important;
+}
+.content-section .text-red-800,
+.content-section .text-red-700,
+.content-section .text-amber-800,
+.content-section .text-amber-700 {
+  color: #29323c !important;
+}
+.content-section [class*='shadow-xl'],
+.content-section [class*='shadow-2xl'] {
+  box-shadow: 0 18px 45px rgba(11, 26, 45, .10) !important;
+}
+.content-section .animate-pulse:not(.passport-nav-badge):not(.nav-status-badge) {
+  animation-duration: 3.2s;
+  animation-timing-function: ease-in-out;
+}
+
+/* Animazioni sobrie come nel sito ufficiale: entrata breve, niente blur/3D. */
+.pointer-glow { display: none !important; }
+.motion-effects-ready .motion-section > .container {
+  opacity: 0;
+  transform: translateY(22px);
+  filter: none;
+  transition: opacity 620ms cubic-bezier(.2,.7,.2,1), transform 680ms cubic-bezier(.2,.7,.2,1);
+}
+.motion-effects-ready .motion-section--visible > .container {
+  opacity: 1;
+  transform: translateY(0);
+  filter: none;
+}
+.theme-verso-la-luce .motion-effects-ready .motion-section > .container {
+  transform: translateY(22px);
+}
+.theme-verso-la-luce .motion-effects-ready .motion-section--visible > .container {
+  transform: translateY(0);
+}
+.motion-section::after { display: none; }
+.theme-verso-la-luce section .rounded-lg:hover,
+.theme-verso-la-luce section .rounded-2xl:hover,
+.theme-verso-la-luce section .rounded-3xl:hover { transform: translateY(-2px); }
+
+/* Menu: controlli chiari da click/tap. Hover resta solo come feedback visivo. */
+[data-site-nav] button,
+[data-site-nav] a { -webkit-tap-highlight-color: transparent; }
+[data-site-nav] button:focus-visible,
+[data-site-nav] a:focus-visible {
+  outline: 3px solid rgba(0, 71, 187, .22);
+  outline-offset: 3px;
+}
+.desktop-nav-popover { border-radius: 18px; }
+.desktop-nav-popover button,
+.desktop-nav-popover a { font-weight: 500; }
+
+@media (max-width: 1023px) {
+  .page-intro { padding: 118px 0 42px; }
+  .home-hub-grid { grid-template-columns: 1fr; }
+  .home-hub-card:nth-child(odd) { border-right: 0; }
+}
+
+@media (max-width: 640px) {
+  .page-intro { padding: 104px 0 34px; }
+  .page-intro h1 { font-size: clamp(2rem, 12vw, 3.15rem); }
+  .page-intro-copy { margin-top: 18px; line-height: 1.62; }
+  .home-sections-hub { padding: 58px 0 72px; }
+  .home-hub-card {
+    grid-template-columns: 34px minmax(0, 1fr) 22px;
+    min-height: 122px;
+    gap: 12px;
+    padding: 22px 8px 22px 2px;
+  }
+  .home-hub-card-copy small { font-size: .84rem; }
+  .content-section { padding-top: 4rem !important; padding-bottom: 4rem !important; }
+  .content-section p,
+  .content-section li { line-height: 1.66; }
+}
+
+
+/* ============================================================
+   2026-10-25 · TIPOGRAFIA UNICA + ACCESSO DIRETTO
+   Un solo carattere geometrico in tutto il sito, compresi intro,
+   countdown, modali, menu, pulsanti, moduli e dati bancari.
+   ============================================================ */
+html,
+body,
+button,
+a,
+input,
+textarea,
+select,
+option,
+label,
+.font-serif,
+.font-sans,
+.font-mono,
+.site-shell,
+.site-shell *,
+.cinematic-intro,
+.cinematic-intro *,
+.flip-card-top,
+.flip-card-bottom,
+.flip-label {
+  font-family: var(--site-font) !important;
+}
+
+/* Il countdown mantiene l'allineamento numerico senza cambiare famiglia. */
+.flip-card-top,
+.flip-card-bottom,
+.font-mono {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Titoli più editoriali e leggibili, senza alternanza serif/sans. */
+.site-shell h1,
+.site-shell h2,
+.site-shell h3,
+.site-shell h4,
+.site-shell h5,
+.site-shell h6 {
+  font-family: var(--site-font) !important;
+  font-weight: 700;
+}
+
+/* Inter è il carattere unico del sito: normalizziamo pesi e componenti per evitare differenze tra sezioni. */
+.site-shell .font-normal { font-weight: 500 !important; }
+.site-shell .font-medium { font-weight: 500 !important; }
+.site-shell .font-semibold { font-weight: 700 !important; }
+.site-shell .font-extrabold,
+.site-shell .font-black { font-weight: 700 !important; }
+
+
+/* ============================================================
+   2026-10-25 · INTER COME FONT UNICO DEL SITO
+   Un solo font per pagine, menu, modali, countdown, form,
+   avvisi, pulsanti e contenuti. Le classi storiche serif/mono
+   mantengono soltanto il loro ruolo semantico, non la famiglia.
+   ============================================================ */
+html,
+body,
+#root,
+#root *,
+#root *::before,
+#root *::after,
+button,
+input,
+textarea,
+select,
+option {
+  font-family: var(--site-font) !important;
+}
+
+/* Il numero del countdown resta allineato pur usando Inter. */
+.flip-card-top,
+.flip-card-bottom,
+.font-mono {
+  font-family: var(--site-font) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Invito del Papa: una riga sui desktop, wrapping pulito su mobile/tablet. */
+.papal-invitation-card {
+  width: 100%;
+  min-width: 0;
+}
+
+.papal-invitation-title,
+.papal-invitation-copy {
+  max-width: 100%;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+
+.papal-invitation-title {
+  white-space: normal;
+  text-wrap: balance;
+}
+
+@media (min-width: 1024px) {
+  .papal-invitation-card {
+    max-width: 68rem;
+  }
+
+  .papal-invitation-copy {
+    white-space: nowrap;
+    font-size: clamp(.93rem, 1.25vw, 1.08rem);
+    line-height: 1.55;
+  }
+}
+
+@media (max-width: 1023px) {
+  .papal-invitation-copy {
+    white-space: normal;
+    text-wrap: pretty;
+  }
+}
+
+/* ============================================================
+   2026-10-25 · MENU PIÙ SOBRIO + SCELTA AREA RISERVATA
+   Menu senza badge colorati/lampeggianti. Su mobile le sezioni
+   si aprono a tap e le azioni rapide restano raccolte in fondo.
+   ============================================================ */
+[data-site-nav] .animate-pulse {
+  animation: none !important;
+}
+
+.desktop-nav-popover {
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, .14) !important;
+}
+
+.desktop-nav-popover button,
+.desktop-nav-popover a {
+  border-radius: 12px;
+  letter-spacing: -0.01em !important;
+}
+
+@media (min-width: 1024px) {
+  [data-site-nav] nav > div > div:nth-child(2) > button,
+  [data-site-nav] nav > div > div:nth-child(2) > div > button {
+    letter-spacing: -0.01em !important;
+    font-weight: 600 !important;
+  }
+}
+
+.mobile-nav-panel {
+  background: rgba(255, 255, 255, .985) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.mobile-reserved-shortcut {
+  white-space: nowrap;
+  min-width: 0;
+}
+
+@media (max-width: 420px) {
+  .mobile-reserved-shortcut {
+    padding-inline: .65rem !important;
+  }
+  .mobile-reserved-shortcut span {
+    font-size: .7rem;
   }
 }
