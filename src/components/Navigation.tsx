@@ -3,12 +3,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { QUICK_ACTIONS, SITE_CONFIG } from '../config/siteConfig';
 import { getSitePageFromPath, navigateToSection, SECTION_PAGE } from '../config/sitePages';
 
-type NavItem = { id: string; label: string; href?: string; children?: NavItem[] };
+type StatusBadge = 'updated' | 'new';
+type NavItem = { id: string; label: string; href?: string; children?: NavItem[]; badge?: StatusBadge };
 type NavGroup = {
   id: string;
   label: string;
   type: 'link' | 'dropdown';
   items: NavItem[];
+  badge?: StatusBadge;
 };
 
 const Navigation = () => {
@@ -36,8 +38,9 @@ const Navigation = () => {
         type: 'dropdown',
         items: [
           { id: 'gmg-2027-iscrizione', label: 'Iscrizione gruppo Piemonte e Svizzera' },
+          { id: 'invito-santo-padre', label: 'Invito del Santo Padre', badge: 'new' },
           { id: 'wyd-seul', label: 'GMG Seoul 2027' },
-          { id: 'incontro-vocazionale', label: 'Incontro vocazionale · 9 agosto' },
+          { id: 'incontro-vocazionale', label: 'Incontro vocazionale · 9 agosto', badge: 'new' },
         ],
       },
       {
@@ -55,14 +58,15 @@ const Navigation = () => {
         type: 'dropdown',
         items: [
           { id: 'sezione-video', label: 'Video' },
-          { id: 'canti-in-coreano', label: 'Canti pellegrinaggio 2027' },
+          { id: 'canti-in-coreano', label: 'Canti pellegrinaggio 2027', badge: 'new' },
         ],
       },
       {
         id: 'donazioni',
         label: 'Versamenti',
         type: 'link',
-        items: [{ id: 'donazioni', label: 'Versamenti e donazioni' }],
+        items: [{ id: 'donazioni', label: 'Versamenti e donazioni', badge: 'updated' }],
+        badge: 'updated',
       },
     ],
     []
@@ -204,8 +208,22 @@ const Navigation = () => {
   const quickActionIconClass = headerIsWhite ? 'text-black hover:text-amber-700' : 'text-white hover:text-amber-200';
   const quickActionLabelClass = headerIsWhite ? 'text-black/70' : 'text-white/80';
 
-  const renderNavLabel = (label: string) => (
-    <span className="min-w-0 break-words whitespace-normal leading-snug">{label}</span>
+  const renderStatusBadge = (badge?: StatusBadge) => {
+    if (!badge) return null;
+    const updated = badge === 'updated';
+    return (
+      <span className={`site-status-badge ${updated ? 'site-status-badge--updated' : 'site-status-badge--new'}`}>
+        <span className="site-status-badge-dot" aria-hidden="true" />
+        <span>{updated ? 'AGGIORNATO' : 'NUOVO'}</span>
+      </span>
+    );
+  };
+
+  const renderNavLabel = (label: string, badge?: StatusBadge) => (
+    <span className="nav-label-with-badge min-w-0">
+      <span className="min-w-0 break-words whitespace-normal leading-snug">{label}</span>
+      {renderStatusBadge(badge)}
+    </span>
   );
 
 
@@ -333,7 +351,7 @@ const Navigation = () => {
                     className={`relative px-2 py-2 text-sm font-serif tracking-wide transition-colors ${baseText} hover:opacity-80`}
                     aria-label={group.label}
                   >
-                    <span className={active ? 'font-semibold' : ''}>{renderNavLabel(group.label)}</span>
+                    <span className={active ? 'font-semibold' : ''}>{renderNavLabel(group.label, group.badge)}</span>
                     <span
                       className={`absolute left-0 right-0 -bottom-1 h-[2px] transition-all duration-200 ${underline ? 'bg-blue-600 opacity-100' : 'bg-transparent opacity-0'}`}
                     />
@@ -349,7 +367,7 @@ const Navigation = () => {
                     aria-haspopup="menu"
                     aria-expanded={isOpen}
                   >
-                    <span className={active ? 'font-semibold' : ''}>{renderNavLabel(group.label)}</span>
+                    <span className={active ? 'font-semibold' : ''}>{renderNavLabel(group.label, group.badge)}</span>
                     <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                     <span
                       className={`absolute left-0 right-0 -bottom-1 h-[2px] transition-all duration-200 ${underline ? 'bg-blue-600 opacity-100' : 'bg-transparent opacity-0'}`}
@@ -391,7 +409,7 @@ const Navigation = () => {
                                       aria-haspopup="menu"
                                       aria-expanded={open}
                                     >
-                                      <span className="font-serif">{renderNavLabel(item.label)}</span>
+                                      <span className="font-serif">{renderNavLabel(item.label, item.badge)}</span>
                                       <span className="text-gray-400">›</span>
                                     </button>
                                   );
@@ -410,7 +428,7 @@ const Navigation = () => {
                                       }}
                                       className={cls}
                                     >
-                                      <span className="font-serif">{item.label}</span>
+                                      <span className="font-serif">{renderNavLabel(item.label, item.badge)}</span>
                                       <span className="text-gray-400">↗</span>
                                     </a>
                                   );
@@ -418,7 +436,7 @@ const Navigation = () => {
 
                                 return (
                                   <button key={item.id} onClick={() => scrollToSection(item.id)} className={cls}>
-                                    <span className="font-serif">{item.label}</span>
+                                    <span className="font-serif">{renderNavLabel(item.label, item.badge)}</span>
                                     <span className="text-gray-400">›</span>
                                   </button>
                                 );
@@ -455,7 +473,7 @@ const Navigation = () => {
                                         }}
                                         className={cls}
                                       >
-                                        <span className="font-serif">{renderNavLabel(child.label)}</span>
+                                        <span className="font-serif">{renderNavLabel(child.label, child.badge)}</span>
                                         <span className="text-gray-400">↗</span>
                                       </a>
                                     );
@@ -463,7 +481,7 @@ const Navigation = () => {
 
                                   return (
                                     <button key={child.id} onClick={() => scrollToSection(child.id)} className={cls}>
-                                      <span className="font-serif">{renderNavLabel(child.label)}</span>
+                                      <span className="font-serif">{renderNavLabel(child.label, child.badge)}</span>
                                       <span className="text-gray-400">›</span>
                                     </button>
                                   );
@@ -486,7 +504,7 @@ const Navigation = () => {
                                     onClick={() => setOpenDropdown(null)}
                                     className={cls}
                                   >
-                                    <span className="font-serif">{item.label}</span>
+                                    <span className="font-serif">{renderNavLabel(item.label, item.badge)}</span>
                                     <span className="text-gray-400">↗</span>
                                   </a>
                                 );
@@ -494,7 +512,7 @@ const Navigation = () => {
 
                               return (
                                 <button key={item.id} onClick={() => scrollToSection(item.id)} className={cls}>
-                                  <span className="font-serif">{item.label}</span>
+                                  <span className="font-serif">{renderNavLabel(item.label, item.badge)}</span>
                                   <span className="text-gray-400">›</span>
                                 </button>
                               );
@@ -568,7 +586,7 @@ const Navigation = () => {
                         onClick={() => scrollToSection(group.items[0].id)}
                         className={`flex w-full items-center justify-between gap-3 py-4 text-left text-[15px] font-semibold transition-colors ${active ? 'text-blue-700' : 'text-slate-950'}`}
                       >
-                        <span>{group.label}</span>
+                        <span>{renderNavLabel(group.label, group.badge)}</span>
                         <span className="text-slate-400">→</span>
                       </button>
                     );
@@ -582,7 +600,7 @@ const Navigation = () => {
                         className={`flex w-full items-center justify-between gap-3 py-4 text-left text-[15px] font-semibold transition-colors ${active ? 'text-blue-700' : 'text-slate-950'}`}
                         aria-expanded={open}
                       >
-                        <span>{group.label}</span>
+                        <span>{renderNavLabel(group.label, group.badge)}</span>
                         <ChevronDown size={18} className={`text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`} />
                       </button>
                       {open && (
@@ -594,7 +612,7 @@ const Navigation = () => {
                               onClick={() => scrollToSection(item.id)}
                               className={`block w-full border-l-2 px-4 py-3 text-left text-sm leading-snug transition-colors ${activeSection === item.id ? 'border-blue-600 bg-blue-50 text-blue-800 font-semibold' : 'border-slate-200 text-slate-700 hover:border-slate-400 hover:bg-slate-50'}`}
                             >
-                              {item.label}
+                              {renderNavLabel(item.label, item.badge)}
                             </button>
                           ))}
                         </div>

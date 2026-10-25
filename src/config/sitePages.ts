@@ -23,6 +23,7 @@ export const SECTION_PAGE: Record<string, SitePage> = {
   home: 'home',
   'giorni-alla-partenza': 'home',
   'gmg-2027-iscrizione': 'pellegrinaggio',
+  'invito-santo-padre': 'pellegrinaggio',
   'wyd-seul': 'pellegrinaggio',
   'incontro-vocazionale': 'pellegrinaggio',
   passaporti: 'documenti',

@@ -203,6 +203,18 @@ const RESERVED_AREA_READING_STEPS = [
 ];
 
 
+type StatusBadgeType = 'updated' | 'new';
+
+const StatusBadge = ({ type }: { type: StatusBadgeType }) => {
+  const updated = type === 'updated';
+  return (
+    <span className={`site-status-badge ${updated ? 'site-status-badge--updated' : 'site-status-badge--new'}`}>
+      <span className="site-status-badge-dot" aria-hidden="true" />
+      <span>{updated ? 'AGGIORNATO' : 'NUOVO'}</span>
+    </span>
+  );
+};
+
 function App() {
   const [currentPage, setCurrentPage] = useState<SitePage>(() => getSitePageFromPath());
   const [isReservedGuideOpen, setIsReservedGuideOpen] = useState(false);
@@ -426,14 +438,14 @@ function App() {
             <h2>Scegli cosa vuoi consultare</h2>
           </div>
           <div className="home-hub-grid">
-            {[
-              ['Pellegrinaggio Korea 2027', 'Iscrizione del gruppo, GMG e incontro vocazionale', 'gmg-2027-iscrizione'],
-              ['Passaporti e visti', 'Documenti, validità e indicazioni per l’ingresso in Corea', 'passaporti'],
-              ['Area Riservata', 'Profilo, iscrizione, documenti e versamenti personali', 'area-riservata'],
-              ['Installa la web app', 'Icona sul cellulare, tutorial e notifiche push', 'installa-app'],
-              ['Canti 2027', 'Audio, testi, accordi e video karaoke', 'canti-in-coreano'],
-              ['Versamenti', 'Codice bonifico, dati bancari e caricamento ricevute', 'donazioni'],
-            ].map(([title, description, target], index) => (
+            {([
+              ['Pellegrinaggio Korea 2027', 'Iscrizione del gruppo, GMG e incontro vocazionale', 'gmg-2027-iscrizione', null],
+              ['Passaporti e visti', 'Documenti, validità e indicazioni per l’ingresso in Corea', 'passaporti', null],
+              ['Area Riservata', 'Profilo, iscrizione, documenti e versamenti personali', 'area-riservata', null],
+              ['Installa la web app', 'Icona sul cellulare, tutorial e notifiche push', 'installa-app', null],
+              ['Canti 2027', 'Audio, testi, accordi e video karaoke', 'canti-in-coreano', 'new'],
+              ['Versamenti', 'Codice bonifico, dati bancari e caricamento ricevute', 'donazioni', 'updated'],
+            ] as Array<[string, string, string, StatusBadgeType | null]>).map(([title, description, target, badge], index) => (
               <button
                 key={target}
                 type="button"
@@ -442,7 +454,10 @@ function App() {
               >
                 <span className="home-hub-index">{String(index + 1).padStart(2, '0')}</span>
                 <span className="home-hub-card-copy">
-                  <strong>{title}</strong>
+                  <span className="home-hub-title-row">
+                    <strong>{title}</strong>
+                    {badge ? <StatusBadge type={badge as StatusBadgeType} /> : null}
+                  </span>
                   <small>{description}</small>
                 </span>
                 <span className="home-hub-arrow" aria-hidden="true">→</span>
@@ -455,8 +470,9 @@ function App() {
       <section id="gmg-2027-iscrizione" data-page="pellegrinaggio" className="page-section content-section section-registration py-20 bg-stone-100">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
-            <div className="papal-invitation-card mx-auto mb-12 max-w-4xl overflow-hidden rounded-2xl border-2 border-amber-500 bg-gradient-to-br from-amber-50 via-white to-sky-50 text-left shadow-lg">
+            <div id="invito-santo-padre" className="papal-invitation-card mx-auto mb-12 max-w-4xl overflow-hidden rounded-2xl border-2 border-amber-500 bg-gradient-to-br from-amber-50 via-white to-sky-50 text-left shadow-lg">
               <div className="px-4 py-4 sm:px-6 sm:py-5">
+                <div className="mb-2 flex justify-center"><StatusBadge type="new" /></div>
                 <p className="papal-invitation-title text-center text-sm font-extrabold uppercase tracking-wide text-amber-800 sm:text-base">
                   Invito del Santo Padre alla GMG Seoul 2027
                 </p>
@@ -1175,9 +1191,12 @@ function App() {
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-5xl">
             <div className="mb-10 text-center">
-              <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider text-slate-950">
-                INCONTRO VOCAZIONALE
-              </h2>
+              <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider text-slate-950">
+                  INCONTRO VOCAZIONALE
+                </h2>
+                <StatusBadge type="new" />
+              </div>
               <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
               <p className="mt-4 text-xl font-extrabold text-amber-800 md:text-2xl">9 AGOSTO 2027 · SEOUL</p>
             </div>
@@ -1299,9 +1318,12 @@ function App() {
       <section id="canti-in-coreano" data-page="canti" className="page-section content-section section-songs py-20 bg-stone-100">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider mb-4 text-black">
-              CANTI PELLEGRINAGGIO 2027
-            </h2>
+            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:items-center">
+              <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider text-black">
+                CANTI PELLEGRINAGGIO 2027
+              </h2>
+              <StatusBadge type="new" />
+            </div>
             <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
             <p className="mx-auto mt-6 max-w-3xl text-lg text-gray-700 leading-relaxed">
               Raccolta unificata dei canti per il pellegrinaggio: audio, testi con accordi e video karaoke in coreano. Apri un canto per visualizzare i materiali disponibili direttamente nella pagina.
@@ -1733,9 +1755,7 @@ function App() {
               <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-wider text-white">
                 VERSAMENTI E DONAZIONI
               </h2>
-              <span className="animate-pulse rounded-full bg-red-600 px-3 py-1 text-xs font-extrabold tracking-wider text-white shadow-lg shadow-red-600/30">
-                CODICE BONIFICO · ATTIVO
-              </span>
+              <StatusBadge type="updated" />
             </div>
             <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
           </div>
