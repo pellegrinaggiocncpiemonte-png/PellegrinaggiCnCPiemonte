@@ -1,4 +1,4 @@
-import { Mail, Phone, Menu, X, MessageCircle, ExternalLink, ChevronDown, Smartphone } from 'lucide-react';
+import { Mail, Phone, Menu, X, MessageCircle, ExternalLink, ChevronDown, Smartphone, Home } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { QUICK_ACTIONS, SITE_CONFIG } from '../config/siteConfig';
 import { getSitePageFromPath, navigateToSection, SECTION_PAGE } from '../config/sitePages';
@@ -513,7 +513,7 @@ const Navigation = () => {
             {QUICK_ACTIONS.map((action) => renderQuickAction(action))}
           </div>
 
-          <div className="flex flex-1 min-w-0 items-center justify-end gap-3 lg:hidden">
+          <div className="flex flex-1 min-w-0 items-center justify-end gap-2 lg:hidden">
             <button
               type="button"
               onClick={openReservedChoice}
@@ -527,6 +527,15 @@ const Navigation = () => {
                 className={`h-5 w-5 ${headerIsWhite ? 'brightness-0' : 'brightness-0 invert'}`}
               />
               <span>Area Riservata</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollToSection('home')}
+              className={`shrink-0 rounded-full p-2.5 transition-colors ${activeSection === 'home' ? (headerIsWhite ? 'bg-blue-50 text-blue-700' : 'bg-white/20 text-white') : (headerIsWhite ? 'text-black hover:bg-slate-100' : 'text-white hover:bg-white/10')}`}
+              aria-label="Torna alla Home"
+              title="Home"
+            >
+              <Home size={21} aria-hidden="true" />
             </button>
             <button
               className={`shrink-0 rounded-full p-2 transition-colors ${headerIsWhite ? 'text-black hover:bg-slate-100' : 'text-white hover:bg-white/10'}`}
