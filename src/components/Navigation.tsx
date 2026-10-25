@@ -516,6 +516,15 @@ const Navigation = () => {
           <div className="flex flex-1 min-w-0 items-center justify-end gap-2 lg:hidden">
             <button
               type="button"
+              onClick={() => scrollToSection('home')}
+              className={`mobile-home-shortcut inline-flex shrink-0 items-center justify-center rounded-full p-2 transition-colors ${headerIsWhite ? 'bg-slate-100 text-slate-950 hover:bg-slate-200' : 'bg-white/12 text-white hover:bg-white/20'}`}
+              aria-label="Torna alla Home"
+              title="Home"
+            >
+              <Home size={20} strokeWidth={2.2} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
               onClick={openReservedChoice}
               className={`mobile-reserved-shortcut inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold transition-colors ${headerIsWhite ? 'bg-slate-100 text-slate-950 hover:bg-slate-200' : 'bg-white/12 text-white hover:bg-white/20'}`}
               aria-label="Area Riservata"
@@ -527,15 +536,6 @@ const Navigation = () => {
                 className={`h-5 w-5 ${headerIsWhite ? 'brightness-0' : 'brightness-0 invert'}`}
               />
               <span>Area Riservata</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollToSection('home')}
-              className={`shrink-0 rounded-full p-2.5 transition-colors ${activeSection === 'home' ? (headerIsWhite ? 'bg-blue-50 text-blue-700' : 'bg-white/20 text-white') : (headerIsWhite ? 'text-black hover:bg-slate-100' : 'text-white hover:bg-white/10')}`}
-              aria-label="Torna alla Home"
-              title="Home"
-            >
-              <Home size={21} aria-hidden="true" />
             </button>
             <button
               className={`shrink-0 rounded-full p-2 transition-colors ${headerIsWhite ? 'text-black hover:bg-slate-100' : 'text-white hover:bg-white/10'}`}
