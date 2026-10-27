@@ -3044,10 +3044,10 @@ option {
   }
 
   .seoul-floating-panel-head {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr;
     align-items: flex-start;
-    justify-content: space-between;
-    gap: .5rem;
+    gap: .34rem;
     padding-right: 2.1rem;
   }
 
@@ -3073,7 +3073,10 @@ option {
   }
 
   .seoul-floating-live {
-    margin-top: .04rem;
+    justify-self: start;
+    margin-top: .06rem;
+    margin-left: calc(38px + .52rem);
+    max-width: calc(100% - 38px - .52rem);
     padding: .3rem .44rem;
     font-size: .48rem;
     letter-spacing: .045em;
