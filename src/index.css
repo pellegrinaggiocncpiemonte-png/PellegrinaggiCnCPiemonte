@@ -2344,3 +2344,646 @@ option {
     animation: none !important;
   }
 }
+
+/* ============================================================
+   DISPONIBILITÀ KOREA 2027 — RESTYLING V57
+   Mantiene la logica storica action=seoul, con grafica coerente
+   con il sito attuale e comportamento responsive.
+   ============================================================ */
+.seoul-posti-widget--modern {
+  max-width: 760px;
+  margin: 2px auto 4px;
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid rgba(53, 111, 166, .22);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 85% 10%, rgba(117, 184, 255, .17), transparent 30%),
+    linear-gradient(145deg, #071a33 0%, #0d294c 100%);
+  box-shadow: 0 20px 48px rgba(3, 10, 24, .18);
+  overflow: hidden;
+}
+
+.seoul-posti-widget--modern .seoul-posti-kicker {
+  margin-bottom: 7px;
+  color: #9fd3ff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.seoul-posti-widget--modern .seoul-posti-title {
+  margin-bottom: 18px;
+  color: #fff;
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 800;
+  letter-spacing: -.02em;
+}
+
+.seoul-posti-widget--modern .seoul-posti-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.seoul-posti-widget--modern .seoul-posti-card {
+  min-width: 0;
+  padding: 17px 10px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 17px;
+  background: rgba(255, 255, 255, .07);
+  backdrop-filter: blur(6px);
+}
+
+.seoul-posti-widget--modern .seoul-posti-card strong {
+  color: #fff;
+  font-size: clamp(30px, 5vw, 46px);
+  font-weight: 800;
+  letter-spacing: -.04em;
+}
+
+.seoul-posti-widget--modern .seoul-posti-card--remaining strong {
+  color: #ffe29b;
+}
+
+.seoul-posti-widget--modern .seoul-posti-card span {
+  min-height: 2.4em;
+  color: rgba(255, 255, 255, .72);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.seoul-posti-progress {
+  height: 8px;
+  margin-top: 18px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .12);
+}
+
+.seoul-posti-progress > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #69b8ff, #e6b75a);
+  transition: width .45s ease;
+}
+
+.seoul-posti-progress-copy {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 7px;
+  color: rgba(255, 255, 255, .62);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.seoul-posti-widget--modern .seoul-posti-message {
+  margin-top: 16px;
+  padding: 11px 13px;
+  border: 1px solid rgba(255, 255, 255, .09);
+  background: rgba(255, 255, 255, .06);
+  color: rgba(255, 255, 255, .87);
+  line-height: 1.45;
+}
+
+.seoul-posti-widget--modern .seoul-posti-refresh-info {
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+.seoul-posti-widget--modern.is-warning .seoul-posti-message {
+  border-color: rgba(230, 183, 90, .42);
+  background: rgba(230, 183, 90, .10);
+  color: #ffe9b5;
+}
+
+.seoul-posti-widget--modern.is-sold-out .seoul-posti-card--remaining strong {
+  color: #ffb4ae;
+}
+
+@media (max-width: 640px) {
+  .seoul-posti-widget--modern {
+    margin-inline: 0;
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .seoul-posti-widget--modern .seoul-posti-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .seoul-posti-widget--modern .seoul-posti-card--total {
+    grid-column: 1 / -1;
+  }
+
+  .seoul-posti-widget--modern .seoul-posti-card span {
+    min-height: 0;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+}
+
+/* ============================================================
+   POSTI KOREA 2027 — WIDGET FLOTTANTE V58
+   Sempre visibile, indipendente dalle sezioni. Si espande con una
+   rapida animazione dal pulsante compatto al pannello completo.
+   ============================================================ */
+.seoul-floating-trigger {
+  position: fixed;
+  right: 1rem;
+  bottom: 5.35rem;
+  z-index: 96;
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  min-width: 178px;
+  min-height: 58px;
+  padding: .48rem .62rem .48rem .48rem;
+  border: 1px solid rgba(231, 185, 91, .72);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(5, 25, 50, .97), rgba(10, 45, 82, .97));
+  color: #fff;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .34), 0 0 0 0 rgba(231, 185, 91, .26);
+  backdrop-filter: blur(12px);
+  cursor: grab;
+  text-align: left;
+  touch-action: none;
+  user-select: none;
+  animation: seoul-floating-pulse 2.4s ease-in-out infinite;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+.seoul-floating-trigger:hover {
+  transform: translateY(-2px) scale(1.015);
+  border-color: rgba(255, 214, 126, .95);
+}
+
+.seoul-floating-trigger:active { cursor: grabbing; transform: scale(.98); }
+
+.seoul-floating-logo-mark,
+.seoul-floating-brand-mark {
+  display: block;
+  flex: 0 0 auto;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .96);
+  border: 1px solid rgba(255, 239, 193, .42);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .16);
+}
+
+.seoul-floating-logo-mark {
+  width: 36px;
+  height: 40px;
+}
+
+.seoul-floating-trigger-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.08;
+  text-align: center;
+}
+
+.seoul-floating-trigger-copy small {
+  margin-bottom: .17rem;
+  color: rgba(255, 255, 255, .66);
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+.seoul-floating-trigger-copy strong {
+  color: #fff;
+  font-size: .82rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.seoul-floating-trigger-count {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  place-items: center;
+  border: 1px solid rgba(255, 221, 151, .55);
+  border-radius: 12px;
+  background: rgba(229, 178, 78, .15);
+  color: #ffe092;
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: -.035em;
+}
+
+.seoul-floating-trigger.is-sold-out .seoul-floating-trigger-count {
+  border-color: rgba(255, 121, 112, .55);
+  background: rgba(190, 48, 41, .18);
+  color: #ffb1ab;
+}
+
+
+/* Posizione automatica per pagina. Il widget può comunque essere trascinato
+   liberamente dall'utente; cambiando pagina torna alla posizione consigliata. */
+.seoul-floating-trigger--home {
+  left: 50%;
+  right: auto;
+  bottom: 4.7rem;
+  transform: translateX(-50%);
+}
+
+.seoul-floating-trigger--pellegrinaggio,
+.seoul-floating-trigger--versamenti {
+  right: 1rem;
+  bottom: 5.35rem;
+}
+
+.seoul-floating-trigger--documenti,
+.seoul-floating-trigger--app {
+  left: 1rem;
+  right: auto;
+  bottom: 5.35rem;
+}
+
+.seoul-floating-trigger--area-riservata,
+.seoul-floating-trigger--video {
+  right: 1rem;
+  top: 6.4rem;
+  bottom: auto;
+}
+
+.seoul-floating-trigger--canti {
+  left: 1rem;
+  right: auto;
+  top: 6.4rem;
+  bottom: auto;
+}
+
+.seoul-floating-trigger.is-manually-positioned {
+  transition: box-shadow .16s ease, border-color .16s ease;
+}
+
+
+.seoul-floating-trigger--home:not(.is-manually-positioned):hover {
+  transform: translateX(-50%) translateY(-2px) scale(1.015);
+}
+.seoul-floating-trigger--home:not(.is-manually-positioned):active {
+  transform: translateX(-50%) scale(.98);
+}
+@keyframes seoul-floating-pulse {
+  0%, 70%, 100% { box-shadow: 0 12px 34px rgba(0, 0, 0, .34), 0 0 0 0 rgba(231, 185, 91, .20); }
+  82% { box-shadow: 0 12px 34px rgba(0, 0, 0, .34), 0 0 0 7px rgba(231, 185, 91, 0); }
+}
+
+.seoul-floating-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 115;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.seoul-floating-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(0, 9, 20, .58);
+  backdrop-filter: blur(5px);
+}
+
+.seoul-floating-panel {
+  position: relative;
+  z-index: 1;
+  width: min(760px, calc(100vw - 2rem));
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid rgba(232, 188, 96, .72);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 86% 10%, rgba(78, 150, 218, .19), transparent 27%),
+    linear-gradient(145deg, #061a33 0%, #0a2a4c 100%);
+  color: #fff;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, .5);
+  transform-origin: calc(100% - 48px) calc(100% - 26px);
+  animation: seoul-panel-grow .22s cubic-bezier(.2, .88, .28, 1.04) both;
+  overflow: hidden;
+}
+
+.seoul-floating-panel--home { transform-origin: 50% 100%; }
+.seoul-floating-panel--pellegrinaggio,
+.seoul-floating-panel--versamenti { transform-origin: 100% 100%; }
+.seoul-floating-panel--documenti,
+.seoul-floating-panel--app { transform-origin: 0 100%; }
+.seoul-floating-panel--area-riservata,
+.seoul-floating-panel--video { transform-origin: 100% 0; }
+.seoul-floating-panel--canti { transform-origin: 0 0; }
+
+@keyframes seoul-panel-grow {
+  from { opacity: 0; transform: scale(.68) translate(22px, 24px); }
+  to { opacity: 1; transform: scale(1) translate(0, 0); }
+}
+
+.seoul-floating-close {
+  position: absolute;
+  top: .75rem;
+  right: .75rem;
+  z-index: 2;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
+  cursor: pointer;
+}
+
+.seoul-floating-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-right: 2.7rem;
+}
+
+.seoul-floating-brand {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  min-width: 0;
+}
+
+.seoul-floating-brand-mark {
+  width: 54px;
+  height: 54px;
+}
+
+.seoul-floating-brand p {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.35rem, 3.4vw, 2.25rem);
+  font-weight: 850;
+  letter-spacing: -.035em;
+  line-height: 1;
+}
+
+.seoul-floating-brand span {
+  display: block;
+  margin-top: .35rem;
+  color: rgba(255, 255, 255, .69);
+  font-size: clamp(.76rem, 1.8vw, .95rem);
+  font-weight: 650;
+}
+
+.seoul-floating-live {
+  display: inline-flex;
+  align-items: center;
+  gap: .42rem;
+  flex: 0 0 auto;
+  margin-top: .18rem;
+  padding: .48rem .72rem;
+  border: 1px solid rgba(235, 190, 92, .52);
+  border-radius: 999px;
+  background: rgba(210, 164, 67, .16);
+  color: #f8df9e;
+  font-size: .68rem;
+  font-weight: 850;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.seoul-floating-live > span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #64dc72;
+  box-shadow: 0 0 0 5px rgba(100, 220, 114, .1), 0 0 14px rgba(100, 220, 114, .58);
+}
+
+.seoul-floating-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) repeat(2, minmax(100px, .72fr));
+  align-items: end;
+  gap: 0;
+  margin-top: 1.35rem;
+}
+
+.seoul-floating-remaining,
+.seoul-floating-stat {
+  min-width: 0;
+  padding: .55rem 1.2rem;
+}
+
+.seoul-floating-remaining {
+  display: flex;
+  align-items: baseline;
+  gap: .72rem;
+  padding-left: 0;
+}
+
+.seoul-floating-remaining strong {
+  color: #f5d578;
+  font-size: clamp(4rem, 11vw, 7rem);
+  font-weight: 800;
+  letter-spacing: -.065em;
+  line-height: .8;
+}
+
+.seoul-floating-remaining span {
+  color: #fff;
+  font-size: clamp(1.45rem, 4.3vw, 2.7rem);
+  font-weight: 800;
+  letter-spacing: -.035em;
+  line-height: 1;
+}
+
+.seoul-floating-stat {
+  border-left: 1px solid rgba(255, 255, 255, .22);
+  text-align: center;
+}
+
+.seoul-floating-stat strong {
+  display: block;
+  color: #fff;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.seoul-floating-stat span {
+  display: block;
+  margin-top: .35rem;
+  color: rgba(255, 255, 255, .68);
+  font-size: .9rem;
+  font-weight: 650;
+}
+
+.seoul-floating-progress {
+  height: 12px;
+  margin-top: 1.5rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(174, 199, 224, .23);
+}
+
+.seoul-floating-progress > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f5d578, #e8b84f);
+  transition: width .45s ease;
+}
+
+.seoul-floating-progress-copy {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: .55rem;
+  color: rgba(255, 255, 255, .68);
+  font-size: .75rem;
+  font-weight: 650;
+}
+
+.seoul-floating-error {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 211, 119, .38);
+  border-radius: 14px;
+  background: rgba(232, 184, 79, .1);
+  color: #ffe5ad;
+  font-size: .9rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 640px) {
+  .seoul-floating-trigger {
+    right: .7rem;
+    bottom: 5.05rem;
+    min-width: 154px;
+    min-height: 52px;
+    gap: .5rem;
+    padding: .4rem .5rem .4rem .42rem;
+    border-radius: 16px;
+  }
+
+  .seoul-floating-logo-mark {
+    width: 32px;
+    height: 32px;
+    border-radius: 12px;
+  }
+
+  .seoul-floating-trigger-copy small { font-size: .52rem; }
+  .seoul-floating-trigger-copy strong { font-size: .74rem; }
+  .seoul-floating-trigger-count {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    font-size: .95rem;
+  }
+
+
+  .seoul-floating-trigger--home {
+    left: 50%;
+    right: auto;
+    bottom: 5.2rem;
+    transform: translateX(-50%);
+  }
+
+  .seoul-floating-trigger--documenti,
+  .seoul-floating-trigger--app {
+    left: .7rem;
+    right: auto;
+    bottom: 5.05rem;
+  }
+
+  .seoul-floating-trigger--area-riservata,
+  .seoul-floating-trigger--video {
+    right: .7rem;
+    top: 5.7rem;
+    bottom: auto;
+  }
+
+  .seoul-floating-trigger--canti {
+    left: .7rem;
+    right: auto;
+    top: 5.7rem;
+    bottom: auto;
+  }
+
+  .seoul-floating-layer {
+    align-items: end;
+    padding: .65rem;
+  }
+
+  .seoul-floating-panel {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 24px;
+  }
+
+  .seoul-floating-panel--home { transform-origin: 50% 100%; }
+  .seoul-floating-panel--pellegrinaggio,
+  .seoul-floating-panel--versamenti { transform-origin: 100% 100%; }
+  .seoul-floating-panel--documenti,
+  .seoul-floating-panel--app { transform-origin: 0 100%; }
+  .seoul-floating-panel--area-riservata,
+  .seoul-floating-panel--video { transform-origin: 100% 0; }
+  .seoul-floating-panel--canti { transform-origin: 0 0; }
+
+  .seoul-floating-panel-head {
+    display: block;
+    padding-right: 2.45rem;
+  }
+
+  .seoul-floating-brand-mark {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+  }
+
+  .seoul-floating-live {
+    margin-top: .75rem;
+    padding: .38rem .58rem;
+    font-size: .58rem;
+  }
+
+  .seoul-floating-main {
+    grid-template-columns: 1fr 1fr;
+    margin-top: 1rem;
+  }
+
+  .seoul-floating-remaining {
+    grid-column: 1 / -1;
+    justify-content: center;
+    padding: .4rem 0 1rem;
+    text-align: center;
+  }
+
+  .seoul-floating-remaining strong { font-size: clamp(4.2rem, 23vw, 6rem); }
+  .seoul-floating-remaining span { font-size: clamp(1.45rem, 7vw, 2rem); }
+
+  .seoul-floating-stat {
+    padding: .8rem .5rem .35rem;
+    border-top: 1px solid rgba(255, 255, 255, .18);
+    border-left: 0;
+  }
+
+  .seoul-floating-stat + .seoul-floating-stat {
+    border-left: 1px solid rgba(255, 255, 255, .18);
+  }
+
+  .seoul-floating-progress { margin-top: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seoul-floating-trigger { animation: none !important; }
+  .seoul-floating-panel { animation: none !important; }
+}

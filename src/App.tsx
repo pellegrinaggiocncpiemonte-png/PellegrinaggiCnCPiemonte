@@ -30,6 +30,272 @@ const getGoogleDrivePreviewUrl = (url: string) => {
   return match ? `https://drive.google.com/file/d/${match[1]}/preview` : url;
 };
 
+
+
+type SeoulAvailability = {
+  ok?: boolean;
+  totalePosti?: number;
+  postiRimanenti?: number;
+  blocco?: boolean;
+  avviso?: boolean;
+  limiteCategoriaRaggiunto?: boolean;
+  messaggio?: string;
+  refreshSecondi?: number;
+};
+
+const SEOUL_AVAILABILITY_URL = 'https://script.google.com/macros/s/AKfycbz2py2LldK05Lm9jVmnDfQuKUFViwY_pxfiYnCcVyaseKgejBPyqEtf4mBP3xNqo7Rv/exec';
+
+function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
+  const [data, setData] = useState<SeoulAvailability | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [manualPosition, setManualPosition] = useState<{ x: number; y: number } | null>(null);
+  const dragStateRef = useRef<{ pointerId: number; startX: number; startY: number; left: number; top: number; moved: boolean } | null>(null);
+  const suppressClickRef = useRef(false);
+
+  useEffect(() => {
+    let refreshTimer: number | undefined;
+    let timeoutTimer: number | undefined;
+    let disposed = false;
+    let activeScript: HTMLScriptElement | null = null;
+    let activeCallback = '';
+
+    const cleanupRequest = () => {
+      if (timeoutTimer) window.clearTimeout(timeoutTimer);
+      if (activeScript?.parentNode) activeScript.parentNode.removeChild(activeScript);
+      if (activeCallback) {
+        const target = window as typeof window & Record<string, unknown>;
+        try { delete target[activeCallback]; } catch { target[activeCallback] = undefined; }
+      }
+      activeScript = null;
+      activeCallback = '';
+    };
+
+    const scheduleNext = (seconds?: number) => {
+      if (disposed) return;
+      if (refreshTimer) window.clearTimeout(refreshTimer);
+      const delay = Math.max(15, Number(seconds) || 30) * 1000;
+      refreshTimer = window.setTimeout(loadStatus, delay);
+    };
+
+    const loadStatus = () => {
+      cleanupRequest();
+      if (disposed) return;
+      setLoading(true);
+
+      const callbackName = `__seoulAvailability_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+      const script = document.createElement('script');
+      const target = window as typeof window & Record<string, unknown>;
+      activeCallback = callbackName;
+      activeScript = script;
+
+      target[callbackName] = (payload: SeoulAvailability) => {
+        cleanupRequest();
+        if (disposed) return;
+        const valid = Boolean(
+          payload?.ok &&
+          Number.isFinite(Number(payload.totalePosti)) &&
+          Number.isFinite(Number(payload.postiRimanenti))
+        );
+        if (!valid) {
+          setFailed(true);
+          setLoading(false);
+          scheduleNext(30);
+          return;
+        }
+        setData(payload);
+        setFailed(false);
+        setLoading(false);
+        scheduleNext(payload.refreshSecondi);
+      };
+
+      const params = new URLSearchParams({
+        action: 'seoul',
+        callback: callbackName,
+        _: String(Date.now()),
+      });
+
+      timeoutTimer = window.setTimeout(() => {
+        cleanupRequest();
+        if (disposed) return;
+        setFailed(true);
+        setLoading(false);
+        scheduleNext(30);
+      }, 12000);
+
+      script.async = true;
+      script.src = `${SEOUL_AVAILABILITY_URL}?${params.toString()}`;
+      script.onerror = () => {
+        cleanupRequest();
+        if (disposed) return;
+        setFailed(true);
+        setLoading(false);
+        scheduleNext(30);
+      };
+      document.head.appendChild(script);
+    };
+
+    loadStatus();
+    return () => {
+      disposed = true;
+      cleanupRequest();
+      if (refreshTimer) window.clearTimeout(refreshTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isOpen]);
+
+  useEffect(() => {
+    setManualPosition(null);
+  }, [page]);
+
+  const handleTriggerPointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (event.button !== 0) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      left: rect.left,
+      top: rect.top,
+      moved: false,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleTriggerPointerMove = (event: React.PointerEvent<HTMLButtonElement>) => {
+    const drag = dragStateRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+    drag.moved = true;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const margin = 8;
+    const x = Math.min(Math.max(margin, drag.left + dx), Math.max(margin, window.innerWidth - rect.width - margin));
+    const y = Math.min(Math.max(margin, drag.top + dy), Math.max(margin, window.innerHeight - rect.height - margin));
+    setManualPosition({ x, y });
+  };
+
+  const handleTriggerPointerUp = (event: React.PointerEvent<HTMLButtonElement>) => {
+    const drag = dragStateRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    suppressClickRef.current = drag.moved;
+    dragStateRef.current = null;
+    try { event.currentTarget.releasePointerCapture(event.pointerId); } catch { /* no-op */ }
+  };
+
+  const total = data ? Math.max(0, Number(data.totalePosti) || 0) : 0;
+  const remaining = data ? Math.max(0, Number(data.postiRimanenti) || 0) : 0;
+  const occupied = Math.max(0, total - remaining);
+  const percentage = total > 0 ? Math.min(100, Math.max(0, (occupied / total) * 100)) : 0;
+  const soldOut = Boolean(data?.blocco || (data && remaining <= 0));
+
+  return (
+    <>
+      <button
+        type="button"
+        className={`seoul-floating-trigger seoul-floating-trigger--${page} ${manualPosition ? 'is-manually-positioned' : ''} ${soldOut ? 'is-sold-out' : ''}`}
+        style={manualPosition ? { left: manualPosition.x, top: manualPosition.y, right: 'auto', bottom: 'auto', transform: 'none' } : undefined}
+        onPointerDown={handleTriggerPointerDown}
+        onPointerMove={handleTriggerPointerMove}
+        onPointerUp={handleTriggerPointerUp}
+        onPointerCancel={handleTriggerPointerUp}
+        onClick={() => {
+          if (suppressClickRef.current) {
+            suppressClickRef.current = false;
+            return;
+          }
+          setIsOpen(true);
+        }}
+        aria-label={data ? `Apri disponibilità posti: ${remaining} posti rimasti` : 'Apri disponibilità posti Korea 2027'}
+        title="Posti rimasti – Pellegrinaggio Piemonte e Svizzera. Puoi anche trascinare il pulsante."
+      >
+        <img src="/images/widget-jmj-logo-rounded.jpg" alt="" aria-hidden="true" className="seoul-floating-logo-mark" />
+        <span className="seoul-floating-trigger-copy">
+          <small>Piemonte · Svizzera</small>
+          <strong>Posti rimasti</strong>
+        </span>
+        <span className="seoul-floating-trigger-count" aria-live="polite">
+          {loading && !data ? <span className="seoul-posti-spinner" aria-hidden="true" /> : data ? remaining : '—'}
+        </span>
+      </button>
+
+      {isOpen ? (
+        <div className="seoul-floating-layer" role="dialog" aria-modal="true" aria-label="Disponibilità posti pellegrinaggio Korea 2027">
+          <button
+            type="button"
+            className="seoul-floating-backdrop"
+            onClick={() => setIsOpen(false)}
+            aria-label="Chiudi disponibilità posti"
+          />
+
+          <section className={`seoul-floating-panel seoul-floating-panel--${page} ${soldOut ? 'is-sold-out' : ''}`}>
+            <button
+              type="button"
+              className="seoul-floating-close"
+              onClick={() => setIsOpen(false)}
+              aria-label="Chiudi"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="seoul-floating-panel-head">
+              <div className="seoul-floating-brand">
+                <img src="/images/widget-jmj-logo-rounded.jpg" alt="Logo JMJ del widget posti rimasti" className="seoul-floating-brand-mark" />
+                <div>
+                  <p>Posti Korea 2027</p>
+                  <span>Pellegrinaggio Piemonte e Svizzera</span>
+                </div>
+              </div>
+              <div className="seoul-floating-live"><span /> Disponibilità aggiornata</div>
+            </div>
+
+            {failed && !data ? (
+              <div className="seoul-floating-error" role="status">
+                Disponibilità momentaneamente non leggibile. Il sistema riproverà automaticamente.
+              </div>
+            ) : (
+              <div className="seoul-floating-main" aria-live="polite">
+                <div className="seoul-floating-remaining">
+                  <strong>{data ? remaining : '—'}</strong>
+                  <span>{soldOut ? 'posti rimasti' : 'posti rimasti'}</span>
+                </div>
+                <div className="seoul-floating-stat">
+                  <strong>{data ? occupied : '—'}</strong>
+                  <span>occupati</span>
+                </div>
+                <div className="seoul-floating-stat">
+                  <strong>{data ? total : '—'}</strong>
+                  <span>totali</span>
+                </div>
+              </div>
+            )}
+
+            <div className="seoul-floating-progress" aria-hidden="true">
+              <span style={{ width: `${percentage}%` }} />
+            </div>
+            {data ? (
+              <div className="seoul-floating-progress-copy">
+                <span>{occupied} occupati</span>
+                <span>{remaining} disponibili</span>
+              </div>
+            ) : null}
+          </section>
+        </div>
+      ) : null}
+    </>
+  );
+}
+
 type PilgrimageSong = {
   id: number;
   title: string;
@@ -520,6 +786,7 @@ function App() {
                   </p>
                 </div>
               </div>
+
 
               <div className="mx-auto max-w-3xl rounded-2xl border-2 border-red-600 bg-red-50 px-4 py-4 text-left shadow-md sm:px-6 sm:py-5">
                 <p className="text-center text-sm font-extrabold uppercase tracking-wide text-red-700 sm:text-base">
@@ -2039,6 +2306,7 @@ function App() {
           </div>
         </div>
       </footer>
+      <SeoulAvailabilityFloating page={currentPage} />
       <FloatingAssistance />
       <VisitCounterBadge />
     </div>
