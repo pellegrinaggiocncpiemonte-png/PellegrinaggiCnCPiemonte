@@ -1,3 +1,13 @@
+# CORRETTO 59 — Widget posti flottante intelligente
+
+- Home come pagina iniziale (`/`).
+- Widget posti centrato in basso sulla Home.
+- Posizione automatica diversa nelle altre pagine per ridurre le sovrapposizioni.
+- Widget trascinabile manualmente con mouse o dito; al cambio pagina torna alla posizione consigliata.
+- Logo JMJ reso in bianco/oro tramite CSS.
+- Testi “Piemonte · Svizzera” e “Posti rimasti” centrati nel mini-widget.
+- Apertura rapida con animazione di ingrandimento coerente con la posizione della pagina.
+
 # Project 2 – Avvio in locale
 
 Questo progetto usa **Vite + React**.
@@ -46,3 +56,8 @@ La versione aggiornata usa URL separati per rendere il sito più semplice da con
 - `/versamenti` – codice bonifico, versamenti, ricevute e donazioni
 
 Su Vercel il file `vercel.json` mantiene funzionanti gli URL anche quando una pagina viene aperta o ricaricata direttamente.
+
+## Aggiornamento v57
+- Ripristinato nella sezione iscrizioni il contatore pubblico di disponibilità Korea 2027.
+- Il widget usa il collegamento storico Apps Script `action=seoul`, aggiorna automaticamente i dati e non espone dati personali.
+- In caso di endpoint non disponibile, il sito resta funzionante e mostra un avviso temporaneo senza bloccare la navigazione.

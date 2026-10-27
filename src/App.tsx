@@ -634,7 +634,7 @@ function App() {
         >
           <div className="absolute inset-0 bg-black/40"></div>
         </div>
-        <div className="hero-copy relative z-10 text-center px-4 max-w-[94vw] mx-auto pt-24 sm:pt-16 -translate-y-[136px] sm:-translate-y-[96px] md:-translate-y-[72px]">
+        <div className="hero-copy relative z-10 text-center px-4 max-w-[94vw] mx-auto pt-24 sm:pt-16 -translate-y-[176px] sm:-translate-y-[96px] md:-translate-y-[72px]">
           <div className="hero-title-wrap space-y-2 sm:space-y-3">
             {SITE_CONFIG.heroTitleLines.map((line, index) => {
               const isFirst = index === 0;
