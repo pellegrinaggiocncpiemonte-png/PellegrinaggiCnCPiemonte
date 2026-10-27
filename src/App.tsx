@@ -216,16 +216,16 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
           }
           setIsOpen(true);
         }}
-        aria-label={data ? `Apri disponibilità posti: ${remaining} posti rimasti` : 'Apri disponibilità posti Korea 2027'}
-        title="Posti rimasti – Pellegrinaggio Piemonte e Svizzera. Puoi anche trascinare il pulsante."
+        aria-label={data ? (soldOut ? 'Apri disponibilità posti: posti esauriti' : `Apri disponibilità posti: ${remaining} posti rimasti`) : 'Apri disponibilità posti Korea 2027'}
+        title={soldOut ? 'Posti esauriti – Pellegrinaggio Piemonte e Svizzera' : 'Posti rimasti – Pellegrinaggio Piemonte e Svizzera. Puoi anche trascinare il pulsante.'}
       >
         <img src="/images/widget-jmj-logo-rounded.jpg" alt="" aria-hidden="true" className="seoul-floating-logo-mark" />
         <span className="seoul-floating-trigger-copy">
           <small>Piemonte · Svizzera</small>
-          <strong>Posti rimasti</strong>
+          <strong>{soldOut ? 'POSTI ESAURITI' : 'Posti rimasti'}</strong>
         </span>
         <span className="seoul-floating-trigger-count" aria-live="polite">
-          {loading && !data ? <span className="seoul-posti-spinner" aria-hidden="true" /> : data ? remaining : '—'}
+          {loading && !data ? <span className="seoul-posti-spinner" aria-hidden="true" /> : data ? (soldOut ? total : remaining) : '—'}
         </span>
       </button>
 
@@ -256,7 +256,7 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
                   <span>Pellegrinaggio Piemonte e Svizzera</span>
                 </div>
               </div>
-              <div className="seoul-floating-live"><span /> Disponibilità aggiornata</div>
+              <div className={`seoul-floating-live ${soldOut ? 'is-sold-out' : ''}`}><span /> {soldOut ? 'Posti esauriti' : 'Disponibilità aggiornata'}</div>
             </div>
 
             {failed && !data ? (
@@ -264,10 +264,19 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
                 Disponibilità momentaneamente non leggibile. Il sistema riproverà automaticamente.
               </div>
             ) : (
-              <div className="seoul-floating-main" aria-live="polite">
+              <div className={`seoul-floating-main ${soldOut ? 'is-sold-out' : ''}`} aria-live="polite">
                 <div className="seoul-floating-remaining">
-                  <strong>{data ? remaining : '—'}</strong>
-                  <span>{soldOut ? 'posti rimasti' : 'posti rimasti'}</span>
+                  {soldOut ? (
+                    <div className="seoul-floating-soldout-copy">
+                      <strong>POSTI ESAURITI</strong>
+                      <span>0 posti rimasti</span>
+                    </div>
+                  ) : (
+                    <>
+                      <strong>{data ? remaining : '—'}</strong>
+                      <span>posti rimasti</span>
+                    </>
+                  )}
                 </div>
                 <div className="seoul-floating-stat">
                   <strong>{data ? occupied : '—'}</strong>
@@ -280,8 +289,8 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
               </div>
             )}
 
-            <div className="seoul-floating-progress" aria-hidden="true">
-              <span style={{ width: `${percentage}%` }} />
+            <div className={`seoul-floating-progress ${soldOut ? 'is-sold-out' : ''}`} aria-hidden="true">
+              <span style={{ width: `${soldOut ? 100 : percentage}%` }} />
             </div>
             {data ? (
               <div className="seoul-floating-progress-copy">
@@ -625,7 +634,7 @@ function App() {
         >
           <div className="absolute inset-0 bg-black/40"></div>
         </div>
-        <div className="hero-copy relative z-10 text-center px-4 max-w-[94vw] mx-auto pt-24 sm:pt-16 -translate-y-[105px] sm:-translate-y-[96px] md:-translate-y-[72px]">
+        <div className="hero-copy relative z-10 text-center px-4 max-w-[94vw] mx-auto pt-24 sm:pt-16 -translate-y-[136px] sm:-translate-y-[96px] md:-translate-y-[72px]">
           <div className="hero-title-wrap space-y-2 sm:space-y-3">
             {SITE_CONFIG.heroTitleLines.map((line, index) => {
               const isFirst = index === 0;
