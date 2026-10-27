@@ -1515,7 +1515,8 @@ body {
 @media (max-width: 767px) {
   .hero-copy {
     width: 100%;
-    transform: translateY(-2.34rem) !important;
+    /* Centra visivamente il titolo tra la barra superiore e il widget posti. */
+    transform: translateY(clamp(-8rem, -13svh, -5.5rem)) !important;
   }
 
   .hero-title-wrap {
