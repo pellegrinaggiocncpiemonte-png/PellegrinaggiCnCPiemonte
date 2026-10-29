@@ -44,6 +44,35 @@ type SeoulAvailability = {
 };
 
 const SEOUL_AVAILABILITY_URL = 'https://script.google.com/macros/s/AKfycbz2py2LldK05Lm9jVmnDfQuKUFViwY_pxfiYnCcVyaseKgejBPyqEtf4mBP3xNqo7Rv/exec';
+const SEOUL_AVAILABILITY_PROXY_URL = '/api/seoul-availability';
+
+const SEOUL_AVAILABILITY_CACHE_KEY = 'seoul-availability:last-valid-v1';
+
+const isValidSeoulAvailability = (payload: SeoulAvailability | null | undefined) => Boolean(
+  payload?.ok &&
+  Number.isFinite(Number(payload.totalePosti)) &&
+  Number.isFinite(Number(payload.postiRimanenti))
+);
+
+const readCachedSeoulAvailability = (): SeoulAvailability | null => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(SEOUL_AVAILABILITY_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as SeoulAvailability;
+    return isValidSeoulAvailability(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
+const saveCachedSeoulAvailability = (payload: SeoulAvailability) => {
+  try {
+    window.localStorage.setItem(SEOUL_AVAILABILITY_CACHE_KEY, JSON.stringify(payload));
+  } catch {
+    // Il dato resta comunque disponibile nella sessione corrente.
+  }
+};
 
 const SEOUL_REGISTRATION_DEADLINE = new Date('2026-10-30T23:59:00+01:00').getTime();
 
@@ -74,8 +103,9 @@ const formatSeoulCountdown = (ms: number, mode: 'compact' | 'full' = 'compact') 
 };
 
 function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
-  const [data, setData] = useState<SeoulAvailability | null>(null);
-  const [loading, setLoading] = useState(true);
+  const cachedAvailabilityRef = useRef<SeoulAvailability | null>(readCachedSeoulAvailability());
+  const [data, setData] = useState<SeoulAvailability | null>(cachedAvailabilityRef.current);
+  const [loading, setLoading] = useState(!cachedAvailabilityRef.current);
   const [failed, setFailed] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [manualPosition, setManualPosition] = useState<{ x: number; y: number } | null>(null);
@@ -85,13 +115,14 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
 
   useEffect(() => {
     let refreshTimer: number | undefined;
-    let timeoutTimer: number | undefined;
+    let jsonpTimeoutTimer: number | undefined;
     let disposed = false;
     let activeScript: HTMLScriptElement | null = null;
     let activeCallback = '';
+    let activeController: AbortController | null = null;
 
-    const cleanupRequest = () => {
-      if (timeoutTimer) window.clearTimeout(timeoutTimer);
+    const cleanupJsonp = () => {
+      if (jsonpTimeoutTimer) window.clearTimeout(jsonpTimeoutTimer);
       if (activeScript?.parentNode) activeScript.parentNode.removeChild(activeScript);
       if (activeCallback) {
         const target = window as typeof window & Record<string, unknown>;
@@ -99,20 +130,59 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
       }
       activeScript = null;
       activeCallback = '';
+      jsonpTimeoutTimer = undefined;
     };
 
     const scheduleNext = (seconds?: number) => {
       if (disposed) return;
       if (refreshTimer) window.clearTimeout(refreshTimer);
-      const delay = Math.max(15, Number(seconds) || 30) * 1000;
-      refreshTimer = window.setTimeout(loadStatus, delay);
+      const delay = Math.max(10, Number(seconds) || 30) * 1000;
+      refreshTimer = window.setTimeout(() => { void loadStatus(); }, delay);
     };
 
-    const loadStatus = () => {
-      cleanupRequest();
+    const acceptPayload = (payload: SeoulAvailability) => {
+      if (!isValidSeoulAvailability(payload)) throw new Error('Risposta posti non valida');
       if (disposed) return;
-      setLoading(true);
+      setData(payload);
+      cachedAvailabilityRef.current = payload;
+      saveCachedSeoulAvailability(payload);
+      setFailed(false);
+      setLoading(false);
+      scheduleNext(payload.refreshSecondi);
+    };
 
+    const requestJson = async (requestUrl: string, timeoutMs: number) => {
+      activeController?.abort();
+      const controller = new AbortController();
+      activeController = controller;
+      const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const response = await fetch(requestUrl, {
+          method: 'GET',
+          redirect: 'follow',
+          cache: 'no-store',
+          signal: controller.signal,
+          headers: { Accept: 'application/json' },
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return (await response.json()) as SeoulAvailability;
+      } finally {
+        window.clearTimeout(timeout);
+        if (activeController === controller) activeController = null;
+      }
+    };
+
+    const requestProxy = () => requestJson(`${SEOUL_AVAILABILITY_PROXY_URL}?_=${Date.now()}`, 3500);
+
+    const requestDirect = () => {
+      const url = new URL(SEOUL_AVAILABILITY_URL);
+      url.searchParams.set('action', 'seoul');
+      url.searchParams.set('_', String(Date.now()));
+      return requestJson(url.toString(), 4000);
+    };
+
+    const requestJsonp = () => new Promise<SeoulAvailability>((resolve, reject) => {
+      cleanupJsonp();
       const callbackName = `__seoulAvailability_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
       const script = document.createElement('script');
       const target = window as typeof window & Record<string, unknown>;
@@ -120,23 +190,8 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
       activeScript = script;
 
       target[callbackName] = (payload: SeoulAvailability) => {
-        cleanupRequest();
-        if (disposed) return;
-        const valid = Boolean(
-          payload?.ok &&
-          Number.isFinite(Number(payload.totalePosti)) &&
-          Number.isFinite(Number(payload.postiRimanenti))
-        );
-        if (!valid) {
-          setFailed(true);
-          setLoading(false);
-          scheduleNext(30);
-          return;
-        }
-        setData(payload);
-        setFailed(false);
-        setLoading(false);
-        scheduleNext(payload.refreshSecondi);
+        cleanupJsonp();
+        resolve(payload);
       };
 
       const params = new URLSearchParams({
@@ -145,31 +200,63 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
         _: String(Date.now()),
       });
 
-      timeoutTimer = window.setTimeout(() => {
-        cleanupRequest();
-        if (disposed) return;
-        setFailed(true);
-        setLoading(false);
-        scheduleNext(30);
-      }, 12000);
+      jsonpTimeoutTimer = window.setTimeout(() => {
+        cleanupJsonp();
+        reject(new Error('Timeout disponibilità posti'));
+      }, 6500);
 
       script.async = true;
       script.src = `${SEOUL_AVAILABILITY_URL}?${params.toString()}`;
       script.onerror = () => {
-        cleanupRequest();
+        cleanupJsonp();
+        reject(new Error('Errore collegamento disponibilità posti'));
+      };
+      document.head.appendChild(script);
+    });
+
+    const loadStatus = async () => {
+      if (disposed) return;
+      if (!cachedAvailabilityRef.current) setLoading(true);
+
+      try {
+        const payload = await Promise.any([
+          requestProxy(),
+          requestJsonp(),
+        ]);
+        cleanupJsonp();
+        acceptPayload(payload);
+        return;
+      } catch {
+        // Se proxy e JSONP non rispondono, resta il collegamento diretto come ultima riserva.
+      }
+
+      try {
+        const payload = await requestDirect();
+        acceptPayload(payload);
+      } catch {
         if (disposed) return;
         setFailed(true);
         setLoading(false);
-        scheduleNext(30);
-      };
-      document.head.appendChild(script);
+        scheduleNext(8);
+      }
     };
 
-    loadStatus();
+    const onOnline = () => { void loadStatus(); };
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') void loadStatus();
+    };
+
+    void loadStatus();
+    window.addEventListener('online', onOnline);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
     return () => {
       disposed = true;
-      cleanupRequest();
+      activeController?.abort();
+      cleanupJsonp();
       if (refreshTimer) window.clearTimeout(refreshTimer);
+      window.removeEventListener('online', onOnline);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, []);
 
@@ -236,7 +323,6 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
   const soldOut = Boolean(data?.blocco || (data && remaining <= 0));
   const registrationsClosed = registrationRemainingMs <= 0;
   const compactCountdown = registrationsClosed ? 'ISCRIZIONI CHIUSE' : `Tempo rimanente: ${formatSeoulCountdown(registrationRemainingMs, 'compact')}`;
-  const fullCountdown = registrationsClosed ? 'Le iscrizioni si sono chiuse il 30/10/2026 alle 23:59.' : `Tempo rimanente: ${formatSeoulCountdown(registrationRemainingMs, 'full')}`;
 
   return (
     <>
@@ -313,7 +399,7 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
                 <div className="seoul-floating-remaining">
                   {soldOut ? (
                     <div className="seoul-floating-soldout-copy">
-                      <strong>POSTI ESAURITI</strong>
+                      <strong><span>POSTI</span><span>ESAURITI</span></strong>
                       <span>0 posti rimasti</span>
                     </div>
                   ) : (

@@ -2778,9 +2778,16 @@ option {
   box-shadow: 0 0 0 5px rgba(255, 82, 105, .1), 0 0 14px rgba(255, 82, 105, .52);
 }
 
+.seoul-floating-main.is-sold-out {
+  grid-template-columns: minmax(270px, 1.45fr) repeat(2, minmax(110px, .72fr));
+  align-items: stretch;
+}
+
 .seoul-floating-main.is-sold-out .seoul-floating-remaining {
+  min-width: 0;
+  overflow: hidden;
   align-items: center;
-  padding: .9rem 1.2rem .9rem 1rem;
+  padding: .9rem 1rem;
   border: 1px solid rgba(255, 82, 105, .36);
   border-radius: 20px;
   background: linear-gradient(145deg, rgba(130, 20, 42, .28), rgba(75, 8, 27, .16));
@@ -2788,22 +2795,37 @@ option {
 
 .seoul-floating-soldout-copy {
   display: flex;
+  min-width: 0;
+  width: 100%;
   flex-direction: column;
-  gap: .28rem;
+  gap: .3rem;
 }
 
-.seoul-floating-soldout-copy strong {
-  color: #ff6176;
-  font-size: clamp(2.05rem, 6vw, 3.55rem);
+.seoul-floating-main.is-sold-out .seoul-floating-soldout-copy strong {
+  display: flex;
+  min-width: 0;
+  width: 100%;
+  flex-direction: column;
+  color: #f5d578;
+  font-size: clamp(2rem, 3.8vw, 2.75rem);
   font-weight: 900;
-  letter-spacing: -.035em;
-  line-height: .96;
+  letter-spacing: -.05em;
+  line-height: .84;
 }
 
-.seoul-floating-soldout-copy span {
+.seoul-floating-main.is-sold-out .seoul-floating-soldout-copy strong > span {
+  display: block;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+}
+
+.seoul-floating-main.is-sold-out .seoul-floating-soldout-copy > span {
   color: #fff;
-  font-size: clamp(1rem, 2.4vw, 1.35rem);
-  font-weight: 700;
+  font-size: clamp(.95rem, 1.8vw, 1.18rem);
+  font-weight: 750;
   letter-spacing: -.01em;
 }
 
@@ -3173,12 +3195,14 @@ option {
   }
 
   .seoul-floating-panel {
-    width: min(96vw, 620px);
+    width: min(calc(100vw - 1.5rem), 620px);
     max-height: calc(100svh - 1.4rem);
+    margin-inline: auto;
     overflow-y: auto;
     overscroll-behavior: contain;
     padding: .78rem .82rem .72rem;
     border-radius: 20px;
+    box-sizing: border-box;
   }
 
   .seoul-floating-panel--home { transform-origin: 50% 100%; }
@@ -3247,6 +3271,52 @@ option {
     margin-top: .78rem;
   }
 
+  .seoul-floating-main.is-sold-out {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: .5rem 0;
+  }
+
+  .seoul-floating-main.is-sold-out .seoul-floating-remaining {
+    grid-column: 1 / -1;
+    display: block;
+    width: 100%;
+    padding: .7rem .75rem;
+    text-align: center;
+  }
+
+  .seoul-floating-main.is-sold-out .seoul-floating-soldout-copy {
+    align-items: center;
+  }
+
+  .seoul-floating-main.is-sold-out .seoul-floating-soldout-copy strong {
+    width: 100%;
+    align-items: center;
+    font-size: clamp(2.05rem, 10.5vw, 2.85rem);
+    line-height: .84;
+  }
+
+  .seoul-floating-main.is-sold-out .seoul-floating-soldout-copy > span {
+    margin-top: .12rem;
+    font-size: 1.05rem;
+  }
+
+  .seoul-floating-main.is-sold-out .seoul-floating-remaining + .seoul-floating-stat {
+    border-left: 0;
+  }
+
+  .seoul-floating-main.is-sold-out .seoul-floating-stat {
+    padding: .45rem .35rem;
+  }
+
+  .seoul-floating-main.is-sold-out .seoul-floating-stat strong {
+    font-size: clamp(2rem, 10vw, 2.65rem);
+  }
+
+  .seoul-floating-main.is-sold-out .seoul-floating-stat span {
+    font-size: .72rem;
+  }
+
   .seoul-floating-remaining,
   .seoul-floating-stat {
     padding: .35rem .45rem;
@@ -3307,12 +3377,13 @@ option {
   }
 
   .seoul-floating-deadline-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: .38rem;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: .42rem;
   }
 
   .seoul-floating-deadline-divider {
-    display: none;
+    display: block;
+    min-height: 48px;
   }
 
   .seoul-floating-deadline-chip {
@@ -3326,12 +3397,12 @@ option {
   }
 
   .seoul-floating-deadline-title {
-    font-size: .6rem;
+    font-size: .58rem;
   }
 
   .seoul-floating-deadline-card strong {
     margin-top: .1rem;
-    font-size: .86rem;
+    font-size: clamp(.76rem, 3.5vw, .9rem);
     text-align: center;
     white-space: nowrap;
   }
