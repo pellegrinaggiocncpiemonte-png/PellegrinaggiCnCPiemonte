@@ -3087,6 +3087,53 @@ option {
   color: #ffb1ab;
 }
 
+.seoul-floating-waitlist-notice {
+  margin-top: .72rem;
+  border: 1px solid rgba(245, 213, 120, .34);
+  border-radius: 15px;
+  background: rgba(245, 213, 120, .07);
+  color: #fff;
+  overflow: hidden;
+}
+
+.seoul-floating-waitlist-notice summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .65rem;
+  padding: .58rem .75rem;
+  cursor: pointer;
+  list-style: none;
+  text-align: center;
+}
+
+.seoul-floating-waitlist-notice summary::-webkit-details-marker { display: none; }
+
+.seoul-floating-waitlist-summary {
+  color: #f7e5ad;
+  font-size: .72rem;
+  font-weight: 750;
+  line-height: 1.25;
+}
+
+.seoul-floating-waitlist-more {
+  flex: 0 0 auto;
+  color: #f5d578;
+  font-size: .68rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.seoul-floating-waitlist-body {
+  padding: 0 .85rem .72rem;
+  color: rgba(255, 255, 255, .76);
+  font-size: .72rem;
+  line-height: 1.42;
+  text-align: left;
+}
+
+.seoul-floating-waitlist-body p { margin: .42rem 0 0; }
+
 .seoul-floating-deadline-card > span:last-child {
   display: block;
   margin-top: .35rem;
@@ -3297,24 +3344,27 @@ option {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: .22rem;
+    gap: .58rem;
     text-align: center;
     white-space: nowrap;
-    font-size: clamp(1.7rem, 8vw, 2.2rem);
-    line-height: .92;
+    font-size: clamp(1.55rem, 7.4vw, 2.05rem);
+    line-height: .96;
   }
 
   .seoul-floating-main.is-sold-out .seoul-floating-soldout-copy strong > span {
     display: inline;
+    max-width: none;
     white-space: nowrap;
   }
 
   .seoul-floating-main.is-sold-out .seoul-floating-soldout-copy > span {
     width: 100%;
-    margin-top: .18rem;
+    max-width: none;
+    margin-top: .28rem;
     text-align: center;
+    white-space: nowrap;
     font-size: .95rem;
-    line-height: 1.02;
+    line-height: 1.05;
   }
 
   .seoul-floating-main.is-sold-out .seoul-floating-remaining + .seoul-floating-stat {
@@ -3421,6 +3471,31 @@ option {
     font-size: clamp(.76rem, 3.5vw, .9rem);
     text-align: center;
     white-space: nowrap;
+  }
+
+  .seoul-floating-waitlist-notice {
+    margin-top: .62rem;
+    border-radius: 13px;
+  }
+
+  .seoul-floating-waitlist-notice summary {
+    flex-direction: column;
+    gap: .16rem;
+    padding: .5rem .58rem;
+  }
+
+  .seoul-floating-waitlist-summary {
+    font-size: .61rem;
+  }
+
+  .seoul-floating-waitlist-more {
+    font-size: .6rem;
+  }
+
+  .seoul-floating-waitlist-body {
+    padding: 0 .62rem .58rem;
+    font-size: .62rem;
+    line-height: 1.4;
   }
 
   .seoul-floating-progress { margin-top: 1rem; }

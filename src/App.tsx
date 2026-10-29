@@ -443,6 +443,20 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
                 </div>
               </div>
             </div>
+
+            {soldOut ? (
+              <details className="seoul-floating-waitlist-notice">
+                <summary>
+                  <span className="seoul-floating-waitlist-summary">Puoi ancora inviare la richiesta fino al 30/10 alle 23:59</span>
+                  <span className="seoul-floating-waitlist-more">Leggi dettagli</span>
+                </summary>
+                <div className="seoul-floating-waitlist-body">
+                  <p>Anche se i posti risultano esauriti, puoi inviare comunque la richiesta di iscrizione entro le ore 23:59 del 30 ottobre 2026.</p>
+                  <p>Le richieste oltre il numero massimo resteranno in lista di attesa. In caso di rinunce o posti che si liberano, potranno essere trasformate in iscrizioni ufficiali previa conferma dell'interessato.</p>
+                  <p>Dopo la scadenza, eventuali nuove richieste potranno essere inviate esclusivamente via email e saranno inserite in lista di attesa.</p>
+                </div>
+              </details>
+            ) : null}
           </section>
         </div>
       ) : null}
