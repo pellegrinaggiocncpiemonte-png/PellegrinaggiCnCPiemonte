@@ -1,5 +1,5 @@
 import Navigation from './components/Navigation';
-import { Bell, ChevronDown, FileText, Landmark, Play, Smartphone, X } from 'lucide-react';
+import { Bell, ChevronDown, Clock3, FileText, Landmark, Play, Smartphone, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import FlipCountdown from './components/FlipCountdown';
 import { SITE_CONFIG } from './config/siteConfig';
@@ -45,12 +45,41 @@ type SeoulAvailability = {
 
 const SEOUL_AVAILABILITY_URL = 'https://script.google.com/macros/s/AKfycbz2py2LldK05Lm9jVmnDfQuKUFViwY_pxfiYnCcVyaseKgejBPyqEtf4mBP3xNqo7Rv/exec';
 
+const SEOUL_REGISTRATION_DEADLINE = new Date('2026-10-30T23:59:00+01:00').getTime();
+
+const getSeoulRegistrationRemainingMs = () => Math.max(0, SEOUL_REGISTRATION_DEADLINE - Date.now());
+
+const formatSeoulCountdown = (ms: number, mode: 'compact' | 'full' = 'compact') => {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (mode === 'full') {
+    const parts = [];
+    if (days > 0) parts.push(`${days} ${days === 1 ? 'giorno' : 'giorni'}`);
+    parts.push(`${hours} ${hours === 1 ? 'ora' : 'ore'}`);
+    parts.push(`${minutes} ${minutes === 1 ? 'minuto' : 'minuti'}`);
+    parts.push(`${seconds} ${seconds === 1 ? 'secondo' : 'secondi'}`);
+    return parts.join(' ');
+  }
+
+  const hh = String(hours).padStart(2, '0');
+  const mm = String(minutes).padStart(2, '0');
+  const ss = String(seconds).padStart(2, '0');
+  if (days > 0) return `${days}g ${hh}h ${mm}m ${ss}s`;
+  if (hours > 0) return `${hh}h ${mm}m ${ss}s`;
+  return `${mm}m ${ss}s`;
+};
+
 function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
   const [data, setData] = useState<SeoulAvailability | null>(null);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [manualPosition, setManualPosition] = useState<{ x: number; y: number } | null>(null);
+  const [registrationRemainingMs, setRegistrationRemainingMs] = useState(getSeoulRegistrationRemainingMs());
   const dragStateRef = useRef<{ pointerId: number; startX: number; startY: number; left: number; top: number; moved: boolean } | null>(null);
   const suppressClickRef = useRef(false);
 
@@ -145,6 +174,13 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
   }, []);
 
   useEffect(() => {
+    const updateCountdown = () => setRegistrationRemainingMs(getSeoulRegistrationRemainingMs());
+    updateCountdown();
+    const timer = window.setInterval(updateCountdown, 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
     if (!isOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setIsOpen(false);
@@ -198,6 +234,9 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
   const occupied = Math.max(0, total - remaining);
   const percentage = total > 0 ? Math.min(100, Math.max(0, (occupied / total) * 100)) : 0;
   const soldOut = Boolean(data?.blocco || (data && remaining <= 0));
+  const registrationsClosed = registrationRemainingMs <= 0;
+  const compactCountdown = registrationsClosed ? 'ISCRIZIONI CHIUSE' : `Tempo rimanente: ${formatSeoulCountdown(registrationRemainingMs, 'compact')}`;
+  const fullCountdown = registrationsClosed ? 'Le iscrizioni si sono chiuse il 30/10/2026 alle 23:59.' : `Tempo rimanente: ${formatSeoulCountdown(registrationRemainingMs, 'full')}`;
 
   return (
     <>
@@ -219,13 +258,19 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
         aria-label={data ? (soldOut ? 'Apri disponibilità posti: posti esauriti' : `Apri disponibilità posti: ${remaining} posti rimasti`) : 'Apri disponibilità posti Korea 2027'}
         title={soldOut ? 'Posti esauriti – Pellegrinaggio Piemonte e Svizzera' : 'Posti rimasti – Pellegrinaggio Piemonte e Svizzera. Puoi anche trascinare il pulsante.'}
       >
-        <img src="/images/widget-jmj-logo-rounded.jpg" alt="" aria-hidden="true" className="seoul-floating-logo-mark" />
-        <span className="seoul-floating-trigger-copy">
-          <small>Piemonte · Svizzera</small>
-          <strong>{soldOut ? 'POSTI ESAURITI' : 'Posti rimasti'}</strong>
+        <span className="seoul-floating-trigger-main">
+          <img src="/images/widget-jmj-logo-rounded.jpg" alt="" aria-hidden="true" className="seoul-floating-logo-mark" />
+          <span className="seoul-floating-trigger-copy">
+            <small>Piemonte · Svizzera</small>
+            <strong>{soldOut ? 'POSTI ESAURITI' : 'Posti rimasti'}</strong>
+          </span>
+          <span className="seoul-floating-trigger-count" aria-live="polite">
+            {loading && !data ? <span className="seoul-posti-spinner" aria-hidden="true" /> : data ? (soldOut ? total : remaining) : '—'}
+          </span>
         </span>
-        <span className="seoul-floating-trigger-count" aria-live="polite">
-          {loading && !data ? <span className="seoul-posti-spinner" aria-hidden="true" /> : data ? (soldOut ? total : remaining) : '—'}
+        <span className={`seoul-floating-trigger-deadline ${registrationsClosed ? 'is-expired' : ''}`}>
+          <span className="seoul-floating-trigger-deadline-label">Chiusura iscrizioni: 30/10/2026 · 23:59</span>
+          <strong>{compactCountdown}</strong>
         </span>
       </button>
 
@@ -298,6 +343,20 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
                 <span>{remaining} disponibili</span>
               </div>
             ) : null}
+
+            <div className={`seoul-floating-deadline-card ${registrationsClosed ? 'is-expired' : ''}`}>
+              <div className="seoul-floating-deadline-grid">
+                <div className="seoul-floating-deadline-col seoul-floating-deadline-col--event">
+                  <span className="seoul-floating-deadline-chip"><Clock3 size={15} /> Chiusura iscrizioni</span>
+                  <span className="seoul-floating-deadline-date">30/10/2026 · 23:59</span>
+                </div>
+                <div className="seoul-floating-deadline-divider" aria-hidden="true" />
+                <div className="seoul-floating-deadline-col seoul-floating-deadline-col--countdown">
+                  <span className="seoul-floating-deadline-title">Countdown</span>
+                  <strong>{registrationsClosed ? 'ISCRIZIONI CHIUSE' : formatSeoulCountdown(registrationRemainingMs, 'compact')}</strong>
+                </div>
+              </div>
+            </div>
           </section>
         </div>
       ) : null}
