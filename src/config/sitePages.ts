@@ -71,7 +71,7 @@ export const PAGE_META: Record<Exclude<SitePage, 'home'>, { eyebrow: string; tit
   versamenti: {
     eyebrow: 'Quote e ricevute',
     title: 'Versamenti e donazioni',
-    intro: 'Codice bonifico, dati bancari e procedura per associare automaticamente ricevute, partecipanti e quote.',
+    intro: 'Segui la procedura guidata in Area Riservata → Bonifici e versamenti: genera Codice Bonifico e distinta prima del pagamento, poi torna nella stessa sezione per caricare la ricevuta.',
   },
 };
 

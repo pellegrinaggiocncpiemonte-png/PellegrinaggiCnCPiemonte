@@ -1,6 +1,6 @@
 import Navigation from './components/Navigation';
-import { Bell, ChevronDown, Clock3, FileText, Landmark, Play, Smartphone, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { AlertCircle, Bell, CheckCircle2, ChevronDown, Clock3, FileCheck2, FileText, Landmark, Loader2, Play, Search, Smartphone, UploadCloud, UserRound, X } from 'lucide-react';
+import { type FormEvent, useEffect, useRef, useState } from 'react';
 import FlipCountdown from './components/FlipCountdown';
 import { SITE_CONFIG } from './config/siteConfig';
 import { RESERVED_AREA_GUIDE_ITEMS, RESERVED_AREA_GUIDE_TITLE } from './config/reservedAreaGuide';
@@ -464,6 +464,253 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
   );
 }
 
+
+type PublicRegistrationStatus = {
+  success?: boolean;
+  found?: boolean;
+  status?: 'confirmed' | 'verification' | 'action_required' | 'not_found' | 'error';
+  message?: string;
+  codiceUnivoco?: string;
+  cognome?: string;
+  nome?: string;
+  pellegrinaggio?: string;
+  steps?: {
+    registrationComplete?: boolean;
+    receiptUploaded?: boolean;
+    bankVerified?: boolean;
+  };
+};
+
+const PUBLIC_REGISTRATION_APPS_SCRIPT_URLS = [
+  'https://script.google.com/macros/s/AKfycbxoay9uqD-q6EaLwTHJm119BJ2XZbaMcg63l1PH5EJMQfrr-AUOjph2E0Tv9QZIU74b/exec',
+  'https://script.google.com/macros/s/AKfycbzOoD7KhBMBl4hXJtajsvvbFAM-8Yrb9MnWfKCspc6AbWjv_J3ev53khHnSXhhpFEm3/exec',
+] as const;
+
+function PublicRegistrationCheck() {
+  const [code, setCode] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<PublicRegistrationStatus | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const normalizeCode = (value: string) => value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 16);
+
+  const fetchViaJsonpEndpoint = (endpoint: string, cleanCode: string) => new Promise<PublicRegistrationStatus>((resolve, reject) => {
+    const callbackName = `__registrationStatus_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+    const script = document.createElement('script');
+    const target = window as typeof window & Record<string, unknown>;
+    let finished = false;
+    const cleanup = () => {
+      if (script.parentNode) script.parentNode.removeChild(script);
+      try { delete target[callbackName]; } catch { target[callbackName] = undefined; }
+    };
+    const timeout = window.setTimeout(() => {
+      if (finished) return;
+      finished = true;
+      cleanup();
+      reject(new Error('Tempo di risposta scaduto'));
+    }, 7000);
+
+    target[callbackName] = (payload: PublicRegistrationStatus) => {
+      if (finished) return;
+      finished = true;
+      window.clearTimeout(timeout);
+      cleanup();
+      if (!payload || typeof payload !== 'object' || typeof payload.success !== 'boolean') {
+        reject(new Error('Risposta Apps Script non valida'));
+        return;
+      }
+      resolve(payload);
+    };
+
+    const params = new URLSearchParams({
+      registration_status: cleanCode,
+      callback: callbackName,
+      _: String(Date.now()),
+    });
+    script.async = true;
+    script.src = `${endpoint}?${params.toString()}`;
+    script.onerror = () => {
+      if (finished) return;
+      finished = true;
+      window.clearTimeout(timeout);
+      cleanup();
+      reject(new Error('Servizio non raggiungibile'));
+    };
+    document.head.appendChild(script);
+  });
+
+  const fetchViaJsonp = (cleanCode: string) => new Promise<PublicRegistrationStatus>((resolve, reject) => {
+    let settled = false;
+    let pending = PUBLIC_REGISTRATION_APPS_SCRIPT_URLS.length;
+    const errors: unknown[] = [];
+
+    PUBLIC_REGISTRATION_APPS_SCRIPT_URLS.forEach((endpoint) => {
+      fetchViaJsonpEndpoint(endpoint, cleanCode)
+        .then((payload) => {
+          if (settled) return;
+          settled = true;
+          resolve(payload);
+        })
+        .catch((error) => {
+          errors.push(error);
+          pending -= 1;
+          if (!settled && pending <= 0) reject(errors[0] || new Error('Nessuna distribuzione Apps Script disponibile'));
+        });
+    });
+  });
+
+  const fetchRegistrationStatus = async (cleanCode: string) => {
+    try {
+      const controller = new AbortController();
+      const timer = window.setTimeout(() => controller.abort(), 8000);
+      const response = await fetch(`/api/registration-status?code=${encodeURIComponent(cleanCode)}&_=${Date.now()}`, {
+        method: 'GET',
+        cache: 'no-store',
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      });
+      window.clearTimeout(timer);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json() as PublicRegistrationStatus;
+      if (!payload || typeof payload !== 'object') throw new Error('Risposta non valida');
+      return payload;
+    } catch (_proxyError) {
+      return fetchViaJsonp(cleanCode);
+    }
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const cleanCode = normalizeCode(code);
+    if (cleanCode.length < 4) {
+      setResult({ success: true, found: false, status: 'not_found', message: 'Inserisci un Codice Univoco valido.' });
+      setIsOpen(true);
+      return;
+    }
+    setLoading(true);
+    try {
+      const payload = await fetchRegistrationStatus(cleanCode);
+      setResult(payload);
+      setIsOpen(true);
+    } catch (_error) {
+      setResult({ success: false, found: false, status: 'error', message: 'Verifica temporaneamente non disponibile. Riprova tra poco.' });
+      setIsOpen(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const closeModal = () => setIsOpen(false);
+  const status = result?.found ? result.status : (result?.status || 'not_found');
+  const confirmed = status === 'confirmed';
+  const verifying = status === 'verification';
+  const actionRequired = status === 'action_required';
+  const steps = result?.steps || {};
+
+  const stepClass = (done: boolean, pending = false) => done ? 'is-complete' : pending ? 'is-pending' : 'is-missing';
+
+  return (
+    <>
+      <section id="verifica-iscrizione" data-page="home" className="page-section public-registration-check-section">
+        <div className="container mx-auto px-4">
+          <div className="public-registration-check-card">
+            <div className="public-registration-check-copy">
+              <span className="public-registration-check-icon" aria-hidden="true"><Search size={28} /></span>
+              <div>
+                <p className="public-registration-check-kicker">Controllo rapido</p>
+                <h2>Verifica la tua iscrizione</h2>
+                <p>Inserisci il tuo Codice Univoco per conoscere lo stato dell’iscrizione, della ricevuta e della verifica C/C.</p>
+              </div>
+            </div>
+            <form className="public-registration-check-form" onSubmit={handleSubmit}>
+              <label htmlFor="public-registration-code" className="sr-only">Codice Univoco</label>
+              <input
+                id="public-registration-code"
+                type="text"
+                inputMode="text"
+                autoComplete="off"
+                spellCheck={false}
+                value={code}
+                onChange={(event) => setCode(normalizeCode(event.target.value))}
+                placeholder="Codice Univoco · es. A7K9"
+                aria-label="Codice Univoco"
+              />
+              <button type="submit" disabled={loading}>
+                {loading ? <Loader2 className="public-registration-spin" size={20} /> : <Search size={20} />}
+                <span>{loading ? 'Verifica…' : 'Verifica'}</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {isOpen && result ? (
+        <div className="public-registration-modal-layer" role="dialog" aria-modal="true" aria-label="Esito verifica iscrizione">
+          <button type="button" className="public-registration-modal-backdrop" onClick={closeModal} aria-label="Chiudi verifica" />
+          <section className={`public-registration-modal ${confirmed ? 'is-confirmed' : verifying ? 'is-verifying' : actionRequired ? 'is-action' : 'is-error'}`}>
+            <button type="button" className="public-registration-modal-close" onClick={closeModal} aria-label="Chiudi"><X size={22} /></button>
+
+            {result.found ? (
+              <>
+                <div className="public-registration-modal-head">
+                  <span className="public-registration-user-icon"><UserRound size={32} /></span>
+                  <div>
+                    <h3>Ciao <strong>{`${result.cognome || ''} ${result.nome || ''}`.trim()}</strong></h3>
+                    <p>Codice Univoco: <b>{result.codiceUnivoco || normalizeCode(code)}</b></p>
+                  </div>
+                </div>
+                <p className="public-registration-modal-intro">Ecco lo stato della tua iscrizione al pellegrinaggio Korea 2027.</p>
+
+                <div className="public-registration-steps">
+                  <div className={`public-registration-step ${stepClass(!!steps.registrationComplete)}`}>
+                    <span className="public-registration-step-state">{steps.registrationComplete ? <CheckCircle2 size={23} /> : <AlertCircle size={23} />}</span>
+                    <FileCheck2 size={30} />
+                    <strong>Iscrizione completa</strong>
+                  </div>
+                  <div className={`public-registration-step ${stepClass(!!steps.receiptUploaded)}`}>
+                    <span className="public-registration-step-state">{steps.receiptUploaded ? <CheckCircle2 size={23} /> : <AlertCircle size={23} />}</span>
+                    <UploadCloud size={30} />
+                    <strong>{steps.receiptUploaded ? 'Ricevuta caricata' : 'Ricevuta non caricata'}</strong>
+                  </div>
+                  <div className={`public-registration-step ${stepClass(!!steps.bankVerified, !!steps.receiptUploaded && !steps.bankVerified)}`}>
+                    <span className="public-registration-step-state">{steps.bankVerified ? <CheckCircle2 size={23} /> : steps.receiptUploaded ? <Clock3 size={23} /> : <AlertCircle size={23} />}</span>
+                    <Landmark size={30} />
+                    <strong>Verifica C/C</strong>
+                  </div>
+                </div>
+
+                <div className="public-registration-outcome">
+                  {confirmed ? <CheckCircle2 size={38} /> : verifying ? <Clock3 size={38} /> : <AlertCircle size={38} />}
+                  <div>
+                    <h4>{confirmed ? 'ISCRIZIONE CONFERMATA' : verifying ? 'VERIFICA IN CORSO' : 'AZIONE RICHIESTA'}</h4>
+                    <p>
+                      {confirmed
+                        ? 'La tua iscrizione al pellegrinaggio Korea 2027 – Piemonte e Svizzera risulta regolarmente confermata.'
+                        : verifying
+                          ? 'La ricevuta risulta caricata. La verifica del versamento sul conto corrente è ancora in corso.'
+                          : !steps.registrationComplete
+                            ? 'L’iscrizione non risulta ancora completa. Verifica i passaggi richiesti nella tua Area Riservata.'
+                            : 'La ricevuta non risulta ancora caricata. Accedi alla tua Area Riservata per completare la procedura.'}
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="public-registration-not-found">
+                <AlertCircle size={46} />
+                <h3>{status === 'error' ? 'Verifica non disponibile' : 'Codice non trovato'}</h3>
+                <p>{result.message || 'Non risulta alcuna iscrizione associata a questo Codice Univoco.'}</p>
+              </div>
+            )}
+
+            <button type="button" className="public-registration-modal-button" onClick={closeModal}>Chiudi</button>
+          </section>
+        </div>
+      ) : null}
+    </>
+  );
+}
+
 type PilgrimageSong = {
   id: number;
   title: string;
@@ -472,6 +719,54 @@ type PilgrimageSong = {
   audioSrc: string;
   textPdfSrc: string;
   textImageSrc: string;
+  officialMaterialTitle: string;
+  pronunciationPdfSrc: string;
+};
+
+type OfficialSongMaterial = {
+  title: string;
+  audio?: string;
+  textPdf?: string;
+  pronunciationPdf?: string;
+};
+
+const normalizeSongTitle = (value: string) => value
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, ' ')
+  .trim();
+
+const parseOfficialSongMaterialsHtml = (html: string): OfficialSongMaterial[] => {
+  if (typeof DOMParser === 'undefined') return [];
+  const document = new DOMParser().parseFromString(html, 'text/html');
+  const resolveUrl = (value?: string | null) => {
+    if (!value) return '';
+    try { return new URL(value, 'https://www.joinway.org/canti/').toString(); } catch { return ''; }
+  };
+  const resourceFromCell = (cell: Element, kind: 'audio' | 'pdf') => {
+    const candidates = [
+      cell.querySelector('audio[src]')?.getAttribute('src'),
+      cell.querySelector('source[src]')?.getAttribute('src'),
+      ...Array.from(cell.querySelectorAll('a[href]')).map((link) => link.getAttribute('href')),
+    ].map(resolveUrl).filter(Boolean);
+    if (kind === 'audio') {
+      return candidates.find((url) => /\.mp3(?:$|[?#])/i.test(url)) || candidates.find((url) => /audio|mp3/i.test(url)) || candidates[0] || '';
+    }
+    return candidates.find((url) => /\.pdf(?:$|[?#])/i.test(url)) || candidates.find((url) => /pdf|download|file/i.test(url)) || candidates[0] || '';
+  };
+
+  return Array.from(document.querySelectorAll('tr')).flatMap((row) => {
+    const cells = Array.from(row.querySelectorAll('th, td'));
+    if (cells.length < 4) return [];
+    const title = (cells[0].textContent || '').replace(/\s+/g, ' ').trim();
+    if (!title || /titolo\s*canto/i.test(title)) return [];
+    const audio = resourceFromCell(cells[1], 'audio');
+    const textPdf = resourceFromCell(cells[2], 'pdf');
+    const pronunciationPdf = resourceFromCell(cells[3], 'pdf');
+    if (!audio && !textPdf && !pronunciationPdf) return [];
+    return [{ title, audio, textPdf, pronunciationPdf }];
+  });
 };
 
 const PILGRIMAGE_SONGS: PilgrimageSong[] = [
@@ -483,6 +778,8 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     audioSrc: 'https://wyd2027way.com/canto/2/file/4?download=true',
     textPdfSrc: 'https://wyd2027way.com/canto/2/file/5?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/2/file/6?download=true',
+    officialMaterialTitle: 'Per amore dei miei fratelli',
+    pronunciationPdfSrc: '/canti/pronuncia/per-amore-dei-miei-fratelli.pdf',
   },
   {
     id: 3,
@@ -492,6 +789,8 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     audioSrc: 'https://wyd2027way.com/canto/3/file/7?download=true',
     textPdfSrc: 'https://wyd2027way.com/canto/3/file/8?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/3/file/9?download=true',
+    officialMaterialTitle: 'Andate ad annunciare ai miei fratelli',
+    pronunciationPdfSrc: '/canti/pronuncia/andate-e-annunciate.pdf',
   },
   {
     id: 4,
@@ -501,6 +800,8 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     audioSrc: 'https://wyd2027way.com/canto/4/file/10?download=true',
     textPdfSrc: 'https://wyd2027way.com/canto/4/file/11?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/4/file/12?download=true',
+    officialMaterialTitle: 'Voglio andare a Gerusalemme',
+    pronunciationPdfSrc: '/canti/pronuncia/voglio-andare-a-gerusalemme.pdf',
   },
   {
     id: 5,
@@ -510,6 +811,8 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     audioSrc: 'https://wyd2027way.com/canto/5/file/13?download=true',
     textPdfSrc: 'https://wyd2027way.com/canto/5/file/14?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/5/file/15?download=true',
+    officialMaterialTitle: 'Una gran senal',
+    pronunciationPdfSrc: '/canti/pronuncia/una-gran-senal.pdf',
   },
   {
     id: 6,
@@ -519,6 +822,8 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     audioSrc: 'https://wyd2027way.com/canto/6/file/16?download=true',
     textPdfSrc: 'https://wyd2027way.com/canto/6/file/17?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/6/file/18?download=true',
+    officialMaterialTitle: 'Che belle sono le tue tende',
+    pronunciationPdfSrc: '/canti/pronuncia/che-belle-sono-le-tue-tende.pdf',
   },
   {
     id: 7,
@@ -528,6 +833,8 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     audioSrc: 'https://wyd2027way.com/canto/7/file/19?download=true',
     textPdfSrc: 'https://wyd2027way.com/canto/7/file/20?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/7/file/21?download=true',
+    officialMaterialTitle: 'Tu sei il più bello',
+    pronunciationPdfSrc: '/canti/pronuncia/tu-sei-piu-bello.pdf',
   },
   {
     id: 8,
@@ -537,6 +844,8 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     audioSrc: 'https://wyd2027way.com/canto/8/file/22?download=true',
     textPdfSrc: 'https://wyd2027way.com/canto/8/file/23?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/8/file/24?download=true',
+    officialMaterialTitle: 'Grazie a Jahwe',
+    pronunciationPdfSrc: '/canti/pronuncia/grazie-a-jahwe.pdf',
   },
   {
     id: 9,
@@ -546,6 +855,8 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     audioSrc: 'https://wyd2027way.com/canto/9/file/25?download=true',
     textPdfSrc: 'https://wyd2027way.com/canto/9/file/26?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/9/file/27?download=true',
+    officialMaterialTitle: 'Io vengo a riunir',
+    pronunciationPdfSrc: '/canti/pronuncia/io-vengo-a-riunire.pdf',
   },
   {
     id: 10,
@@ -555,6 +866,8 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     audioSrc: 'https://wyd2027way.com/canto/10/file/28?download=true',
     textPdfSrc: 'https://wyd2027way.com/canto/10/file/29?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/10/file/30?download=true',
+    officialMaterialTitle: 'Risuscitò',
+    pronunciationPdfSrc: '/canti/pronuncia/risuscito.pdf',
   },
 ];
 
@@ -632,7 +945,7 @@ const RESERVED_AREA_READING_STEPS = [
   },
   {
     title: '4. Bonifico: genera prima il codice',
-    text: 'La nuova procedura è attiva. Prima di effettuare un versamento delle quote entra nell’Area Riservata, apri “Bonifici e versamenti”, scegli il pellegrinaggio e premi “Genera codice bonifico”. Il codice generato deve comparire nella causale del bonifico; puoi aggiungere altro testo, ma il codice non deve essere modificato. Dopo il bonifico salva la ricevuta e caricala nella stessa sezione, indicando i partecipanti interessati e le relative quote. Non inviare la ricevuta via email: questa procedura serve ad automatizzare i controlli.',
+    text: 'Prima di effettuare qualsiasi bonifico è necessario entrare nell’Area Riservata e seguire la procedura guidata in “Bonifici e versamenti”. Scegli Korea 2027, premi “Genera codice bonifico”, inserisci i partecipanti e le relative quote, quindi genera e salva la distinta di pagamento. Il Codice Bonifico deve comparire nella causale esattamente come generato; dopo il codice puoi aggiungere altro testo. Dopo il pagamento, chi ha generato il codice deve tornare nella stessa sezione, riprendere il versamento creato, caricare la ricevuta e confermare partecipanti e quote. Non inviare la ricevuta via email o WhatsApp. La procedura consente all’organizzazione di collegare automaticamente pagamento, codice, distinta, ricevuta ed estratto conto, come nella GMG internazionale.',
   },
 ];
 
@@ -660,6 +973,8 @@ function App() {
   const [openVideoId, setOpenVideoId] = useState<number | null>(1);
   const [expandedSongKey, setExpandedSongKey] = useState<string | null>(null);
   const [songViewer, setSongViewer] = useState<{ type: 'video' | 'sheet'; title: string; src: string } | null>(null);
+  const [officialSongMaterials, setOfficialSongMaterials] = useState<Record<string, OfficialSongMaterial>>({});
+  const [officialSongMaterialsLoading, setOfficialSongMaterialsLoading] = useState(false);
   const [tutorialViewer, setTutorialViewer] = useState<TutorialViewer | null>(null);
   const [sheetZoom, setSheetZoom] = useState(1);
   const sheetViewportRef = useRef<HTMLDivElement | null>(null);
@@ -747,6 +1062,49 @@ function App() {
     window.addEventListener('payment-instructions:open', openPaymentInstructions);
     return () => window.removeEventListener('payment-instructions:open', openPaymentInstructions);
   }, []);
+
+  useEffect(() => {
+    if (currentPage !== 'canti' || Object.keys(officialSongMaterials).length > 0) return;
+    let disposed = false;
+    setOfficialSongMaterialsLoading(true);
+
+    const indexMaterials = (songs: OfficialSongMaterial[]) => {
+      const indexed: Record<string, OfficialSongMaterial> = {};
+      songs.forEach((item) => {
+        if (!item?.title) return;
+        indexed[normalizeSongTitle(item.title)] = item;
+      });
+      if (!disposed && Object.keys(indexed).length > 0) setOfficialSongMaterials(indexed);
+      return Object.keys(indexed).length > 0;
+    };
+
+    const loadMaterials = async () => {
+      try {
+        const response = await fetch('/api/canti-coreano', { headers: { Accept: 'application/json' } });
+        if (response.ok) {
+          const payload = await response.json();
+          if (payload?.ok && Array.isArray(payload.songs) && indexMaterials(payload.songs)) return;
+        }
+      } catch {
+        // In sviluppo locale l'endpoint Vercel non è disponibile: usa il proxy Vite qui sotto.
+      }
+
+      try {
+        const response = await fetch('/joinway-canti-source', { headers: { Accept: 'text/html' } });
+        if (!response.ok) return;
+        const html = await response.text();
+        indexMaterials(parseOfficialSongMaterialsHtml(html));
+      } catch {
+        // I materiali già presenti restano disponibili anche se la fonte esterna non risponde.
+      }
+    };
+
+    loadMaterials().finally(() => {
+      if (!disposed) setOfficialSongMaterialsLoading(false);
+    });
+
+    return () => { disposed = true; };
+  }, [currentPage]);
 
   const openSongViewer = (type: 'video' | 'sheet', song: KoreanSong) => {
     const src = type === 'video' ? song.videoSrc : song.sheetSrc;
@@ -864,6 +1222,7 @@ function App() {
         </div>
       </section>
 
+      <PublicRegistrationCheck />
 
       <section id="home-sezioni" data-page="home" className="page-section home-sections-hub">
         <div className="container mx-auto px-4">
@@ -1059,7 +1418,7 @@ function App() {
                         La data è inderogabile e la quota serve a bloccare il posto sul volo. Senza il versamento entro la scadenza l&apos;iscrizione non può essere considerata completa.
                       </p>
                       <p className="mt-2 rounded-lg border border-red-300 bg-white/70 px-3 py-2 text-sm font-bold leading-relaxed text-red-950 sm:text-base">
-                        Prima del bonifico entra nell&apos;Area Riservata, apri <span className="font-extrabold">“Bonifici e versamenti”</span>, scegli il pellegrinaggio e genera il <span className="font-extrabold">codice bonifico</span>. Il codice deve comparire nella causale. Dopo il pagamento salva la ricevuta e caricala nella stessa sezione associando i partecipanti e le relative quote.
+                        Prima di effettuare il bonifico entra nell&apos;Area Riservata e segui la procedura guidata in <span className="font-extrabold">“Bonifici e versamenti”</span>. Genera prima <span className="font-extrabold">Codice Bonifico e distinta di pagamento</span> inserendo partecipanti e quote; il codice deve comparire nella causale esattamente come generato. Dopo il pagamento torna nella stessa sezione, carica la ricevuta e conferma partecipanti e quote. Non inviare la ricevuta via email o WhatsApp.
                       </p>
                       <p className="mt-2 text-sm leading-relaxed sm:text-base">
                         Il costo complessivo del pellegrinaggio e il piano completo delle rate non sono ancora definitivi. Le rate successive saranno comunicate prossimamente.
@@ -1370,10 +1729,10 @@ function App() {
                   <article className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 px-4 py-5">
                     <p className="text-lg font-extrabold text-amber-200">4. Genera il codice bonifico prima di pagare</p>
                     <p className="mt-2 text-white/90 leading-relaxed">
-                      Nell&apos;Area Riservata apri <span className="font-extrabold text-white">“Bonifici e versamenti”</span>, scegli il pellegrinaggio e premi <span className="font-extrabold text-white">“Genera codice bonifico”</span>. Il codice generato deve comparire nella causale. Puoi scrivere liberamente il resto della causale, ma il codice deve rimanere presente e invariato.
+                      Prima di effettuare qualsiasi bonifico apri nell&apos;Area Riservata <span className="font-extrabold text-white">“Bonifici e versamenti”</span>, scegli Korea 2027 e premi <span className="font-extrabold text-white">“Genera codice bonifico”</span>. Inserisci partecipanti e quote, genera e salva la distinta di pagamento; il Codice Bonifico deve comparire nella causale esattamente come generato. Dopo il codice puoi aggiungere altre indicazioni.
                     </p>
                     <p className="mt-2 font-bold leading-relaxed text-amber-200">
-                      Dopo il bonifico salva la ricevuta e, nella stessa sezione, allegala indicando i partecipanti interessati e le relative quote. Non inviare la ricevuta via email: questo passaggio permette di automatizzare i controlli.
+                      La procedura vale per versamenti singoli e per pagamenti di famiglie, comunità o gruppi di persone. Dopo il bonifico, chi ha generato il codice deve tornare nella stessa sezione, riprendere il versamento creato, caricare la ricevuta e confermare partecipanti e quote. <span className="font-extrabold text-white">Non inviare la ricevuta via email o WhatsApp.</span> Questo collegamento permette di automatizzare la riconciliazione e i controlli, con una procedura analoga a quella utilizzata dalla GMG internazionale.
                     </p>
                   </article>
                 </div>
@@ -1761,7 +2120,7 @@ function App() {
             </div>
             <div className="w-32 h-1 bg-amber-600 mx-auto"></div>
             <p className="mx-auto mt-6 max-w-3xl text-lg text-gray-700 leading-relaxed">
-              Raccolta unificata dei canti per il pellegrinaggio: audio, testi con accordi e video karaoke in coreano. Apri un canto per visualizzare i materiali disponibili direttamente nella pagina.
+              Raccolta unificata dei canti per il pellegrinaggio: audio, testi con accordi, pronuncia coreana e video karaoke. Apri un canto per visualizzare i materiali disponibili direttamente nella pagina.
             </p>
           </div>
 
@@ -1770,10 +2129,10 @@ function App() {
               <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-emerald-700">Raccolta canti</p>
-                  <h3 className="mt-1 font-serif text-2xl font-bold text-gray-900 sm:text-3xl">Audio, testi e accordi</h3>
+                  <h3 className="mt-1 font-serif text-2xl font-bold text-gray-900 sm:text-3xl">Audio, testi e pronuncia coreana</h3>
                 </div>
                 <p className="max-w-xl text-sm leading-relaxed text-gray-600 sm:text-base">
-                  Premi sul titolo del canto: si apre il lettore audio e puoi consultare l&apos;anteprima del testo o il PDF.
+                  Premi sul titolo del canto: si apre il lettore audio e puoi consultare testo, accordi e pronuncia coreana quando disponibili.
                 </p>
               </div>
 
@@ -1781,6 +2140,9 @@ function App() {
                 {PILGRIMAGE_SONGS.map((song) => {
                   const songKey = `raccolta-${song.id}`;
                   const expanded = expandedSongKey === songKey;
+                  const officialMaterial = officialSongMaterials[normalizeSongTitle(song.officialMaterialTitle)];
+                  const audioSrc = officialMaterial?.audio || song.audioSrc;
+                  const pronunciationPdfSrc = song.pronunciationPdfSrc || officialMaterial?.pronunciationPdf;
                   return (
                     <article
                       key={songKey}
@@ -1799,6 +2161,11 @@ function App() {
                           <span className="block text-base font-bold leading-snug text-slate-900 sm:text-lg">{song.title}</span>
                           <span className="mt-1 block text-xs leading-snug text-slate-500 sm:text-sm">{song.subtitle}</span>
                         </span>
+                        {pronunciationPdfSrc ? (
+                          <span className="hidden shrink-0 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-[10px] font-extrabold uppercase tracking-wide text-emerald-700 sm:inline-flex">
+                            Pronuncia
+                          </span>
+                        ) : null}
                         <span className="shrink-0 rounded-lg border border-orange-200 bg-orange-50 px-2.5 py-1.5 text-xs font-extrabold text-orange-700">
                           {song.duration}
                         </span>
@@ -1808,7 +2175,7 @@ function App() {
                       {expanded ? (
                         <div className="border-t border-slate-200 px-4 pb-5 pt-4 sm:px-5">
                           <audio
-                            src={song.audioSrc}
+                            src={audioSrc}
                             controls
                             preload="none"
                             className="h-12 w-full"
@@ -1820,10 +2187,11 @@ function App() {
                           <div className="mt-4 flex flex-wrap gap-2">
                             <button
                               type="button"
-                              onClick={() => setTutorialViewer({ type: 'pdf', title: `Testo e accordi – ${song.title}`, src: `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(song.textPdfSrc)}` })}
-                              className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-800 shadow-sm transition-colors hover:bg-slate-50"
+                              onClick={() => pronunciationPdfSrc && setTutorialViewer({ type: 'pdf', title: `Pronuncia coreana – ${song.title}`, src: pronunciationPdfSrc.startsWith('/') ? pronunciationPdfSrc : `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(pronunciationPdfSrc)}` })}
+                              disabled={!pronunciationPdfSrc}
+                              className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold shadow-sm transition-colors ${pronunciationPdfSrc ? 'border border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100' : 'cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400'}`}
                             >
-                              <FileText size={16} /> Apri PDF nella pagina
+                              <FileText size={16} /> {pronunciationPdfSrc ? 'Pronuncia coreana' : (officialSongMaterialsLoading ? 'Pronuncia — caricamento' : 'Pronuncia — in arrivo')}
                             </button>
                           </div>
 
@@ -2198,22 +2566,27 @@ function App() {
           <div className="max-w-4xl mx-auto rounded-3xl border border-white/15 bg-white/10 p-6 text-white shadow-2xl backdrop-blur-sm sm:p-8 md:p-10">
             <div className="space-y-4 text-base leading-relaxed text-white/90 sm:text-lg">
               <p>
-                In questa sezione trovi la procedura aggiornata per effettuare i versamenti delle quote del pellegrinaggio Korea 2027 e caricare correttamente le ricevute.
+                In questa sezione trovi i dati bancari e le indicazioni per i versamenti del pellegrinaggio Korea 2027. Prima di effettuare qualsiasi bonifico è però necessario seguire la procedura guidata nell&apos;Area Riservata.
               </p>
               <p>
-                La procedura operativa si trova nella tua Area Riservata, nella sezione <span className="font-semibold text-white">“Bonifici e versamenti”</span>.
+                La procedura operativa si trova nella tua Area Riservata, nella sezione <span className="font-semibold text-white">“Bonifici e versamenti”</span>: entra con il profilo che gestisce il pagamento, scegli Korea 2027 e segui il percorso guidato. Prima del bonifico il sistema genera il Codice Bonifico e la distinta di pagamento; dopo il pagamento devi tornare nella stessa sezione per caricare la ricevuta.
               </p>
 
               <div className="rounded-2xl border-2 border-amber-300 bg-amber-300/10 px-4 py-5 text-left shadow-lg shadow-amber-400/10">
-                <p className="font-extrabold text-amber-200">NUOVA PROCEDURA ATTIVA — CODICE BONIFICO</p>
+                <p className="font-extrabold text-amber-200">PRIMA DI PAGARE — GENERA IL CODICE BONIFICO</p>
                 <p className="mt-2 text-white/95">
-                  Prima di effettuare un bonifico entra nella tua <span className="font-extrabold text-white">Area Riservata</span>, apri <span className="font-extrabold text-white">“Bonifici e versamenti”</span>, scegli il pellegrinaggio e premi <span className="font-extrabold text-white">“Genera codice bonifico”</span>.
+                  <span className="font-extrabold text-white">Non effettuare il bonifico direttamente utilizzando soltanto i dati bancari.</span> Entra prima nella tua Area Riservata, apri <span className="font-extrabold text-white">“Bonifici e versamenti”</span>, scegli il pellegrinaggio Korea 2027 e premi <span className="font-extrabold text-white">“Genera codice bonifico”</span>. Segui le indicazioni, inserisci i partecipanti e le relative quote, quindi genera e salva la distinta di pagamento da utilizzare per effettuare il bonifico.
                 </p>
                 <p className="mt-2 font-semibold text-amber-100">
-                  Il <span className="font-extrabold text-white">codice generato deve comparire nella causale</span>. Puoi scrivere come vuoi il resto della causale, ma il codice deve rimanere presente e non va modificato. La procedura vale per <span className="font-extrabold text-white">quota singola, versamento multiplo figli e versamento multiplo comunitario</span>.
+                  Il <span className="font-extrabold text-white">Codice Bonifico generato deve comparire obbligatoriamente nella causale</span>. Scrivi prima il codice, senza modificarlo; dopo puoi aggiungere ciò che ritieni utile. La procedura vale per <span className="font-extrabold text-white">versamenti singoli, famiglie, comunità e gruppi di persone</span>.
                 </p>
+                <div className="mt-3 rounded-xl border border-amber-200/50 bg-black/25 px-3 py-3 text-center">
+                  <p className="text-xs font-bold uppercase tracking-[0.12em] text-amber-200">Esempio di Codice Bonifico generato dal sistema</p>
+                  <p className="mt-1 break-all font-mono text-lg font-extrabold tracking-wide text-white sm:text-xl">GMG2027-PHX7ZD3G</p>
+                  <p className="mt-1 text-sm text-white/75">Esempio causale: <span className="font-mono font-bold text-white">GMG2027-PHX7ZD3G ROSSI MARIO</span></p>
+                </div>
                 <p className="mt-2 text-white/95">
-                  Dopo il bonifico salva la ricevuta, torna nella stessa sezione e <span className="font-extrabold text-white">allega la ricevuta del bonifico</span>, indicando i <span className="font-extrabold text-white">partecipanti e le relative quote</span>. Non inviare la ricevuta via email: questa procedura serve ad automatizzare i controlli.
+                  Dopo il bonifico, <span className="font-extrabold text-white">chi ha generato il codice deve tornare nella stessa sezione</span>, riprendere il versamento creato, allegare la ricevuta e confermare tutti i partecipanti con le relative quote. <span className="font-extrabold text-white">Non inviare la ricevuta via email o WhatsApp.</span> In questo modo il sistema può collegare automaticamente pagamento, Codice Bonifico, distinta, ricevuta ed estratto conto, riducendo gli abbinamenti manuali. È una procedura analoga a quella utilizzata dalla GMG internazionale.
                 </p>
                 <button
                   type="button"
@@ -2231,7 +2604,7 @@ function App() {
                   Da versare entro e non oltre il <span className="font-extrabold text-white">20 ottobre 2026</span>. La scadenza è inderogabile: la quota serve a bloccare il posto sul volo e senza il versamento l&apos;iscrizione non può essere considerata completa.
                 </p>
                 <p className="mt-3 rounded-xl border border-amber-300/60 bg-amber-300/10 px-3 py-3 font-bold leading-relaxed text-amber-100">
-                  Prima del pagamento genera il codice nella sezione <span className="font-extrabold text-white">“Bonifici e versamenti”</span> dell&apos;Area Riservata e inseriscilo nella causale. Dopo il bonifico salva la ricevuta: <span className="font-extrabold text-white">non inviarla via email</span>. Torna nella stessa sezione, allega la ricevuta e indica i partecipanti con le relative quote.
+                  Prima del pagamento passa obbligatoriamente dalla sezione <span className="font-extrabold text-white">“Bonifici e versamenti”</span> dell&apos;Area Riservata, genera il Codice Bonifico e la distinta con partecipanti e quote, quindi inserisci il codice nella causale. Dopo il bonifico salva la ricevuta: <span className="font-extrabold text-white">non inviarla via email o WhatsApp</span>. Torna nella stessa sezione, riprendi il versamento creato, carica la ricevuta e conferma partecipanti e quote.
                 </p>
                 <p className="mt-2 text-sm text-white/80">
                   Il costo complessivo e il piano completo delle rate sono ancora in definizione. Le rate successive saranno comunicate prossimamente.
@@ -2287,7 +2660,7 @@ function App() {
                     È importante che l&apos;importo netto effettivamente accreditato sul conto del Comitato corrisponda esattamente alla quota richiesta.
                   </p>
                   <p>
-                    Anche per i bonifici dalla Svizzera, prima del pagamento genera il <strong>codice bonifico</strong> dalla sezione “Bonifici e versamenti” dell&apos;Area Riservata e inseriscilo nella causale. Dopo il bonifico salva la ricevuta. <strong>Non deve essere inviata via email.</strong> Torna nella stessa sezione, allega la ricevuta e indica i partecipanti interessati con le relative quote.
+                    Anche per i bonifici dalla Svizzera è obbligatorio passare prima dalla sezione “Bonifici e versamenti” dell&apos;Area Riservata, generare il <strong>Codice Bonifico</strong> e la distinta con partecipanti e quote, quindi inserire il codice nella causale. Dopo il bonifico salva la ricevuta. <strong>Non deve essere inviata via email o WhatsApp.</strong> Torna nella stessa sezione, riprendi il versamento creato, carica la ricevuta e segui le indicazioni per confermare partecipanti e quote.
                   </p>
                   <p>
                     Per problemi tecnici con il bonifico o per richiedere informazioni sulla consegna delle quote in contanti, contattare l&apos;organizzazione.
@@ -2370,6 +2743,11 @@ function App() {
               </button>
             </div>
             <div className="max-h-[calc(100dvh-7rem)] overflow-y-auto p-4 sm:p-5">
+              <div className="mb-4 rounded-xl border-2 border-amber-400 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950 sm:text-base">
+                <p className="font-extrabold">Prima di utilizzare questi dati bancari</p>
+                <p className="mt-1">Entra nell&apos;Area Riservata → <strong>Bonifici e versamenti</strong>, genera <strong>Codice Bonifico e distinta di pagamento</strong> con partecipanti e quote, quindi inserisci il codice nella causale esattamente come generato. Dopo il bonifico torna nella stessa sezione, carica la ricevuta e completa la procedura. <strong>Non inviarla via email o WhatsApp.</strong></p>
+                <p className="mt-2 text-xs font-bold uppercase tracking-wide sm:text-sm">Esempio codice: <span className="font-mono">GMG2027-PHX7ZD3G</span></p>
+              </div>
               <img src="/images/banca-sella-coordinate.png" alt="Banca Sella" className="mx-auto mb-4 hidden w-full rounded border border-gray-200 sm:block" />
               <div className="space-y-3 text-sm sm:text-base">
                 <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
@@ -2420,18 +2798,24 @@ function App() {
 
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3 sm:p-5">
               <div className="space-y-3 rounded-xl border-2 border-amber-300 bg-amber-50 px-3 py-4 text-sm leading-relaxed text-amber-950 sm:px-4 sm:text-base">
-                <p className="font-extrabold">CODICE BONIFICO — PROCEDURA ATTIVA</p>
+                <p className="font-extrabold">PRIMA GENERA IL CODICE — POI EFFETTUA IL BONIFICO</p>
                 <p>
-                  Per i versamenti delle quote non devi più copiare una causale fissa. Prima del bonifico genera il codice dalla tua Area Riservata: il <span className="font-extrabold">codice deve comparire nella causale</span>. Il resto della causale può essere scritto liberamente, purché il codice rimanga presente e invariato.
+                  I dati bancari restano disponibili sul sito, ma <span className="font-extrabold">prima di effettuare qualsiasi bonifico devi seguire la procedura guidata nella sezione “Bonifici e versamenti” dell&apos;Area Riservata</span>. Il sistema genera un Codice Bonifico univoco e una distinta di pagamento con partecipanti e quote. Il Codice Bonifico deve comparire nella causale esattamente come generato; dopo il codice puoi aggiungere altro testo.
                 </p>
+              </div>
+
+              <div className="rounded-xl border border-slate-300 bg-slate-950 px-3 py-3 text-center text-white sm:px-4">
+                <p className="text-xs font-bold uppercase tracking-[0.12em] text-amber-300">Esempio Codice Bonifico</p>
+                <p className="mt-1 font-mono text-lg font-extrabold tracking-wide sm:text-xl">GMG2027-PHX7ZD3G</p>
+                <p className="mt-1 text-xs text-white/70 sm:text-sm">Nella causale deve essere presente questo codice; dopo puoi aggiungere altro testo.</p>
               </div>
 
               {[
                 ['1. Entra nell’Area Riservata', 'Accedi con il profilo con cui devi gestire il pagamento.'],
-                ['2. Apri “Bonifici e versamenti”', 'Scegli il pellegrinaggio Korea 2027 e premi “Genera codice bonifico”.'],
-                ['3. Inserisci il codice nella causale', 'Copia il codice generato nella causale del bonifico. Puoi aggiungere altre parole, ma non eliminare o modificare il codice. La procedura vale per quota singola, versamento multiplo figli e versamento multiplo comunitario.'],
-                ['4. Esegui il bonifico e salva la ricevuta', 'Conserva il file o la foto della ricevuta. Non inviarla via email.'],
-                ['5. Carica la ricevuta nella stessa sezione', 'Torna in “Bonifici e versamenti”, allega la ricevuta del bonifico e indica tutti i partecipanti interessati con le relative quote. Questo permette al sistema di automatizzare i controlli.'],
+                ['2. Apri “Bonifici e versamenti”', 'Scegli il pellegrinaggio Korea 2027 e premi “Genera codice bonifico”. Segui le indicazioni per generare la distinta di pagamento inserendo i nomi dei partecipanti e le relative quote. Salva la distinta e utilizzala per effettuare il bonifico.'],
+                ['3. Inserisci il codice nella causale', 'Il Codice Bonifico deve comparire nella causale esattamente come generato. Dopo il codice puoi aggiungere altro testo. La procedura vale per versamenti singoli e per pagamenti di famiglie, comunità o gruppi di persone.'],
+                ['4. Esegui il bonifico e salva la ricevuta', 'Conserva il file o la foto della ricevuta. Non inviarla via email o WhatsApp.'],
+                ['5. Torna nella stessa sezione e carica la ricevuta', 'Chi ha generato il Codice Bonifico deve tornare in “Bonifici e versamenti”, riprendere il versamento creato, allegare la ricevuta e seguire le indicazioni per confermare tutti i partecipanti con le relative quote. In questo modo il sistema può collegare automaticamente pagamento, Codice Bonifico, distinta, ricevuta ed estratto conto.'],
               ].map(([title, text]) => (
                 <article key={title} className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 sm:px-4 sm:py-4">
                   <h4 className="font-bold text-black">{title}</h4>
@@ -2450,7 +2834,7 @@ function App() {
 
               <div className="space-y-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-3 text-sm leading-relaxed text-amber-950 sm:px-4 sm:py-4 sm:text-base">
                 <p><span className="font-bold">Bonifici dalla Svizzera:</span> aggiungere 8,50 € di commissioni per ogni operazione. Se il pagamento parte da un conto in franchi svizzeri (CHF) e viene convertito in euro, considerare anche 5,00 € per il cambio valuta: in questo caso la cifra complessiva da aggiungere è <span className="font-bold">13,50 €</span> (8,50 € + 5,00 €). Verificare comunque con la propria banca, prima di eseguire il bonifico, eventuali commissioni o costi aggiuntivi. <span className="font-bold">È importante che l&apos;importo netto effettivamente accreditato sul conto del Comitato corrisponda esattamente alla quota richiesta.</span></p>
-                <p><span className="font-bold">Ricevute:</span> dopo ogni bonifico, salvarle. <span className="font-bold">Non inviarle via email.</span> Caricarle nella stessa sezione <span className="font-bold">“Bonifici e versamenti”</span>, allegando la ricevuta e indicando i partecipanti interessati con le relative quote.</p>
+                <p><span className="font-bold">Ricevute:</span> dopo ogni bonifico, salvarle. <span className="font-bold">Non inviarle via email o WhatsApp.</span> Chi ha generato il Codice Bonifico deve tornare nella stessa sezione <span className="font-bold">“Bonifici e versamenti”</span>, riprendere il versamento creato, allegare la ricevuta e seguire le indicazioni per confermare partecipanti e quote.</p>
                 <p><span className="font-bold">Contanti:</span> per problemi tecnici con il bonifico e per ricevere informazioni, contattare l&apos;organizzazione.</p>
               </div>
             </div>

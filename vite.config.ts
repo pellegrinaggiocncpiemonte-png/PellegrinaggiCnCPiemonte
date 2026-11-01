@@ -23,6 +23,12 @@ export default defineConfig({
           return `${counterScriptPath}${query}`;
         },
       },
+      '/joinway-canti-source': {
+        target: 'https://www.joinway.org',
+        changeOrigin: true,
+        secure: true,
+        rewrite: () => '/canti/',
+      },
     },
   },
 });
