@@ -2632,6 +2632,36 @@ option {
   color: #ff8c97;
 }
 
+.seoul-floating-trigger-waitlist {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .28rem;
+  width: 100%;
+  padding: .22rem .36rem .05rem;
+  color: #ffe08b;
+  font-size: .55rem;
+  line-height: 1.15;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.seoul-floating-trigger-waitlist strong {
+  color: #fff0b4;
+  font-weight: 850;
+}
+
+.seoul-floating-trigger-waitlist-action {
+  color: #ffd45f;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.seoul-floating-trigger:hover .seoul-floating-trigger-waitlist-action {
+  color: #fff0a6;
+}
+
 .seoul-floating-trigger.is-sold-out .seoul-floating-trigger-count {
   border-color: rgba(255, 121, 112, .55);
   background: rgba(190, 48, 41, .18);
@@ -3134,6 +3164,13 @@ option {
 
 .seoul-floating-waitlist-body p { margin: .42rem 0 0; }
 
+.seoul-floating-waitlist-body a {
+  color: #f5d578;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .seoul-floating-deadline-card > span:last-child {
   display: block;
   margin-top: .35rem;
@@ -3199,6 +3236,12 @@ option {
   .seoul-floating-trigger-deadline strong {
     font-size: .6rem;
     line-height: 1.15;
+  }
+
+  .seoul-floating-trigger-waitlist {
+    gap: .2rem;
+    padding: .16rem .18rem .02rem;
+    font-size: .47rem;
   }
 
 
@@ -3889,4 +3932,259 @@ option {
   .public-registration-outcome { align-items: flex-start; padding: .85rem; }
   .public-registration-outcome h4 { font-size: 1.08rem; }
   .public-registration-outcome p { font-size: .82rem; }
+}
+
+/* ============================================================
+   LISTA D'ATTESA — LINK COMPATTO NEL MODAL POSTI + MODAL DETTAGLI
+   ============================================================ */
+.seoul-floating-waitlist-link {
+  width: 100%;
+  margin-top: .72rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  padding: .58rem .78rem;
+  border: 1px solid rgba(245, 213, 120, .34);
+  border-radius: 15px;
+  background: rgba(245, 213, 120, .07);
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color .18s ease, background .18s ease, transform .18s ease;
+}
+
+.seoul-floating-waitlist-link:hover {
+  border-color: rgba(245, 213, 120, .64);
+  background: rgba(245, 213, 120, .12);
+  transform: translateY(-1px);
+}
+
+.seoul-floating-waitlist-link > span {
+  color: #f7e5ad;
+  font-size: .72rem;
+  font-weight: 750;
+  line-height: 1.25;
+}
+
+.seoul-floating-waitlist-link > strong {
+  color: #f5d578;
+  font-size: .7rem;
+  font-weight: 850;
+  line-height: 1.25;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.seoul-waitlist-details-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 128;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.seoul-waitlist-details-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(0, 7, 17, .76);
+  backdrop-filter: blur(8px);
+}
+
+.seoul-waitlist-details-panel {
+  position: relative;
+  z-index: 1;
+  width: min(880px, calc(100vw - 2rem));
+  max-height: min(88svh, 820px);
+  overflow: auto;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid rgba(232, 188, 96, .7);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 86% 8%, rgba(78, 150, 218, .16), transparent 28%),
+    linear-gradient(145deg, #061a33 0%, #0b2745 100%);
+  color: #fff;
+  box-shadow: 0 32px 100px rgba(0, 0, 0, .62);
+  animation: seoul-panel-grow .22s cubic-bezier(.2, .88, .28, 1.04) both;
+}
+
+.seoul-waitlist-details-close {
+  position: absolute;
+  top: .85rem;
+  right: .85rem;
+  z-index: 2;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
+  cursor: pointer;
+}
+
+.seoul-waitlist-details-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-right: 3rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+
+.seoul-waitlist-details-head img {
+  width: 66px;
+  height: 66px;
+  flex: 0 0 auto;
+  border-radius: 18px;
+  object-fit: cover;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .28);
+}
+
+.seoul-waitlist-details-head span {
+  display: block;
+  color: #f5d578;
+  font-size: .7rem;
+  font-weight: 850;
+  letter-spacing: .1em;
+}
+
+.seoul-waitlist-details-head h3 {
+  margin: .2rem 0 0;
+  color: #fff;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  font-weight: 900;
+  letter-spacing: -.04em;
+  line-height: 1;
+}
+
+.seoul-waitlist-details-head p {
+  margin: .5rem 0 0;
+  color: rgba(255, 255, 255, .72);
+  font-size: .92rem;
+  line-height: 1.45;
+}
+
+.seoul-waitlist-details-content {
+  padding-top: 1.05rem;
+  color: rgba(255, 255, 255, .86);
+  font-size: .96rem;
+  line-height: 1.6;
+}
+
+.seoul-waitlist-details-content p {
+  margin: .75rem 0 0;
+}
+
+.seoul-waitlist-details-content a {
+  color: #f5d578;
+}
+
+.seoul-waitlist-details-mail {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .2rem;
+  padding: .9rem 1rem;
+  border: 1px solid rgba(245, 213, 120, .46);
+  border-radius: 16px;
+  background: rgba(245, 213, 120, .09);
+  text-align: center;
+  text-decoration: none;
+}
+
+.seoul-waitlist-details-mail span {
+  color: #fff;
+  font-size: .78rem;
+  font-weight: 750;
+}
+
+.seoul-waitlist-details-mail strong {
+  color: #f5d578;
+  font-size: clamp(.82rem, 2.4vw, 1rem);
+  overflow-wrap: anywhere;
+}
+
+.seoul-waitlist-details-warning {
+  margin-top: 1rem;
+  padding: .9rem 1rem;
+  border: 1px solid rgba(255, 90, 108, .52);
+  border-radius: 16px;
+  background: rgba(150, 18, 43, .2);
+}
+
+.seoul-waitlist-details-warning strong {
+  color: #ffb5bd;
+  font-size: .82rem;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.seoul-waitlist-details-warning p {
+  margin: .25rem 0 0;
+  color: #fff;
+  font-weight: 750;
+}
+
+.seoul-waitlist-details-return {
+  width: 100%;
+  margin-top: 1.2rem;
+  padding: .82rem 1rem;
+  border: 1px solid rgba(245, 213, 120, .48);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(245, 213, 120, .2), rgba(232, 184, 79, .12));
+  color: #fff3cf;
+  font-size: .86rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .seoul-floating-waitlist-link {
+    flex-direction: column;
+    gap: .18rem;
+    padding: .52rem .62rem;
+  }
+
+  .seoul-floating-waitlist-link > span,
+  .seoul-floating-waitlist-link > strong {
+    font-size: .65rem;
+  }
+
+  .seoul-waitlist-details-layer {
+    padding: .55rem;
+  }
+
+  .seoul-waitlist-details-panel {
+    width: calc(100vw - 1.1rem);
+    max-height: 92svh;
+    padding: 1.05rem;
+    border-radius: 20px;
+  }
+
+  .seoul-waitlist-details-head {
+    align-items: flex-start;
+    gap: .75rem;
+    padding-right: 2.5rem;
+  }
+
+  .seoul-waitlist-details-head img {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+  }
+
+  .seoul-waitlist-details-head h3 {
+    font-size: 1.65rem;
+  }
+
+  .seoul-waitlist-details-head p,
+  .seoul-waitlist-details-content {
+    font-size: .86rem;
+  }
 }

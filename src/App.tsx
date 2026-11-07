@@ -108,6 +108,7 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
   const [loading, setLoading] = useState(!cachedAvailabilityRef.current);
   const [failed, setFailed] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [waitlistDetailsOpen, setWaitlistDetailsOpen] = useState(false);
   const [manualPosition, setManualPosition] = useState<{ x: number; y: number } | null>(null);
   const [registrationRemainingMs, setRegistrationRemainingMs] = useState(getSeoulRegistrationRemainingMs());
   const dragStateRef = useRef<{ pointerId: number; startX: number; startY: number; left: number; top: number; moved: boolean } | null>(null);
@@ -268,13 +269,18 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
   }, []);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen && !waitlistDetailsOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsOpen(false);
+      if (event.key !== 'Escape') return;
+      if (waitlistDetailsOpen) {
+        setWaitlistDetailsOpen(false);
+      } else {
+        setIsOpen(false);
+      }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isOpen]);
+  }, [isOpen, waitlistDetailsOpen]);
 
   useEffect(() => {
     setManualPosition(null);
@@ -339,10 +345,14 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
             suppressClickRef.current = false;
             return;
           }
+          if (soldOut) {
+            setWaitlistDetailsOpen(true);
+            return;
+          }
           setIsOpen(true);
         }}
-        aria-label={data ? (soldOut ? 'Apri disponibilità posti: posti esauriti' : `Apri disponibilità posti: ${remaining} posti rimasti`) : 'Apri disponibilità posti Korea 2027'}
-        title={soldOut ? 'Posti esauriti – Pellegrinaggio Piemonte e Svizzera' : 'Posti rimasti – Pellegrinaggio Piemonte e Svizzera. Puoi anche trascinare il pulsante.'}
+        aria-label={data ? (soldOut ? 'Apri informazioni lista d\'attesa: posti esauriti' : `Apri disponibilità posti: ${remaining} posti rimasti`) : 'Apri disponibilità posti Korea 2027'}
+        title={soldOut ? 'Posti esauriti – clicca per le informazioni sulla lista d\'attesa' : 'Posti rimasti – Pellegrinaggio Piemonte e Svizzera. Puoi anche trascinare il pulsante.'}
       >
         <span className="seoul-floating-trigger-main">
           <img src="/images/widget-jmj-logo-rounded.jpg" alt="" aria-hidden="true" className="seoul-floating-logo-mark" />
@@ -358,6 +368,13 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
           <span className="seoul-floating-trigger-deadline-label">Chiusura iscrizioni: 30/10/2026 · 23:59</span>
           <strong>{compactCountdown}</strong>
         </span>
+        {soldOut ? (
+          <span className="seoul-floating-trigger-waitlist">
+            <span aria-hidden="true">ℹ️</span>
+            <strong>Se si liberasse un posto?</strong>
+            <span className="seoul-floating-trigger-waitlist-action">Info lista d'attesa</span>
+          </span>
+        ) : null}
       </button>
 
       {isOpen ? (
@@ -445,18 +462,72 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
             </div>
 
             {soldOut ? (
-              <details className="seoul-floating-waitlist-notice">
-                <summary>
-                  <span className="seoul-floating-waitlist-summary">Lista d'attesa gestita automaticamente</span>
-                  <span className="seoul-floating-waitlist-more">Leggi dettagli</span>
-                </summary>
-                <div className="seoul-floating-waitlist-body">
-                  <p>I posti risultano attualmente tutti occupati.</p>
-                  <p>Se si libera un posto, il sistema lo propone automaticamente alle persone già presenti in lista d'attesa.</p>
-                  <p>Durante una proposta il posto resta temporaneamente riservato e non viene conteggiato come disponibile. Torna libero soltanto se l'interessato rinuncia alla proposta o la proposta scade senza conferma; in quel caso il sistema può proporlo al successivo avente diritto.</p>
-                </div>
-              </details>
+              <button
+                type="button"
+                className="seoul-floating-waitlist-link"
+                onClick={() => setWaitlistDetailsOpen(true)}
+                aria-haspopup="dialog"
+              >
+                <span>ℹ️ Se si liberasse un posto, vorresti partecipare?</span>
+                <strong>Leggi le informazioni sulla lista d'attesa</strong>
+              </button>
             ) : null}
+          </section>
+        </div>
+      ) : null}
+
+      {waitlistDetailsOpen ? (
+        <div className="seoul-waitlist-details-layer" role="dialog" aria-modal="true" aria-label="Informazioni lista d'attesa Korea 2027">
+          <button
+            type="button"
+            className="seoul-waitlist-details-backdrop"
+            onClick={() => setWaitlistDetailsOpen(false)}
+            aria-label="Chiudi informazioni lista d'attesa"
+          />
+          <section className="seoul-waitlist-details-panel">
+            <button
+              type="button"
+              className="seoul-waitlist-details-close"
+              onClick={() => setWaitlistDetailsOpen(false)}
+              aria-label="Chiudi"
+            >
+              <X size={22} />
+            </button>
+
+            <div className="seoul-waitlist-details-head">
+              <img src="/images/widget-jmj-logo-rounded.jpg" alt="" aria-hidden="true" />
+              <div>
+                <span>PELLEGRINAGGIO KOREA 2027</span>
+                <h3>Lista d'attesa</h3>
+                <p>Informazioni per chi desidera partecipare nel caso in cui si liberasse un posto.</p>
+              </div>
+            </div>
+
+            <div className="seoul-waitlist-details-content">
+              <p>I posti risultano attualmente tutti occupati.</p>
+              <p>
+                Se desideri partecipare qualora in futuro si liberasse un posto, puoi richiedere di essere inserito in lista d'attesa inviando un'email a
+                {' '}<a href="mailto:pellegrinaggio.cnc.piemonte@gmail.com"><strong>pellegrinaggio.cnc.piemonte@gmail.com</strong></a>,
+                {' '}indicando i tuoi dati.
+              </p>
+
+              <a className="seoul-waitlist-details-mail" href="mailto:pellegrinaggio.cnc.piemonte@gmail.com">
+                <span>Invia email per richiedere la lista d'attesa</span>
+                <strong>pellegrinaggio.cnc.piemonte@gmail.com</strong>
+              </a>
+
+              <div className="seoul-waitlist-details-warning">
+                <strong>Attenzione</strong>
+                <p>L'inserimento in lista d'attesa non garantisce che un posto si liberi né che venga successivamente proposto.</p>
+              </div>
+
+              <p>Se si libera un posto, il sistema può proporlo alle persone già presenti in lista d'attesa secondo l'ordine e la gestione previsti.</p>
+              <p>Quando un posto viene proposto, rimane temporaneamente riservato alla persona contattata e non risulta disponibile. Per accettare l'eventuale posto sarà necessario allinearsi alle quote previste dal piano di pagamento fino alla data della proposta, comprese le quote già scadute. Se la proposta viene rifiutata, revocata o scade senza conferma, il posto può essere proposto al successivo avente diritto.</p>
+            </div>
+
+            <button type="button" className="seoul-waitlist-details-return" onClick={() => setWaitlistDetailsOpen(false)}>
+              Chiudi informazioni
+            </button>
           </section>
         </div>
       ) : null}
