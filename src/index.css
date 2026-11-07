@@ -3505,3 +3505,388 @@ option {
   .seoul-floating-trigger { animation: none !important; }
   .seoul-floating-panel { animation: none !important; }
 }
+
+/* ============================================================
+   VERIFICA PUBBLICA ISCRIZIONE — V78
+   Solo Codice Univoco, nessun accesso all'Area Riservata richiesto.
+   ============================================================ */
+.public-registration-check-section {
+  padding: 3.5rem 0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(19, 95, 156, .16), transparent 34%),
+    linear-gradient(180deg, #071526 0%, #0a2038 100%);
+}
+
+.public-registration-check-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(360px, .8fr);
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.3rem 1.4rem;
+  border: 1px solid rgba(238, 190, 73, .72);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(4, 27, 52, .98), rgba(9, 54, 91, .96));
+  box-shadow: 0 20px 50px rgba(0, 0, 0, .28);
+}
+
+.public-registration-check-copy {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.public-registration-check-icon {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  place-items: center;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #0c65ae, #06477d);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+}
+
+.public-registration-check-kicker {
+  margin: 0 0 .15rem;
+  color: #f1cd72;
+  font-size: .72rem;
+  font-weight: 850;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.public-registration-check-copy h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.45rem, 3vw, 2.2rem);
+  font-weight: 850;
+  letter-spacing: -.035em;
+  line-height: 1.04;
+}
+
+.public-registration-check-copy p:last-child {
+  margin: .45rem 0 0;
+  color: rgba(255,255,255,.74);
+  font-size: .96rem;
+  line-height: 1.45;
+}
+
+.public-registration-check-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: .65rem;
+}
+
+.public-registration-check-form input {
+  width: 100%;
+  min-width: 0;
+  height: 52px;
+  padding: 0 1rem;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 14px;
+  outline: none;
+  background: #fff;
+  color: #0b1930;
+  font-size: 1rem;
+  font-weight: 750;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.06);
+}
+
+.public-registration-check-form input:focus {
+  border-color: #f0c85e;
+  box-shadow: 0 0 0 3px rgba(240, 200, 94, .18);
+}
+
+.public-registration-check-form button {
+  display: inline-flex;
+  min-width: 120px;
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ffd963, #f0b927);
+  color: #15223b;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(225, 169, 31, .22);
+}
+
+.public-registration-check-form button:disabled {
+  cursor: wait;
+  opacity: .78;
+}
+
+.public-registration-spin { animation: public-registration-spin .8s linear infinite; }
+@keyframes public-registration-spin { to { transform: rotate(360deg); } }
+
+.public-registration-modal-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 160;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.public-registration-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(0, 9, 20, .68);
+  backdrop-filter: blur(6px);
+}
+
+.public-registration-modal {
+  position: relative;
+  z-index: 1;
+  width: min(820px, calc(100vw - 2rem));
+  max-height: calc(100svh - 2rem);
+  overflow-y: auto;
+  padding: 1.35rem;
+  border: 2px solid #3fbf5b;
+  border-radius: 26px;
+  background: #fff;
+  color: #10213f;
+  box-shadow: 0 30px 90px rgba(0,0,0,.48);
+}
+
+.public-registration-modal.is-verifying { border-color: #e7b42e; }
+.public-registration-modal.is-action,
+.public-registration-modal.is-error { border-color: #df4355; }
+
+.public-registration-modal-close {
+  position: absolute;
+  top: .75rem;
+  right: .75rem;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: #eef2f6;
+  color: #5b6472;
+  cursor: pointer;
+}
+
+.public-registration-modal-head {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  padding-right: 3rem;
+}
+
+.public-registration-user-icon {
+  display: grid;
+  width: 60px;
+  height: 60px;
+  flex: 0 0 60px;
+  place-items: center;
+  border-radius: 50%;
+  background: #dff4df;
+  color: #17942b;
+}
+
+.public-registration-modal.is-verifying .public-registration-user-icon {
+  background: #fff0c9;
+  color: #d48b00;
+}
+
+.public-registration-modal.is-action .public-registration-user-icon,
+.public-registration-modal.is-error .public-registration-user-icon {
+  background: #ffe0e4;
+  color: #cf2138;
+}
+
+.public-registration-modal-head h3 {
+  margin: 0;
+  font-size: clamp(1.4rem, 3.4vw, 2rem);
+  font-weight: 500;
+  line-height: 1.05;
+}
+
+.public-registration-modal-head h3 strong { font-weight: 900; }
+
+.public-registration-modal-head p {
+  margin: .35rem 0 0;
+  font-size: .94rem;
+}
+
+.public-registration-modal-head b {
+  display: inline-block;
+  margin-left: .25rem;
+  padding: .2rem .55rem;
+  border-radius: 9px;
+  background: #d9efff;
+  color: #0c3560;
+  letter-spacing: .04em;
+}
+
+.public-registration-modal-intro {
+  margin: 1.1rem 0 1rem;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.public-registration-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .75rem;
+}
+
+.public-registration-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: .65rem;
+  min-height: 96px;
+  padding: .9rem .85rem;
+  border: 1px solid #dce4ec;
+  border-radius: 17px;
+  background: #f1f5f8;
+}
+
+.public-registration-step.is-complete {
+  border-color: #c4e9c8;
+  background: linear-gradient(145deg, #f1fff2, #e7f8e8);
+}
+
+.public-registration-step.is-pending {
+  border-color: #f0d188;
+  background: linear-gradient(145deg, #fffaf0, #fff1c7);
+}
+
+.public-registration-step.is-missing {
+  border-color: #efc1c7;
+  background: linear-gradient(145deg, #fff6f7, #ffe7ea);
+}
+
+.public-registration-step-state {
+  position: absolute;
+  top: -.7rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  color: #cf2138;
+}
+
+.public-registration-step.is-complete .public-registration-step-state { color: #18a53a; }
+.public-registration-step.is-pending .public-registration-step-state { color: #df9700; }
+.public-registration-step > svg { color: #123766; }
+.public-registration-step strong { font-size: .94rem; line-height: 1.15; }
+
+.public-registration-outcome {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #ebfbea, #dff5df);
+  color: #087b20;
+}
+
+.public-registration-modal.is-verifying .public-registration-outcome {
+  background: linear-gradient(145deg, #fff8e4, #ffefbf);
+  color: #b97500;
+}
+
+.public-registration-modal.is-action .public-registration-outcome {
+  background: linear-gradient(145deg, #fff1f3, #ffdade);
+  color: #b9152b;
+}
+
+.public-registration-outcome > svg { flex: 0 0 auto; }
+.public-registration-outcome h4 {
+  margin: 0;
+  font-size: clamp(1.15rem, 3vw, 1.55rem);
+  font-weight: 900;
+}
+.public-registration-outcome p {
+  margin: .22rem 0 0;
+  color: #1c2b3e;
+  font-size: .92rem;
+  line-height: 1.4;
+}
+
+.public-registration-not-found {
+  display: grid;
+  justify-items: center;
+  gap: .45rem;
+  padding: 2rem 1rem 1.3rem;
+  text-align: center;
+  color: #bd2034;
+}
+.public-registration-not-found h3 { margin: 0; font-size: 1.55rem; font-weight: 900; }
+.public-registration-not-found p { margin: 0; max-width: 520px; color: #344154; line-height: 1.45; }
+
+.public-registration-modal-button {
+  width: 100%;
+  margin-top: 1rem;
+  padding: .82rem 1rem;
+  border: 0;
+  border-radius: 14px;
+  background: #083c76;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+@media (max-width: 760px) {
+  .public-registration-check-section { padding: 2.2rem 0; }
+  .public-registration-check-card {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 20px;
+  }
+  .public-registration-check-copy { align-items: flex-start; }
+  .public-registration-check-icon { width: 52px; height: 52px; flex-basis: 52px; border-radius: 15px; }
+  .public-registration-check-copy h2 { font-size: 1.45rem; }
+  .public-registration-check-copy p:last-child { font-size: .86rem; }
+  .public-registration-check-form { grid-template-columns: 1fr; }
+  .public-registration-check-form input,
+  .public-registration-check-form button { height: 50px; }
+
+  .public-registration-modal {
+    width: min(94vw, 560px);
+    padding: 1rem;
+    border-radius: 22px;
+  }
+  .public-registration-modal-head { align-items: flex-start; gap: .65rem; padding-right: 2.5rem; }
+  .public-registration-user-icon { width: 48px; height: 48px; flex-basis: 48px; }
+  .public-registration-modal-head h3 { font-size: 1.3rem; }
+  .public-registration-modal-head p { font-size: .8rem; }
+  .public-registration-modal-intro { margin: .85rem 0 1rem; font-size: .88rem; }
+  .public-registration-steps { grid-template-columns: 1fr; gap: .7rem; }
+  .public-registration-step {
+    min-height: 70px;
+    grid-template-columns: auto 1fr;
+    padding: .72rem .8rem;
+  }
+  .public-registration-step-state {
+    top: 50%;
+    left: auto;
+    right: .7rem;
+    transform: translateY(-50%);
+  }
+  .public-registration-step strong { padding-right: 2rem; }
+  .public-registration-outcome { align-items: flex-start; padding: .85rem; }
+  .public-registration-outcome h4 { font-size: 1.08rem; }
+  .public-registration-outcome p { font-size: .82rem; }
+}

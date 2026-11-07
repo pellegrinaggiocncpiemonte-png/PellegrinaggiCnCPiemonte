@@ -1,6 +1,6 @@
 import Navigation from './components/Navigation';
-import { Bell, ChevronDown, Clock3, FileText, Landmark, Play, Smartphone, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { AlertCircle, Bell, CheckCircle2, ChevronDown, Clock3, FileCheck2, FileText, Landmark, Loader2, Play, Search, Smartphone, UploadCloud, UserRound, X } from 'lucide-react';
+import { type FormEvent, useEffect, useRef, useState } from 'react';
 import FlipCountdown from './components/FlipCountdown';
 import { SITE_CONFIG } from './config/siteConfig';
 import { RESERVED_AREA_GUIDE_ITEMS, RESERVED_AREA_GUIDE_TITLE } from './config/reservedAreaGuide';
@@ -447,13 +447,13 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
             {soldOut ? (
               <details className="seoul-floating-waitlist-notice">
                 <summary>
-                  <span className="seoul-floating-waitlist-summary">Puoi ancora inviare la richiesta fino al 30/10 alle 23:59</span>
+                  <span className="seoul-floating-waitlist-summary">Lista d'attesa gestita automaticamente</span>
                   <span className="seoul-floating-waitlist-more">Leggi dettagli</span>
                 </summary>
                 <div className="seoul-floating-waitlist-body">
-                  <p>Anche se i posti risultano esauriti, puoi inviare comunque la richiesta di iscrizione entro le ore 23:59 del 30 ottobre 2026.</p>
-                  <p>Le richieste oltre il numero massimo resteranno in lista di attesa. In caso di rinunce o posti che si liberano, potranno essere trasformate in iscrizioni ufficiali previa conferma dell'interessato.</p>
-                  <p>Dopo la scadenza, eventuali nuove richieste potranno essere inviate esclusivamente via email e saranno inserite in lista di attesa.</p>
+                  <p>I posti risultano attualmente tutti occupati.</p>
+                  <p>Se si libera un posto, il sistema lo propone automaticamente alle persone già presenti in lista d'attesa.</p>
+                  <p>Durante una proposta il posto resta temporaneamente riservato e non viene conteggiato come disponibile. Torna libero soltanto se l'interessato rinuncia alla proposta o la proposta scade senza conferma; in quel caso il sistema può proporlo al successivo avente diritto.</p>
                 </div>
               </details>
             ) : null}
@@ -465,6 +465,252 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
 }
 
 
+type PublicRegistrationStatus = {
+  success?: boolean;
+  found?: boolean;
+  status?: 'confirmed' | 'verification' | 'action_required' | 'not_found' | 'error';
+  message?: string;
+  codiceUnivoco?: string;
+  cognome?: string;
+  nome?: string;
+  pellegrinaggio?: string;
+  steps?: {
+    registrationComplete?: boolean;
+    receiptUploaded?: boolean;
+    bankVerified?: boolean;
+  };
+};
+
+const PUBLIC_REGISTRATION_APPS_SCRIPT_URLS = [
+  'https://script.google.com/macros/s/AKfycbxoay9uqD-q6EaLwTHJm119BJ2XZbaMcg63l1PH5EJMQfrr-AUOjph2E0Tv9QZIU74b/exec',
+  'https://script.google.com/macros/s/AKfycbzOoD7KhBMBl4hXJtajsvvbFAM-8Yrb9MnWfKCspc6AbWjv_J3ev53khHnSXhhpFEm3/exec',
+] as const;
+
+function PublicRegistrationCheck() {
+  const [code, setCode] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<PublicRegistrationStatus | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const normalizeCode = (value: string) => value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 16);
+
+  const fetchViaJsonpEndpoint = (endpoint: string, cleanCode: string) => new Promise<PublicRegistrationStatus>((resolve, reject) => {
+    const callbackName = `__registrationStatus_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+    const script = document.createElement('script');
+    const target = window as typeof window & Record<string, unknown>;
+    let finished = false;
+    const cleanup = () => {
+      if (script.parentNode) script.parentNode.removeChild(script);
+      try { delete target[callbackName]; } catch { target[callbackName] = undefined; }
+    };
+    const timeout = window.setTimeout(() => {
+      if (finished) return;
+      finished = true;
+      cleanup();
+      reject(new Error('Tempo di risposta scaduto'));
+    }, 7000);
+
+    target[callbackName] = (payload: PublicRegistrationStatus) => {
+      if (finished) return;
+      finished = true;
+      window.clearTimeout(timeout);
+      cleanup();
+      if (!payload || typeof payload !== 'object' || typeof payload.success !== 'boolean') {
+        reject(new Error('Risposta Apps Script non valida'));
+        return;
+      }
+      resolve(payload);
+    };
+
+    const params = new URLSearchParams({
+      registration_status: cleanCode,
+      callback: callbackName,
+      _: String(Date.now()),
+    });
+    script.async = true;
+    script.src = `${endpoint}?${params.toString()}`;
+    script.onerror = () => {
+      if (finished) return;
+      finished = true;
+      window.clearTimeout(timeout);
+      cleanup();
+      reject(new Error('Servizio non raggiungibile'));
+    };
+    document.head.appendChild(script);
+  });
+
+  const fetchViaJsonp = (cleanCode: string) => new Promise<PublicRegistrationStatus>((resolve, reject) => {
+    let settled = false;
+    let pending = PUBLIC_REGISTRATION_APPS_SCRIPT_URLS.length;
+    const errors: unknown[] = [];
+
+    PUBLIC_REGISTRATION_APPS_SCRIPT_URLS.forEach((endpoint) => {
+      fetchViaJsonpEndpoint(endpoint, cleanCode)
+        .then((payload) => {
+          if (settled) return;
+          settled = true;
+          resolve(payload);
+        })
+        .catch((error) => {
+          errors.push(error);
+          pending -= 1;
+          if (!settled && pending <= 0) reject(errors[0] || new Error('Nessuna distribuzione Apps Script disponibile'));
+        });
+    });
+  });
+
+  const fetchRegistrationStatus = async (cleanCode: string) => {
+    try {
+      const controller = new AbortController();
+      const timer = window.setTimeout(() => controller.abort(), 8000);
+      const response = await fetch(`/api/registration-status?code=${encodeURIComponent(cleanCode)}&_=${Date.now()}`, {
+        method: 'GET',
+        cache: 'no-store',
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      });
+      window.clearTimeout(timer);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json() as PublicRegistrationStatus;
+      if (!payload || typeof payload !== 'object') throw new Error('Risposta non valida');
+      return payload;
+    } catch (_proxyError) {
+      return fetchViaJsonp(cleanCode);
+    }
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const cleanCode = normalizeCode(code);
+    if (cleanCode.length < 4) {
+      setResult({ success: true, found: false, status: 'not_found', message: 'Inserisci un Codice Univoco valido.' });
+      setIsOpen(true);
+      return;
+    }
+    setLoading(true);
+    try {
+      const payload = await fetchRegistrationStatus(cleanCode);
+      setResult(payload);
+      setIsOpen(true);
+    } catch (_error) {
+      setResult({ success: false, found: false, status: 'error', message: 'Verifica temporaneamente non disponibile. Riprova tra poco.' });
+      setIsOpen(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const closeModal = () => setIsOpen(false);
+  const status = result?.found ? result.status : (result?.status || 'not_found');
+  const confirmed = status === 'confirmed';
+  const verifying = status === 'verification';
+  const actionRequired = status === 'action_required';
+  const steps = result?.steps || {};
+
+  const stepClass = (done: boolean, pending = false) => done ? 'is-complete' : pending ? 'is-pending' : 'is-missing';
+
+  return (
+    <>
+      <section id="verifica-iscrizione" data-page="home" className="page-section public-registration-check-section">
+        <div className="container mx-auto px-4">
+          <div className="public-registration-check-card">
+            <div className="public-registration-check-copy">
+              <span className="public-registration-check-icon" aria-hidden="true"><Search size={28} /></span>
+              <div>
+                <p className="public-registration-check-kicker">Controllo rapido</p>
+                <h2>Verifica la tua iscrizione</h2>
+                <p>Inserisci il tuo Codice Univoco per conoscere lo stato dell’iscrizione, della ricevuta e della verifica C/C.</p>
+              </div>
+            </div>
+            <form className="public-registration-check-form" onSubmit={handleSubmit}>
+              <label htmlFor="public-registration-code" className="sr-only">Codice Univoco</label>
+              <input
+                id="public-registration-code"
+                type="text"
+                inputMode="text"
+                autoComplete="off"
+                spellCheck={false}
+                value={code}
+                onChange={(event) => setCode(normalizeCode(event.target.value))}
+                placeholder="Codice Univoco · es. A7K9"
+                aria-label="Codice Univoco"
+              />
+              <button type="submit" disabled={loading}>
+                {loading ? <Loader2 className="public-registration-spin" size={20} /> : <Search size={20} />}
+                <span>{loading ? 'Verifica…' : 'Verifica'}</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {isOpen && result ? (
+        <div className="public-registration-modal-layer" role="dialog" aria-modal="true" aria-label="Esito verifica iscrizione">
+          <button type="button" className="public-registration-modal-backdrop" onClick={closeModal} aria-label="Chiudi verifica" />
+          <section className={`public-registration-modal ${confirmed ? 'is-confirmed' : verifying ? 'is-verifying' : actionRequired ? 'is-action' : 'is-error'}`}>
+            <button type="button" className="public-registration-modal-close" onClick={closeModal} aria-label="Chiudi"><X size={22} /></button>
+
+            {result.found ? (
+              <>
+                <div className="public-registration-modal-head">
+                  <span className="public-registration-user-icon"><UserRound size={32} /></span>
+                  <div>
+                    <h3>Ciao <strong>{`${result.cognome || ''} ${result.nome || ''}`.trim()}</strong></h3>
+                    <p>Codice Univoco: <b>{result.codiceUnivoco || normalizeCode(code)}</b></p>
+                  </div>
+                </div>
+                <p className="public-registration-modal-intro">Ecco lo stato della tua iscrizione al pellegrinaggio Korea 2027.</p>
+
+                <div className="public-registration-steps">
+                  <div className={`public-registration-step ${stepClass(!!steps.registrationComplete)}`}>
+                    <span className="public-registration-step-state">{steps.registrationComplete ? <CheckCircle2 size={23} /> : <AlertCircle size={23} />}</span>
+                    <FileCheck2 size={30} />
+                    <strong>Iscrizione completa</strong>
+                  </div>
+                  <div className={`public-registration-step ${stepClass(!!steps.receiptUploaded)}`}>
+                    <span className="public-registration-step-state">{steps.receiptUploaded ? <CheckCircle2 size={23} /> : <AlertCircle size={23} />}</span>
+                    <UploadCloud size={30} />
+                    <strong>{steps.receiptUploaded ? 'Ricevuta caricata' : 'Ricevuta non caricata'}</strong>
+                  </div>
+                  <div className={`public-registration-step ${stepClass(!!steps.bankVerified, !!steps.receiptUploaded && !steps.bankVerified)}`}>
+                    <span className="public-registration-step-state">{steps.bankVerified ? <CheckCircle2 size={23} /> : steps.receiptUploaded ? <Clock3 size={23} /> : <AlertCircle size={23} />}</span>
+                    <Landmark size={30} />
+                    <strong>Verifica C/C</strong>
+                  </div>
+                </div>
+
+                <div className="public-registration-outcome">
+                  {confirmed ? <CheckCircle2 size={38} /> : verifying ? <Clock3 size={38} /> : <AlertCircle size={38} />}
+                  <div>
+                    <h4>{confirmed ? 'ISCRIZIONE CONFERMATA' : verifying ? 'VERIFICA IN CORSO' : 'AZIONE RICHIESTA'}</h4>
+                    <p>
+                      {confirmed
+                        ? 'La tua iscrizione al pellegrinaggio Korea 2027 – Piemonte e Svizzera risulta regolarmente confermata.'
+                        : verifying
+                          ? 'La ricevuta risulta caricata. La verifica del versamento sul conto corrente è ancora in corso.'
+                          : !steps.registrationComplete
+                            ? 'L’iscrizione non risulta ancora completa. Verifica i passaggi richiesti nella tua Area Riservata.'
+                            : 'La ricevuta non risulta ancora caricata. Accedi alla tua Area Riservata per completare la procedura.'}
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="public-registration-not-found">
+                <AlertCircle size={46} />
+                <h3>{status === 'error' ? 'Verifica non disponibile' : 'Codice non trovato'}</h3>
+                <p>{result.message || 'Non risulta alcuna iscrizione associata a questo Codice Univoco.'}</p>
+              </div>
+            )}
+
+            <button type="button" className="public-registration-modal-button" onClick={closeModal}>Chiudi</button>
+          </section>
+        </div>
+      ) : null}
+    </>
+  );
+}
+
 type PilgrimageSong = {
   id: number;
   title: string;
@@ -474,7 +720,6 @@ type PilgrimageSong = {
   textPdfSrc: string;
   textImageSrc: string;
   officialMaterialTitle: string;
-  pronunciationPdfSrc: string;
 };
 
 type OfficialSongMaterial = {
@@ -533,7 +778,6 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     textPdfSrc: 'https://wyd2027way.com/canto/2/file/5?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/2/file/6?download=true',
     officialMaterialTitle: 'Per amore dei miei fratelli',
-    pronunciationPdfSrc: '/canti/pronuncia/per-amore-dei-miei-fratelli.pdf',
   },
   {
     id: 3,
@@ -544,7 +788,6 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     textPdfSrc: 'https://wyd2027way.com/canto/3/file/8?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/3/file/9?download=true',
     officialMaterialTitle: 'Andate ad annunciare ai miei fratelli',
-    pronunciationPdfSrc: '/canti/pronuncia/andate-e-annunciate.pdf',
   },
   {
     id: 4,
@@ -555,7 +798,6 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     textPdfSrc: 'https://wyd2027way.com/canto/4/file/11?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/4/file/12?download=true',
     officialMaterialTitle: 'Voglio andare a Gerusalemme',
-    pronunciationPdfSrc: '/canti/pronuncia/voglio-andare-a-gerusalemme.pdf',
   },
   {
     id: 5,
@@ -566,7 +808,6 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     textPdfSrc: 'https://wyd2027way.com/canto/5/file/14?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/5/file/15?download=true',
     officialMaterialTitle: 'Una gran senal',
-    pronunciationPdfSrc: '/canti/pronuncia/una-gran-senal.pdf',
   },
   {
     id: 6,
@@ -577,7 +818,6 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     textPdfSrc: 'https://wyd2027way.com/canto/6/file/17?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/6/file/18?download=true',
     officialMaterialTitle: 'Che belle sono le tue tende',
-    pronunciationPdfSrc: '/canti/pronuncia/che-belle-sono-le-tue-tende.pdf',
   },
   {
     id: 7,
@@ -588,7 +828,6 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     textPdfSrc: 'https://wyd2027way.com/canto/7/file/20?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/7/file/21?download=true',
     officialMaterialTitle: 'Tu sei il più bello',
-    pronunciationPdfSrc: '/canti/pronuncia/tu-sei-piu-bello.pdf',
   },
   {
     id: 8,
@@ -599,7 +838,6 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     textPdfSrc: 'https://wyd2027way.com/canto/8/file/23?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/8/file/24?download=true',
     officialMaterialTitle: 'Grazie a Jahwe',
-    pronunciationPdfSrc: '/canti/pronuncia/grazie-a-jahwe.pdf',
   },
   {
     id: 9,
@@ -610,7 +848,6 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     textPdfSrc: 'https://wyd2027way.com/canto/9/file/26?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/9/file/27?download=true',
     officialMaterialTitle: 'Io vengo a riunir',
-    pronunciationPdfSrc: '/canti/pronuncia/io-vengo-a-riunire.pdf',
   },
   {
     id: 10,
@@ -621,7 +858,6 @@ const PILGRIMAGE_SONGS: PilgrimageSong[] = [
     textPdfSrc: 'https://wyd2027way.com/canto/10/file/29?download=true',
     textImageSrc: 'https://wyd2027way.com/canto/10/file/30?download=true',
     officialMaterialTitle: 'Risuscitò',
-    pronunciationPdfSrc: '/canti/pronuncia/risuscito.pdf',
   },
 ];
 
@@ -976,6 +1212,7 @@ function App() {
         </div>
       </section>
 
+      <PublicRegistrationCheck />
 
       <section id="home-sezioni" data-page="home" className="page-section home-sections-hub">
         <div className="container mx-auto px-4">
@@ -1895,7 +2132,8 @@ function App() {
                   const expanded = expandedSongKey === songKey;
                   const officialMaterial = officialSongMaterials[normalizeSongTitle(song.officialMaterialTitle)];
                   const audioSrc = officialMaterial?.audio || song.audioSrc;
-                  const pronunciationPdfSrc = song.pronunciationPdfSrc || officialMaterial?.pronunciationPdf;
+                  const textPdfSrc = officialMaterial?.textPdf || song.textPdfSrc;
+                  const pronunciationPdfSrc = officialMaterial?.pronunciationPdf;
                   return (
                     <article
                       key={songKey}
@@ -1940,7 +2178,14 @@ function App() {
                           <div className="mt-4 flex flex-wrap gap-2">
                             <button
                               type="button"
-                              onClick={() => pronunciationPdfSrc && setTutorialViewer({ type: 'pdf', title: `Pronuncia coreana – ${song.title}`, src: pronunciationPdfSrc.startsWith('/') ? pronunciationPdfSrc : `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(pronunciationPdfSrc)}` })}
+                              onClick={() => setTutorialViewer({ type: 'pdf', title: `Testo e accordi – ${song.title}`, src: `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(textPdfSrc)}` })}
+                              className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-800 shadow-sm transition-colors hover:bg-slate-50"
+                            >
+                              <FileText size={16} /> Apri PDF nella pagina
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => pronunciationPdfSrc && setTutorialViewer({ type: 'pdf', title: `Pronuncia coreana – ${song.title}`, src: `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(pronunciationPdfSrc)}` })}
                               disabled={!pronunciationPdfSrc}
                               className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold shadow-sm transition-colors ${pronunciationPdfSrc ? 'border border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100' : 'cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400'}`}
                             >
