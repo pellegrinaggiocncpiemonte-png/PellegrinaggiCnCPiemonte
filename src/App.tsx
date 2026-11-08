@@ -570,7 +570,7 @@ const PUBLIC_REGISTRATION_APPS_SCRIPT_URLS = [
   'https://script.google.com/macros/s/AKfycbzOoD7KhBMBl4hXJtajsvvbFAM-8Yrb9MnWfKCspc6AbWjv_J3ev53khHnSXhhpFEm3/exec',
 ] as const;
 
-function PublicRegistrationCheck() {
+export function PublicRegistrationCheck() {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PublicRegistrationStatus | null>(null);
@@ -1296,7 +1296,6 @@ function App() {
         </div>
       </section>
 
-      <PublicRegistrationCheck />
 
       <section id="home-sezioni" data-page="home" className="page-section home-sections-hub">
         <div className="container mx-auto px-4">
