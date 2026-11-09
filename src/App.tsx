@@ -2261,18 +2261,11 @@ function App() {
                           <div className="mt-4 flex flex-wrap gap-2">
                             <button
                               type="button"
-                              onClick={() => setTutorialViewer({ type: 'pdf', title: `Testo e accordi – ${song.title}`, src: `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(textPdfSrc)}` })}
-                              className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-800 shadow-sm transition-colors hover:bg-slate-50"
-                            >
-                              <FileText size={16} /> Apri PDF nella pagina
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => pronunciationPdfSrc && setTutorialViewer({ type: 'pdf', title: `Pronuncia coreana – ${song.title}`, src: `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(pronunciationPdfSrc)}` })}
+                              onClick={() => pronunciationPdfSrc && setTutorialViewer({ type: 'pdf', title: `Pronuncia coreana – ${song.title}`, src: pronunciationPdfSrc })}
                               disabled={!pronunciationPdfSrc}
                               className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold shadow-sm transition-colors ${pronunciationPdfSrc ? 'border border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100' : 'cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400'}`}
                             >
-                              <FileText size={16} /> {pronunciationPdfSrc ? 'Pronuncia coreana' : (officialSongMaterialsLoading ? 'Pronuncia — caricamento' : 'Pronuncia — in arrivo')}
+                              <FileText size={16} /> {pronunciationPdfSrc ? 'Pronuncia' : (officialSongMaterialsLoading ? 'Pronuncia — caricamento' : 'Pronuncia — in arrivo')}
                             </button>
                           </div>
 
