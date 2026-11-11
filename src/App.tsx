@@ -1013,25 +1013,20 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
               <button type="button" className="seoul-waitlist-details-mail" onClick={openPublicWaitlistRequest}>
                 <span className="seoul-waitlist-details-mail-icon" aria-hidden="true">👥</span>
                 <span className="seoul-waitlist-details-mail-copy">
-                  <span className="seoul-waitlist-details-mail-eyebrow">RICHIEDI L’INSERIMENTO IN</span>
-                  <strong>Lista d’attesa</strong>
+                  <strong>Richiedi l'inserimento in lista d'attesa</strong>
                   <b>Compila i dati della richiesta</b>
                 </span>
-                <span className="seoul-waitlist-details-mail-arrow" aria-hidden="true"><ChevronRight size={18} strokeWidth={3} /></span>
               </button>
 
               <div className="seoul-waitlist-details-warning">
-                <AlertCircle size={34} aria-hidden="true" />
-                <div>
-                  <strong>Attenzione</strong>
-                  <p>La lista d'attesa non garantisce che un posto si liberi né che venga proposto.</p>
-                </div>
+                <strong>Attenzione</strong>
+                <p>La lista d'attesa non garantisce che un posto si liberi né che venga proposto.</p>
               </div>
 
               <div className="seoul-waitlist-details-rules">
-                <div><Clock3 size={28} aria-hidden="true" /><p><strong>Se si libera un posto:</strong> il sistema può proporlo alle persone in lista d'attesa secondo l'ordine e la gestione previsti.</p></div>
-                <div><Landmark size={28} aria-hidden="true" /><p><strong>Quando viene proposto:</strong> il posto resta temporaneamente riservato alla persona contattata. Per accettarlo occorre allinearsi alle quote del piano di pagamento maturate fino a quel momento, comprese quelle già scadute.</p></div>
-                <div><FileCheck2 size={28} aria-hidden="true" /><p><strong>Se la proposta decade:</strong> in caso di rifiuto, revoca o scadenza senza conferma, il posto può essere proposto al successivo avente diritto.</p></div>
+                <p><strong>Se si libera un posto:</strong> il sistema può proporlo alle persone in lista d'attesa secondo l'ordine e la gestione previsti.</p>
+                <p><strong>Quando viene proposto:</strong> il posto resta temporaneamente riservato alla persona contattata. Per accettarlo occorre allinearsi alle quote del piano di pagamento maturate fino a quel momento, comprese quelle già scadute.</p>
+                <p><strong>Se la proposta decade:</strong> in caso di rifiuto, revoca o scadenza senza conferma, il posto può essere proposto al successivo avente diritto.</p>
               </div>
             </div>
 
@@ -1110,6 +1105,7 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
                       <strong>Lista d’attesa</strong>
                       <b>Compila i dati della richiesta</b>
                     </div>
+                    <span className="seoul-waitlist-request-banner-arrow" aria-hidden="true"><ChevronRight size={20} strokeWidth={3.2} /></span>
                   </div>
                   <div className="seoul-waitlist-request-warning-card">
                     <AlertCircle size={34} aria-hidden="true" />

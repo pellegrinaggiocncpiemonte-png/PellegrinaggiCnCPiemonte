@@ -5096,232 +5096,170 @@ option {
   }
 }
 
-/* V109 — Modal lista d'attesa (info + richiesta): testata full-bleed con grafica sfumata, layout unificato */
-.seoul-waitlist-details-head,
-.seoul-waitlist-request-head {
-  position: relative;
-  overflow: hidden;
-  align-items: center;
-  min-height: 118px;
-  gap: 18px;
-  padding: 22px 84px 20px 28px;
-  border-bottom: 1px solid rgba(147, 190, 230, .22);
-  background: linear-gradient(105deg, rgba(3, 35, 68, .55), rgba(6, 80, 132, .22));
+
+/* V109 — correzioni mobile + leggibilità lista d'attesa */
+.seoul-floating-trigger-waitlist {
+  white-space: normal;
+  flex-wrap: wrap;
+  row-gap: .14rem;
 }
-.seoul-waitlist-details-head::after,
-.seoul-waitlist-request-head::after {
-  content: "";
-  position: absolute;
-  inset: 0 0 0 auto;
-  width: min(46%, 470px);
-  background: url('/images/waitlist-seoul-header-v109.png') right center / auto 100% no-repeat;
-  -webkit-mask-image: none;
-  mask-image: none;
-  opacity: 1;
-  pointer-events: none;
-  z-index: 0;
+.seoul-floating-trigger-waitlist strong,
+.seoul-floating-trigger-waitlist-action {
+  display: inline;
 }
-.seoul-waitlist-details-head > img,
-.seoul-waitlist-request-head > img {
-  position: relative;
-  z-index: 2;
-  width: 74px;
-  height: 74px;
-  border-radius: 19px;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, .3);
+.seoul-waitlist-details-mail {
+  grid-template-columns: auto 1fr;
 }
-.seoul-waitlist-details-head > div,
-.seoul-waitlist-request-head > div {
-  position: relative;
-  z-index: 2;
-  max-width: 62%;
-}
+.seoul-waitlist-details-mail-arrow { display:none; }
+
+.seoul-waitlist-request-head span,
+.seoul-waitlist-request-head h3,
+.seoul-waitlist-request-head p,
 .seoul-waitlist-details-head span,
-.seoul-waitlist-request-head span {
-  color: #ffd65f;
-  font-size: .8rem;
-  font-weight: 900;
-  letter-spacing: .1em;
-}
 .seoul-waitlist-details-head h3,
-.seoul-waitlist-request-head h3 {
-  margin: 4px 0 4px;
-  font-size: clamp(1.9rem, 3.6vw, 2.9rem);
-  line-height: 1.02;
-  letter-spacing: -.035em;
-  font-weight: 900;
+.seoul-waitlist-details-head p {
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0,0,0,.28);
 }
-.seoul-waitlist-details-head p,
-.seoul-waitlist-request-head p {
-  margin: 4px 0 0;
-  font-size: .95rem;
-  line-height: 1.4;
-  color: rgba(255, 255, 255, .78);
-}
-.seoul-waitlist-details-close,
-.seoul-waitlist-request-close {
-  z-index: 5;
-  top: 18px;
-  right: 18px;
-  width: 46px;
-  height: 46px;
-  background: rgba(6, 28, 54, .55);
-  border: 1px solid rgba(255, 255, 255, .32);
-  backdrop-filter: blur(4px);
+.seoul-waitlist-request-head span,
+.seoul-waitlist-details-head span {
+  color:#ffd65f;
 }
 
-/* Pannello informativo: stesso linguaggio grafico della richiesta */
-.seoul-waitlist-details-panel {
-  display: block;
-  width: min(1080px, calc(100vw - 28px));
-  max-height: calc(100svh - 24px);
-  overflow: auto;
-  padding: 0;
-  border: 1px solid rgba(224, 171, 61, .85);
-  border-radius: 28px;
-  background:
-    radial-gradient(circle at 11% 16%, rgba(255,255,255,.13) 0 1.5px, transparent 2px),
-    radial-gradient(circle at 78% 15%, rgba(255,255,255,.10) 0 1.4px, transparent 2px),
-    linear-gradient(145deg, #041d38 0%, #07345c 47%, #071f3f 100%);
-  background-size: 200px 200px, 220px 220px, auto;
+.seoul-waitlist-request-banner {
+  grid-template-columns: auto minmax(0,1fr) auto;
 }
-.seoul-waitlist-details-content {
-  display: grid;
-  grid-template-columns: 1.04fr .96fr;
-  gap: 14px;
-  padding: 18px 24px 8px;
-  font-size: 1rem;
-  line-height: 1.48;
-  color: #fff;
+.seoul-waitlist-request-banner div {
+  min-width: 0;
 }
-.seoul-waitlist-details-intro { grid-column: 1 / -1; font-size: 1rem; }
-.seoul-waitlist-details-panel .seoul-waitlist-details-mail {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 18px;
-  min-height: 130px;
-  padding: 16px 22px;
-  border: 3px solid #ffe27d !important;
-  border-radius: 22px !important;
-  background: linear-gradient(135deg, #0d6ec6, #0757a6 55%, #063e7c) !important;
-  text-align: left;
+.seoul-waitlist-request-banner b {
+  white-space: nowrap;
 }
-.seoul-waitlist-details-panel .seoul-waitlist-details-mail-icon {
-  font-size: 2.9rem;
-  padding-right: 18px;
-  border-right: 1px solid rgba(255, 255, 255, .72);
-  align-self: stretch;
-  display: grid;
-  place-items: center;
+.seoul-waitlist-request-banner-arrow {
+  display:grid;
+  place-items:center;
+  width:42px;
+  height:42px;
+  border-radius:999px;
+  background:#ffda65;
+  color:#ffffff;
+  border:1px solid rgba(4,42,88,.28);
+  box-shadow:0 0 0 2px rgba(255,227,127,.22), 0 8px 20px rgba(0,0,0,.22);
+  flex:0 0 auto;
+  animation: seoulWaitBlink 1.25s ease-in-out infinite;
 }
-.seoul-waitlist-details-panel .seoul-waitlist-details-mail-copy { display: grid; gap: 2px; justify-items: start; }
-.seoul-waitlist-details-panel .seoul-waitlist-details-mail-eyebrow {
-  color: #fff; font-size: .84rem; font-weight: 900; letter-spacing: .04em;
+.seoul-waitlist-request-banner-arrow svg {
+  filter: drop-shadow(0 0 2px rgba(3,30,66,.95));
 }
-.seoul-waitlist-details-panel .seoul-waitlist-details-mail-copy strong {
-  color: #ffd65f !important;
-  font-size: clamp(1.7rem, 3.2vw, 2.5rem) !important;
-  line-height: 1;
-  font-weight: 900;
-}
-.seoul-waitlist-details-panel .seoul-waitlist-details-mail-copy b {
-  display: inline-block;
-  margin-top: 6px;
-  padding: 7px 18px;
-  border-radius: 999px;
-  background: #fff1bd;
-  color: #162c43;
-  font-size: .86rem;
-  font-weight: 800;
-}
-.seoul-waitlist-details-panel .seoul-waitlist-details-warning {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  min-height: 130px;
-  padding: 17px 20px;
-  border: 1px solid #d9416d;
-  border-radius: 22px;
-  background: linear-gradient(135deg, rgba(93,24,67,.82), rgba(55,29,65,.88));
-}
-.seoul-waitlist-details-warning > svg { color: #ff9cae; flex: 0 0 auto; }
-.seoul-waitlist-details-panel .seoul-waitlist-details-warning strong {
-  color: #ffb7c1; font-size: 1rem; letter-spacing: .08em; text-transform: uppercase;
-}
-.seoul-waitlist-details-panel .seoul-waitlist-details-warning p {
-  margin: 5px 0 0; color: #fff; font-weight: 800; font-size: 1.05rem; line-height: 1.35;
-}
-.seoul-waitlist-details-panel .seoul-waitlist-details-rules {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-.seoul-waitlist-details-rules > div {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  padding: 15px 16px;
-  border: 1px solid rgba(147,190,230,.28);
-  border-radius: 18px;
-  background: linear-gradient(145deg, rgba(13,69,116,.72), rgba(10,47,83,.78));
-}
-.seoul-waitlist-details-rules > div > svg { color: #a9d4ff; flex: 0 0 auto; margin-top: 2px; }
-.seoul-waitlist-details-panel .seoul-waitlist-details-rules p {
-  margin: 0; padding: 0; border: 0; background: none; border-radius: 0;
-  font-size: .92rem; line-height: 1.38; color: #f4f8fc;
-}
-.seoul-waitlist-details-panel .seoul-waitlist-details-return {
-  display: block;
-  width: calc(100% - 48px);
-  margin: 12px 24px 22px;
-  padding: 13px 16px;
-  border: 1px solid #7095b9;
-  border-radius: 15px;
-  background: rgba(37, 84, 128, .35);
-  color: #fff;
-  font-size: .95rem;
-  font-weight: 900;
+@keyframes seoulWaitBlink {
+  0%, 100% { transform: scale(1); box-shadow:0 0 0 2px rgba(255,227,127,.22), 0 8px 20px rgba(0,0,0,.22); }
+  50% { transform: scale(1.08); box-shadow:0 0 0 5px rgba(255,227,127,.28), 0 0 18px rgba(255,216,101,.55), 0 8px 20px rgba(0,0,0,.24); }
 }
 
-@media (max-width: 900px) {
-  .seoul-waitlist-details-content { grid-template-columns: 1fr; }
-  .seoul-waitlist-details-panel .seoul-waitlist-details-rules { grid-template-columns: 1fr; }
-  .seoul-waitlist-details-panel .seoul-waitlist-details-mail,
-  .seoul-waitlist-details-panel .seoul-waitlist-details-warning { min-height: 0; }
-}
-@media (max-width: 640px) {
-  .seoul-waitlist-details-head,
-  .seoul-waitlist-request-head { min-height: 0; gap: 11px; padding: 14px 52px 12px 13px; }
+@media (max-width: 760px) {
   .seoul-waitlist-details-head::after,
-  .seoul-waitlist-request-head::after { width: 58%; opacity: .38; }
+  .seoul-waitlist-request-head::after {
+    right: 20px;
+    width: 42%;
+    opacity: .82;
+    background-position: right center;
+  }
   .seoul-waitlist-details-head > div,
-  .seoul-waitlist-request-head > div { max-width: 100%; }
-  .seoul-waitlist-details-head > img,
-  .seoul-waitlist-request-head > img { width: 48px; height: 48px; border-radius: 13px; }
-  .seoul-waitlist-details-head h3,
-  .seoul-waitlist-request-head h3 { font-size: 1.4rem; }
-  .seoul-waitlist-details-head p,
-  .seoul-waitlist-request-head p { font-size: .74rem; line-height: 1.3; }
-  .seoul-waitlist-details-head span,
-  .seoul-waitlist-request-head span { font-size: .6rem; }
-  .seoul-waitlist-details-close,
-  .seoul-waitlist-request-close { top: 10px; right: 10px; width: 36px; height: 36px; }
-  .seoul-waitlist-details-panel { width: calc(100vw - 12px); max-height: calc(100svh - 12px); border-radius: 20px; }
-  .seoul-waitlist-details-content { padding: 12px 12px 4px; gap: 9px; font-size: .8rem; }
-  .seoul-waitlist-details-intro { font-size: .8rem; }
-  .seoul-waitlist-details-panel .seoul-waitlist-details-mail { gap: 10px; padding: 12px 13px; border-width: 2px !important; border-radius: 16px !important; }
-  .seoul-waitlist-details-panel .seoul-waitlist-details-mail-icon { font-size: 2rem; padding-right: 10px; }
-  .seoul-waitlist-details-panel .seoul-waitlist-details-mail-eyebrow { font-size: .62rem; }
-  .seoul-waitlist-details-panel .seoul-waitlist-details-mail-copy strong { font-size: 1.5rem !important; }
-  .seoul-waitlist-details-panel .seoul-waitlist-details-mail-copy b { font-size: .68rem; padding: 5px 10px; }
-  .seoul-waitlist-details-panel .seoul-waitlist-details-warning { padding: 11px 12px; border-radius: 16px; gap: 11px; }
-  .seoul-waitlist-details-warning > svg { width: 26px; height: 26px; }
-  .seoul-waitlist-details-panel .seoul-waitlist-details-warning strong { font-size: .74rem; }
-  .seoul-waitlist-details-panel .seoul-waitlist-details-warning p { font-size: .78rem; }
-  .seoul-waitlist-details-rules > div { padding: 10px 11px; border-radius: 13px; gap: 9px; }
-  .seoul-waitlist-details-rules > div > svg { width: 22px; height: 22px; }
-  .seoul-waitlist-details-panel .seoul-waitlist-details-rules p { font-size: .74rem; }
-  .seoul-waitlist-details-panel .seoul-waitlist-details-return { width: calc(100% - 24px); margin: 8px 12px 14px; padding: 11px; font-size: .8rem; }
+  .seoul-waitlist-request-head > div {
+    max-width: 62%;
+  }
+}
+
+@media (max-width: 640px) {
+  .seoul-floating-trigger-waitlist {
+    gap: .16rem;
+    padding: .18rem .22rem .04rem;
+    font-size: .49rem;
+    line-height: 1.18;
+    text-align: center;
+  }
+  .seoul-floating-trigger-waitlist strong { color:#fff2bc; }
+  .seoul-floating-trigger-waitlist-action {
+    font-size: .5rem;
+    text-decoration-thickness: 1px;
+  }
+
+  .seoul-waitlist-request-head {
+    padding: 14px 56px 12px 12px;
+  }
+  .seoul-waitlist-request-head::after {
+    right: 12px;
+    width: 40%;
+    opacity: .78;
+    background-size: contain;
+    background-position: right center;
+  }
+  .seoul-waitlist-request-head > div {
+    max-width: 58%;
+  }
+  .seoul-waitlist-details-head::after {
+    right: 12px;
+    width: 36%;
+    opacity: .72;
+    background-size: contain;
+    background-position: right center;
+  }
+  .seoul-waitlist-details-head > div {
+    max-width: 64%;
+  }
+  .seoul-waitlist-request-head h3 { font-size: 1.26rem; line-height: 1.03; }
+  .seoul-waitlist-request-head p { font-size: .72rem; }
+
+  .seoul-waitlist-request-banner {
+    min-height: 90px;
+    gap: 8px;
+    padding: 10px 11px;
+    grid-template-columns: auto minmax(0,1fr) auto;
+  }
+  .seoul-waitlist-request-banner-icon {
+    font-size: 1.7rem;
+    padding-right: 8px;
+  }
+  .seoul-waitlist-request-banner div>span { font-size: .58rem; }
+  .seoul-waitlist-request-banner strong { font-size: 1.34rem; line-height: .96; }
+  .seoul-waitlist-request-banner b {
+    margin-top: 5px;
+    padding: 5px 10px;
+    font-size: .61rem;
+    white-space: nowrap;
+  }
+  .seoul-waitlist-request-banner-arrow {
+    width: 34px;
+    height: 34px;
+  }
+  .seoul-waitlist-request-banner-arrow svg {
+    width: 17px;
+    height: 17px;
+  }
+}
+
+@media (max-width: 420px) {
+  .seoul-floating-trigger-waitlist {
+    font-size: .46rem;
+  }
+  .seoul-floating-trigger-waitlist-action { font-size: .47rem; }
+  .seoul-waitlist-request-head::after {
+    width: 39%;
+    opacity: .7;
+  }
+  .seoul-waitlist-request-head > div { max-width: 58%; }
+  .seoul-waitlist-details-head::after { width: 34%; opacity: .64; }
+  .seoul-waitlist-details-head > div { max-width: 65%; }
+  .seoul-waitlist-request-banner {
+    grid-template-columns: auto minmax(0,1fr) auto;
+  }
+  .seoul-waitlist-request-banner strong { font-size: 1.18rem; }
+  .seoul-waitlist-request-banner b {
+    font-size: .58rem;
+    padding: 5px 8px;
+  }
+  .seoul-waitlist-request-banner-arrow {
+    width: 30px;
+    height: 30px;
+  }
 }
