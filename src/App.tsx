@@ -1016,6 +1016,7 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
                   <strong>Richiedi l'inserimento in lista d'attesa</strong>
                   <b>Compila i dati della richiesta</b>
                 </span>
+                <span className="seoul-waitlist-details-mail-arrow" aria-hidden="true"><ChevronRight size={18} strokeWidth={3.2} /></span>
               </button>
 
               <div className="seoul-waitlist-details-warning">
@@ -1105,7 +1106,6 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
                       <strong>Lista d’attesa</strong>
                       <b>Compila i dati della richiesta</b>
                     </div>
-                    <span className="seoul-waitlist-request-banner-arrow" aria-hidden="true"><ChevronRight size={20} strokeWidth={3.2} /></span>
                   </div>
                   <div className="seoul-waitlist-request-warning-card">
                     <AlertCircle size={34} aria-hidden="true" />

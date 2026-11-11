@@ -5263,3 +5263,37 @@ option {
     height: 30px;
   }
 }
+
+
+/* V110 — freccia gialla nel modal corretto */
+.seoul-waitlist-details-mail {
+  grid-template-columns: auto minmax(0,1fr) auto !important;
+}
+.seoul-waitlist-details-mail-arrow {
+  display:grid !important;
+  place-items:center;
+  width:34px;
+  height:34px;
+  border-radius:999px;
+  background:#ffda65;
+  color:#ffffff;
+  border:1px solid rgba(4,42,88,.34);
+  box-shadow:0 0 0 2px rgba(255,227,127,.22),0 6px 16px rgba(0,0,0,.22);
+  animation:seoulWaitInfoArrowBlink 1.25s ease-in-out infinite;
+}
+.seoul-waitlist-details-mail-arrow svg {
+  filter:drop-shadow(0 0 2px rgba(3,30,66,.95));
+}
+@keyframes seoulWaitInfoArrowBlink {
+  0%,100% { transform:scale(1); box-shadow:0 0 0 2px rgba(255,227,127,.20),0 6px 16px rgba(0,0,0,.22); }
+  50% { transform:scale(1.08); box-shadow:0 0 0 5px rgba(255,227,127,.25),0 0 17px rgba(255,216,101,.55),0 6px 16px rgba(0,0,0,.24); }
+}
+.seoul-waitlist-request-banner {
+  grid-template-columns:auto minmax(0,1fr) !important;
+}
+.seoul-waitlist-request-banner-arrow { display:none !important; }
+@media (max-width:640px) {
+  .seoul-waitlist-details-mail-arrow { width:28px; height:28px; }
+  .seoul-waitlist-details-mail-arrow svg { width:15px; height:15px; }
+  .seoul-waitlist-request-banner { grid-template-columns:auto minmax(0,1fr) !important; }
+}
