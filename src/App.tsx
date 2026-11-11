@@ -1142,13 +1142,13 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
                       </fieldset>
 
                       <label className="seoul-waitlist-field">
-                        <span>Nome *</span>
-                        <div className="seoul-waitlist-input-wrap"><UserRound size={19} aria-hidden="true" /><input type="text" maxLength={120} autoComplete="given-name" placeholder="Inserisci il tuo nome" value={waitlistRequestForm.nome} onChange={(event) => updatePublicWaitlistField('nome', event.target.value)} disabled={waitlistRequestSubmitting} required /></div>
+                        <span>Cognome *</span>
+                        <div className="seoul-waitlist-input-wrap"><UserRound size={19} aria-hidden="true" /><input type="text" maxLength={120} autoComplete="family-name" placeholder="Inserisci il tuo cognome" value={waitlistRequestForm.cognome} onChange={(event) => updatePublicWaitlistField('cognome', event.target.value)} disabled={waitlistRequestSubmitting} required /></div>
                       </label>
 
                       <label className="seoul-waitlist-field">
-                        <span>Cognome *</span>
-                        <div className="seoul-waitlist-input-wrap"><UserRound size={19} aria-hidden="true" /><input type="text" maxLength={120} autoComplete="family-name" placeholder="Inserisci il tuo cognome" value={waitlistRequestForm.cognome} onChange={(event) => updatePublicWaitlistField('cognome', event.target.value)} disabled={waitlistRequestSubmitting} required /></div>
+                        <span>Nome *</span>
+                        <div className="seoul-waitlist-input-wrap"><UserRound size={19} aria-hidden="true" /><input type="text" maxLength={120} autoComplete="given-name" placeholder="Inserisci il tuo nome" value={waitlistRequestForm.nome} onChange={(event) => updatePublicWaitlistField('nome', event.target.value)} disabled={waitlistRequestSubmitting} required /></div>
                       </label>
                     </div>
 
@@ -1160,8 +1160,8 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
 
                       {waitlistRequestForm.tipoRichiesta === 'COPPIA' ? (
                         <div className="seoul-waitlist-spouse-inline">
-                          <label className="seoul-waitlist-field"><span>Nome coniuge *</span><div className="seoul-waitlist-input-wrap"><UserRound size={19} aria-hidden="true" /><input type="text" maxLength={120} placeholder="Nome del coniuge" value={waitlistRequestForm.coniugeNome} onChange={(event) => updatePublicWaitlistField('coniugeNome', event.target.value)} disabled={waitlistRequestSubmitting} required /></div></label>
                           <label className="seoul-waitlist-field"><span>Cognome coniuge *</span><div className="seoul-waitlist-input-wrap"><UserRound size={19} aria-hidden="true" /><input type="text" maxLength={120} placeholder="Cognome del coniuge" value={waitlistRequestForm.coniugeCognome} onChange={(event) => updatePublicWaitlistField('coniugeCognome', event.target.value)} disabled={waitlistRequestSubmitting} required /></div></label>
+                          <label className="seoul-waitlist-field"><span>Nome coniuge *</span><div className="seoul-waitlist-input-wrap"><UserRound size={19} aria-hidden="true" /><input type="text" maxLength={120} placeholder="Nome del coniuge" value={waitlistRequestForm.coniugeNome} onChange={(event) => updatePublicWaitlistField('coniugeNome', event.target.value)} disabled={waitlistRequestSubmitting} required /></div></label>
                         </div>
                       ) : (
                         <div className="seoul-waitlist-spouse-placeholder"><span>Dati coniuge</span><small>Compariranno automaticamente selezionando “Coppia sposata”.</small></div>
