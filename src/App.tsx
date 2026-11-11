@@ -875,8 +875,8 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
             aria-label="Apri direttamente le informazioni sulla lista d'attesa"
           >
             <span aria-hidden="true">ℹ️</span>
-            <strong>Se si liberasse un posto?</strong>
-            <span className="seoul-floating-trigger-waitlist-action">Info lista d'attesa</span>
+            <strong>Vuoi partecipare se si libera un posto?</strong>
+            <span className="seoul-floating-trigger-waitlist-action">Info e richiesta lista d'attesa</span>
           </button>
         ) : null}
       </div>
@@ -973,7 +973,7 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
                 aria-haspopup="dialog"
               >
                 <span>ℹ️ Se si liberasse un posto, vorresti partecipare?</span>
-                <strong>Leggi le informazioni sulla lista d'attesa</strong>
+                <strong>Informazioni e richiesta lista d'attesa</strong>
               </button>
             ) : null}
           </section>
@@ -1011,8 +1011,9 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
               <p className="seoul-waitlist-details-intro"><strong>I posti sono attualmente tutti occupati.</strong> Se desideri partecipare qualora in futuro si liberasse un posto, puoi chiedere l'inserimento in lista d'attesa indicando i tuoi dati.</p>
 
               <button type="button" className="seoul-waitlist-details-mail" onClick={openPublicWaitlistRequest}>
-                <span>Richiedi l'inserimento in lista d'attesa</span>
-                <strong>Compila i dati della richiesta</strong>
+                <span className="seoul-waitlist-details-mail-kicker">RICHIESTA ONLINE</span>
+                <strong>Richiedi l'inserimento in lista d'attesa</strong>
+                <small>Compila i dati della richiesta</small>
               </button>
 
               <div className="seoul-waitlist-details-warning">

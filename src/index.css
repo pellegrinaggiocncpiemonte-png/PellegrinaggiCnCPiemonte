@@ -4452,6 +4452,72 @@ option {
   appearance: none;
   cursor: pointer;
   font-family: inherit;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(255, 214, 102, .88);
+  background: linear-gradient(135deg, rgba(255, 214, 102, .22), rgba(255, 191, 63, .13) 52%, rgba(255,255,255,.06));
+  box-shadow: 0 0 0 1px rgba(255, 225, 139, .12) inset, 0 16px 34px rgba(4, 14, 30, .34), 0 0 26px rgba(245, 213, 120, .08);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.seoul-waitlist-details-mail::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,.16) 38%, transparent 72%);
+  opacity: .5;
+  pointer-events: none;
+}
+
+.seoul-waitlist-details-mail:hover,
+.seoul-waitlist-details-mail:focus-visible {
+  transform: translateY(-2px);
+  border-color: #ffe08a;
+  box-shadow: 0 0 0 1px rgba(255, 232, 164, .20) inset, 0 20px 42px rgba(4, 14, 30, .40), 0 0 34px rgba(245, 213, 120, .12);
+  background: linear-gradient(135deg, rgba(255, 214, 102, .28), rgba(255, 191, 63, .17) 52%, rgba(255,255,255,.07));
+}
+
+.seoul-waitlist-details-mail:focus-visible {
+  outline: 2px solid rgba(255, 225, 139, .65);
+  outline-offset: 3px;
+}
+
+.seoul-waitlist-details-mail > * {
+  position: relative;
+  z-index: 1;
+}
+
+.seoul-waitlist-details-mail-kicker {
+  color: #fff6d0 !important;
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+}
+
+.seoul-waitlist-details-mail strong {
+  color: #ffd86e !important;
+  font-size: clamp(1rem, 2.7vw, 1.18rem) !important;
+  line-height: 1.18;
+  text-shadow: 0 1px 12px rgba(255, 216, 110, .12);
+}
+
+.seoul-waitlist-details-mail small {
+  display: block;
+  color: #fff4c6;
+  font-size: clamp(.76rem, 2.15vw, .92rem);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+@media (max-width: 640px) {
+  .seoul-waitlist-details-mail {
+    padding: .62rem .6rem;
+    border-radius: 12px;
+  }
+  .seoul-waitlist-details-mail-kicker { font-size: .54rem; }
+  .seoul-waitlist-details-mail strong { font-size: clamp(.78rem, 3.6vw, .94rem) !important; }
+  .seoul-waitlist-details-mail small { font-size: clamp(.64rem, 2.9vw, .74rem); }
 }
 
 .seoul-waitlist-request-layer {
