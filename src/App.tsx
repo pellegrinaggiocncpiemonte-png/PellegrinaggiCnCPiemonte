@@ -47,6 +47,40 @@ type SeoulAvailability = {
 
 const SEOUL_AVAILABILITY_URL = 'https://script.google.com/macros/s/AKfycbz2py2LldK05Lm9jVmnDfQuKUFViwY_pxfiYnCcVyaseKgejBPyqEtf4mBP3xNqo7Rv/exec';
 const SEOUL_AVAILABILITY_PROXY_URL = '/api/seoul-availability';
+const SEOUL_WAITLIST_REQUEST_URL = '/api/waitlist-request';
+
+type PublicWaitlistRequestResult = {
+  ok?: boolean;
+  success?: boolean;
+  alreadyExists?: boolean;
+  codiceRichiesta?: string;
+  dataRichiesta?: string;
+  emailSent?: boolean;
+  emailError?: string;
+  message?: string;
+};
+
+type PublicWaitlistFormState = {
+  cognome: string;
+  nome: string;
+  email: string;
+  tipoRichiesta: 'SINGOLO' | 'COPPIA';
+  coniugeCognome: string;
+  coniugeNome: string;
+  note: string;
+  website: string;
+};
+
+const EMPTY_PUBLIC_WAITLIST_FORM: PublicWaitlistFormState = {
+  cognome: '',
+  nome: '',
+  email: '',
+  tipoRichiesta: 'SINGOLO',
+  coniugeCognome: '',
+  coniugeNome: '',
+  note: '',
+  website: '',
+};
 
 
 const KOREA_RATE_CALENDAR_ID = '3db8f997d6faad49c19e0428127660210a62d012477ec682d99c3d114334f680@group.calendar.google.com';
@@ -468,6 +502,11 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
   const [failed, setFailed] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [waitlistDetailsOpen, setWaitlistDetailsOpen] = useState(false);
+  const [waitlistRequestOpen, setWaitlistRequestOpen] = useState(false);
+  const [waitlistRequestForm, setWaitlistRequestForm] = useState<PublicWaitlistFormState>(EMPTY_PUBLIC_WAITLIST_FORM);
+  const [waitlistRequestSubmitting, setWaitlistRequestSubmitting] = useState(false);
+  const [waitlistRequestError, setWaitlistRequestError] = useState('');
+  const [waitlistRequestResult, setWaitlistRequestResult] = useState<PublicWaitlistRequestResult | null>(null);
   const [manualPosition, setManualPosition] = useState<{ x: number; y: number } | null>(null);
   const [registrationRemainingMs, setRegistrationRemainingMs] = useState(getSeoulRegistrationRemainingMs());
   const dragStateRef = useRef<{ pointerId: number; startX: number; startY: number; left: number; top: number; moved: boolean } | null>(null);
@@ -628,10 +667,12 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
   }, []);
 
   useEffect(() => {
-    if (!isOpen && !waitlistDetailsOpen) return;
+    if (!isOpen && !waitlistDetailsOpen && !waitlistRequestOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
-      if (waitlistDetailsOpen) {
+      if (waitlistRequestOpen && !waitlistRequestSubmitting) {
+        setWaitlistRequestOpen(false);
+      } else if (waitlistDetailsOpen) {
         setWaitlistDetailsOpen(false);
       } else {
         setIsOpen(false);
@@ -639,11 +680,100 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isOpen, waitlistDetailsOpen]);
+  }, [isOpen, waitlistDetailsOpen, waitlistRequestOpen, waitlistRequestSubmitting]);
 
   useEffect(() => {
     setManualPosition(null);
   }, [page]);
+
+  const openPublicWaitlistRequest = () => {
+    setWaitlistRequestForm(EMPTY_PUBLIC_WAITLIST_FORM);
+    setWaitlistRequestError('');
+    setWaitlistRequestResult(null);
+    setWaitlistDetailsOpen(false);
+    setWaitlistRequestOpen(true);
+  };
+
+  const closePublicWaitlistRequest = () => {
+    if (waitlistRequestSubmitting) return;
+    setWaitlistRequestOpen(false);
+    setWaitlistRequestError('');
+    setWaitlistRequestResult(null);
+  };
+
+  const updatePublicWaitlistField = <K extends keyof PublicWaitlistFormState>(field: K, value: PublicWaitlistFormState[K]) => {
+    setWaitlistRequestForm((current) => ({ ...current, [field]: value }));
+    if (waitlistRequestError) setWaitlistRequestError('');
+  };
+
+  const submitPublicWaitlistRequest = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (waitlistRequestSubmitting) return;
+
+    const cognome = waitlistRequestForm.cognome.trim();
+    const nome = waitlistRequestForm.nome.trim();
+    const email = waitlistRequestForm.email.trim().toLowerCase();
+    const couple = waitlistRequestForm.tipoRichiesta === 'COPPIA';
+    const coniugeCognome = waitlistRequestForm.coniugeCognome.trim();
+    const coniugeNome = waitlistRequestForm.coniugeNome.trim();
+
+    if (!cognome || !nome || !email) {
+      setWaitlistRequestError('Compila cognome, nome ed email.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setWaitlistRequestError('Inserisci un indirizzo email valido.');
+      return;
+    }
+    if (couple && (!coniugeCognome || !coniugeNome)) {
+      setWaitlistRequestError('Per una coppia sposata indica anche cognome e nome del coniuge.');
+      return;
+    }
+
+    setWaitlistRequestSubmitting(true);
+    setWaitlistRequestError('');
+    setWaitlistRequestResult(null);
+
+    try {
+      const response = await fetch(SEOUL_WAITLIST_REQUEST_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        cache: 'no-store',
+        body: JSON.stringify({
+          cognome,
+          nome,
+          email,
+          tipoRichiesta: waitlistRequestForm.tipoRichiesta,
+          coniugeCognome: couple ? coniugeCognome : '',
+          coniugeNome: couple ? coniugeNome : '',
+          note: waitlistRequestForm.note.trim(),
+          website: waitlistRequestForm.website,
+        }),
+      });
+      const rawResponse = await response.text();
+      let payload: PublicWaitlistRequestResult | null = null;
+      if (rawResponse.trim()) {
+        try {
+          payload = JSON.parse(rawResponse) as PublicWaitlistRequestResult;
+        } catch {
+          const looksLikeHtml = /^\s*</.test(rawResponse);
+          throw new Error(
+            looksLikeHtml
+              ? 'Il servizio per la lista d\'attesa non è ancora disponibile nella versione pubblicata del sito. Pubblica nuovamente questa versione e riprova.'
+              : 'Il servizio per la lista d\'attesa ha restituito una risposta non valida. Riprova tra poco.'
+          );
+        }
+      }
+      if (!response.ok || !payload?.success) {
+        throw new Error(payload?.message || `Non è stato possibile registrare la richiesta (errore ${response.status}).`);
+      }
+      setWaitlistRequestResult(payload);
+    } catch (error) {
+      setWaitlistRequestError(error instanceof Error ? error.message : 'Errore durante il salvataggio della richiesta.');
+    } finally {
+      setWaitlistRequestSubmitting(false);
+    }
+  };
 
   const handleTriggerPointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
     if (event.button !== 0) return;
@@ -880,10 +1010,10 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
             <div className="seoul-waitlist-details-content">
               <p className="seoul-waitlist-details-intro"><strong>I posti sono attualmente tutti occupati.</strong> Se desideri partecipare qualora in futuro si liberasse un posto, puoi chiedere l'inserimento in lista d'attesa indicando i tuoi dati.</p>
 
-              <a className="seoul-waitlist-details-mail" href="mailto:pellegrinaggio.cnc.piemonte@gmail.com">
+              <button type="button" className="seoul-waitlist-details-mail" onClick={openPublicWaitlistRequest}>
                 <span>Richiedi l'inserimento in lista d'attesa</span>
-                <strong>pellegrinaggio.cnc.piemonte@gmail.com</strong>
-              </a>
+                <strong>Compila i dati della richiesta</strong>
+              </button>
 
               <div className="seoul-waitlist-details-warning">
                 <strong>Attenzione</strong>
@@ -900,6 +1030,204 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
             <button type="button" className="seoul-waitlist-details-return" onClick={() => setWaitlistDetailsOpen(false)}>
               Chiudi informazioni
             </button>
+          </section>
+        </div>
+      ) : null}
+
+      {waitlistRequestOpen ? (
+        <div className="seoul-waitlist-request-layer" role="dialog" aria-modal="true" aria-labelledby="seoul-waitlist-request-title">
+          <button
+            type="button"
+            className="seoul-waitlist-request-backdrop"
+            onClick={closePublicWaitlistRequest}
+            aria-label="Chiudi richiesta lista d'attesa"
+          />
+          <section className="seoul-waitlist-request-panel">
+            <button
+              type="button"
+              className="seoul-waitlist-request-close"
+              onClick={closePublicWaitlistRequest}
+              disabled={waitlistRequestSubmitting}
+              aria-label="Chiudi"
+            >
+              <X size={22} />
+            </button>
+
+            <div className="seoul-waitlist-request-head">
+              <img src="/images/widget-jmj-logo-rounded.jpg" alt="" aria-hidden="true" />
+              <div>
+                <span>PELLEGRINAGGIO KOREA 2027</span>
+                <h3 id="seoul-waitlist-request-title">Richiesta lista d'attesa</h3>
+                <p>Inserisci i dati. Data e ora della richiesta verranno registrate automaticamente dal sistema.</p>
+              </div>
+            </div>
+
+            {waitlistRequestResult ? (
+              <div className="seoul-waitlist-request-success" role="status">
+                <CheckCircle2 size={54} aria-hidden="true" />
+                <h4>{waitlistRequestResult.alreadyExists ? 'Richiesta già presente' : 'Richiesta inviata!'}</h4>
+                <p>{waitlistRequestResult.message || 'La richiesta è stata registrata correttamente.'}</p>
+                {waitlistRequestResult.codiceRichiesta ? (
+                  <div className="seoul-waitlist-request-code">
+                    <span>Codice richiesta</span>
+                    <strong>{waitlistRequestResult.codiceRichiesta}</strong>
+                  </div>
+                ) : null}
+                {!waitlistRequestResult.alreadyExists ? (
+                  waitlistRequestResult.emailSent ? (
+                    <div className="seoul-waitlist-request-mail-ok">
+                      <strong>Ricevuta inviata via email</strong>
+                      <span>Mittente: pellegrinaggio.cnc.piemonte@gmail.com</span>
+                    </div>
+                  ) : (
+                    <div className="seoul-waitlist-request-mail-warning">
+                      <AlertCircle size={18} />
+                      <span>La richiesta è registrata, ma la ricevuta email non è partita. Conserva il codice mostrato sopra.</span>
+                    </div>
+                  )
+                ) : null}
+                <button type="button" className="seoul-waitlist-request-done" onClick={closePublicWaitlistRequest}>Chiudi</button>
+              </div>
+            ) : (
+              <form className="seoul-waitlist-request-form" onSubmit={submitPublicWaitlistRequest}>
+                <div className="seoul-waitlist-request-info">
+                  La lista d'attesa non garantisce che un posto si liberi né che venga proposto.
+                </div>
+
+                <div className="seoul-waitlist-request-grid">
+                  <label>
+                    <span>Cognome *</span>
+                    <input
+                      type="text"
+                      maxLength={120}
+                      autoComplete="family-name"
+                      value={waitlistRequestForm.cognome}
+                      onChange={(event) => updatePublicWaitlistField('cognome', event.target.value)}
+                      disabled={waitlistRequestSubmitting}
+                      required
+                    />
+                  </label>
+                  <label>
+                    <span>Nome *</span>
+                    <input
+                      type="text"
+                      maxLength={120}
+                      autoComplete="given-name"
+                      value={waitlistRequestForm.nome}
+                      onChange={(event) => updatePublicWaitlistField('nome', event.target.value)}
+                      disabled={waitlistRequestSubmitting}
+                      required
+                    />
+                  </label>
+                  <label className="is-full">
+                    <span>Email *</span>
+                    <input
+                      type="email"
+                      maxLength={254}
+                      autoComplete="email"
+                      value={waitlistRequestForm.email}
+                      onChange={(event) => updatePublicWaitlistField('email', event.target.value)}
+                      disabled={waitlistRequestSubmitting}
+                      required
+                    />
+                  </label>
+                </div>
+
+                <fieldset className="seoul-waitlist-request-choice" disabled={waitlistRequestSubmitting}>
+                  <legend>Scelta *</legend>
+                  <label className={waitlistRequestForm.tipoRichiesta === 'SINGOLO' ? 'is-selected' : ''}>
+                    <input
+                      type="radio"
+                      name="waitlist-type"
+                      value="SINGOLO"
+                      checked={waitlistRequestForm.tipoRichiesta === 'SINGOLO'}
+                      onChange={() => updatePublicWaitlistField('tipoRichiesta', 'SINGOLO')}
+                    />
+                    <span>Singolo</span>
+                  </label>
+                  <label className={waitlistRequestForm.tipoRichiesta === 'COPPIA' ? 'is-selected' : ''}>
+                    <input
+                      type="radio"
+                      name="waitlist-type"
+                      value="COPPIA"
+                      checked={waitlistRequestForm.tipoRichiesta === 'COPPIA'}
+                      onChange={() => updatePublicWaitlistField('tipoRichiesta', 'COPPIA')}
+                    />
+                    <span>Coppia sposata</span>
+                  </label>
+                </fieldset>
+
+                {waitlistRequestForm.tipoRichiesta === 'COPPIA' ? (
+                  <div className="seoul-waitlist-request-spouse">
+                    <strong>Dati del coniuge</strong>
+                    <p>Servono per mantenere la richiesta compatibile con la gestione delle coppie già usata dall'amministrazione.</p>
+                    <div className="seoul-waitlist-request-grid">
+                      <label>
+                        <span>Cognome coniuge *</span>
+                        <input
+                          type="text"
+                          maxLength={120}
+                          value={waitlistRequestForm.coniugeCognome}
+                          onChange={(event) => updatePublicWaitlistField('coniugeCognome', event.target.value)}
+                          disabled={waitlistRequestSubmitting}
+                          required
+                        />
+                      </label>
+                      <label>
+                        <span>Nome coniuge *</span>
+                        <input
+                          type="text"
+                          maxLength={120}
+                          value={waitlistRequestForm.coniugeNome}
+                          onChange={(event) => updatePublicWaitlistField('coniugeNome', event.target.value)}
+                          disabled={waitlistRequestSubmitting}
+                          required
+                        />
+                      </label>
+                    </div>
+                  </div>
+                ) : null}
+
+                <label className="seoul-waitlist-request-notes">
+                  <span>Note per l'organizzazione</span>
+                  <textarea
+                    maxLength={600}
+                    rows={3}
+                    placeholder="Facoltative"
+                    value={waitlistRequestForm.note}
+                    onChange={(event) => updatePublicWaitlistField('note', event.target.value)}
+                    disabled={waitlistRequestSubmitting}
+                  />
+                  <small>{waitlistRequestForm.note.length}/600</small>
+                </label>
+
+                <label className="seoul-waitlist-request-honeypot" aria-hidden="true">
+                  Sito
+                  <input
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={waitlistRequestForm.website}
+                    onChange={(event) => updatePublicWaitlistField('website', event.target.value)}
+                  />
+                </label>
+
+                {waitlistRequestError ? (
+                  <div className="seoul-waitlist-request-error" role="alert">
+                    <AlertCircle size={18} />
+                    <span>{waitlistRequestError}</span>
+                  </div>
+                ) : null}
+
+                <div className="seoul-waitlist-request-actions">
+                  <button type="button" onClick={closePublicWaitlistRequest} disabled={waitlistRequestSubmitting}>Annulla</button>
+                  <button type="submit" className="is-primary" disabled={waitlistRequestSubmitting}>
+                    {waitlistRequestSubmitting ? <Loader2 className="animate-spin" size={20} /> : null}
+                    <span>{waitlistRequestSubmitting ? 'Invio in corso…' : 'Invia richiesta'}</span>
+                  </button>
+                </div>
+              </form>
+            )}
           </section>
         </div>
       ) : null}
