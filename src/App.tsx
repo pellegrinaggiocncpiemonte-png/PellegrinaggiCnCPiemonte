@@ -1,5 +1,5 @@
 import Navigation from './components/Navigation';
-import { AlertCircle, Bell, CheckCircle2, ChevronDown, Clock3, FileCheck2, FileText, Landmark, Loader2, Play, Search, Smartphone, UploadCloud, UserRound, X } from 'lucide-react';
+import { AlertCircle, Bell, CheckCircle2, ChevronDown, ChevronRight, Clock3, FileCheck2, FileText, Landmark, Loader2, Play, Search, Smartphone, UploadCloud, UserRound, X } from 'lucide-react';
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import FlipCountdown from './components/FlipCountdown';
@@ -1011,20 +1011,27 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
               <p className="seoul-waitlist-details-intro"><strong>I posti sono attualmente tutti occupati.</strong> Se desideri partecipare qualora in futuro si liberasse un posto, puoi chiedere l'inserimento in lista d'attesa indicando i tuoi dati.</p>
 
               <button type="button" className="seoul-waitlist-details-mail" onClick={openPublicWaitlistRequest}>
-                <span className="seoul-waitlist-details-mail-kicker">RICHIESTA ONLINE</span>
-                <strong>Richiedi l'inserimento in lista d'attesa</strong>
-                <small>Compila i dati della richiesta</small>
+                <span className="seoul-waitlist-details-mail-icon" aria-hidden="true">👥</span>
+                <span className="seoul-waitlist-details-mail-copy">
+                  <span className="seoul-waitlist-details-mail-eyebrow">RICHIEDI L’INSERIMENTO IN</span>
+                  <strong>Lista d’attesa</strong>
+                  <b>Compila i dati della richiesta</b>
+                </span>
+                <span className="seoul-waitlist-details-mail-arrow" aria-hidden="true"><ChevronRight size={18} strokeWidth={3} /></span>
               </button>
 
               <div className="seoul-waitlist-details-warning">
-                <strong>Attenzione</strong>
-                <p>La lista d'attesa non garantisce che un posto si liberi né che venga proposto.</p>
+                <AlertCircle size={34} aria-hidden="true" />
+                <div>
+                  <strong>Attenzione</strong>
+                  <p>La lista d'attesa non garantisce che un posto si liberi né che venga proposto.</p>
+                </div>
               </div>
 
               <div className="seoul-waitlist-details-rules">
-                <p><strong>Se si libera un posto:</strong> il sistema può proporlo alle persone in lista d'attesa secondo l'ordine e la gestione previsti.</p>
-                <p><strong>Quando viene proposto:</strong> il posto resta temporaneamente riservato alla persona contattata. Per accettarlo occorre allinearsi alle quote del piano di pagamento maturate fino a quel momento, comprese quelle già scadute.</p>
-                <p><strong>Se la proposta decade:</strong> in caso di rifiuto, revoca o scadenza senza conferma, il posto può essere proposto al successivo avente diritto.</p>
+                <div><Clock3 size={28} aria-hidden="true" /><p><strong>Se si libera un posto:</strong> il sistema può proporlo alle persone in lista d'attesa secondo l'ordine e la gestione previsti.</p></div>
+                <div><Landmark size={28} aria-hidden="true" /><p><strong>Quando viene proposto:</strong> il posto resta temporaneamente riservato alla persona contattata. Per accettarlo occorre allinearsi alle quote del piano di pagamento maturate fino a quel momento, comprese quelle già scadute.</p></div>
+                <div><FileCheck2 size={28} aria-hidden="true" /><p><strong>Se la proposta decade:</strong> in caso di rifiuto, revoca o scadenza senza conferma, il posto può essere proposto al successivo avente diritto.</p></div>
               </div>
             </div>
 
@@ -1091,139 +1098,99 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
               </div>
             ) : (
               <form className="seoul-waitlist-request-form" onSubmit={submitPublicWaitlistRequest}>
-                <div className="seoul-waitlist-request-info">
-                  La lista d'attesa non garantisce che un posto si liberi né che venga proposto.
+                <div className="seoul-waitlist-request-introline">
+                  <strong>I posti sono attualmente tutti occupati.</strong> Se desideri partecipare qualora in futuro si liberasse un posto, puoi chiedere l’inserimento in lista d’attesa indicando i tuoi dati.
                 </div>
 
-                <div className="seoul-waitlist-request-grid">
-                  <label>
-                    <span>Cognome *</span>
-                    <input
-                      type="text"
-                      maxLength={120}
-                      autoComplete="family-name"
-                      value={waitlistRequestForm.cognome}
-                      onChange={(event) => updatePublicWaitlistField('cognome', event.target.value)}
-                      disabled={waitlistRequestSubmitting}
-                      required
-                    />
-                  </label>
-                  <label>
-                    <span>Nome *</span>
-                    <input
-                      type="text"
-                      maxLength={120}
-                      autoComplete="given-name"
-                      value={waitlistRequestForm.nome}
-                      onChange={(event) => updatePublicWaitlistField('nome', event.target.value)}
-                      disabled={waitlistRequestSubmitting}
-                      required
-                    />
-                  </label>
-                  <label className="is-full">
-                    <span>Email *</span>
-                    <input
-                      type="email"
-                      maxLength={254}
-                      autoComplete="email"
-                      value={waitlistRequestForm.email}
-                      onChange={(event) => updatePublicWaitlistField('email', event.target.value)}
-                      disabled={waitlistRequestSubmitting}
-                      required
-                    />
-                  </label>
-                </div>
-
-                <fieldset className="seoul-waitlist-request-choice" disabled={waitlistRequestSubmitting}>
-                  <legend>Scelta *</legend>
-                  <label className={waitlistRequestForm.tipoRichiesta === 'SINGOLO' ? 'is-selected' : ''}>
-                    <input
-                      type="radio"
-                      name="waitlist-type"
-                      value="SINGOLO"
-                      checked={waitlistRequestForm.tipoRichiesta === 'SINGOLO'}
-                      onChange={() => updatePublicWaitlistField('tipoRichiesta', 'SINGOLO')}
-                    />
-                    <span>Singolo</span>
-                  </label>
-                  <label className={waitlistRequestForm.tipoRichiesta === 'COPPIA' ? 'is-selected' : ''}>
-                    <input
-                      type="radio"
-                      name="waitlist-type"
-                      value="COPPIA"
-                      checked={waitlistRequestForm.tipoRichiesta === 'COPPIA'}
-                      onChange={() => updatePublicWaitlistField('tipoRichiesta', 'COPPIA')}
-                    />
-                    <span>Coppia sposata</span>
-                  </label>
-                </fieldset>
-
-                {waitlistRequestForm.tipoRichiesta === 'COPPIA' ? (
-                  <div className="seoul-waitlist-request-spouse">
-                    <strong>Dati del coniuge</strong>
-                    <p>Servono per mantenere la richiesta compatibile con la gestione delle coppie già usata dall'amministrazione.</p>
-                    <div className="seoul-waitlist-request-grid">
-                      <label>
-                        <span>Cognome coniuge *</span>
-                        <input
-                          type="text"
-                          maxLength={120}
-                          value={waitlistRequestForm.coniugeCognome}
-                          onChange={(event) => updatePublicWaitlistField('coniugeCognome', event.target.value)}
-                          disabled={waitlistRequestSubmitting}
-                          required
-                        />
-                      </label>
-                      <label>
-                        <span>Nome coniuge *</span>
-                        <input
-                          type="text"
-                          maxLength={120}
-                          value={waitlistRequestForm.coniugeNome}
-                          onChange={(event) => updatePublicWaitlistField('coniugeNome', event.target.value)}
-                          disabled={waitlistRequestSubmitting}
-                          required
-                        />
-                      </label>
+                <div className="seoul-waitlist-request-toprow">
+                  <div className="seoul-waitlist-request-banner">
+                    <span className="seoul-waitlist-request-banner-icon" aria-hidden="true">👥</span>
+                    <div>
+                      <span>RICHIEDI L’INSERIMENTO IN</span>
+                      <strong>Lista d’attesa</strong>
+                      <b>Compila i dati della richiesta</b>
                     </div>
                   </div>
-                ) : null}
-
-                <label className="seoul-waitlist-request-notes">
-                  <span>Note per l'organizzazione</span>
-                  <textarea
-                    maxLength={600}
-                    rows={3}
-                    placeholder="Facoltative"
-                    value={waitlistRequestForm.note}
-                    onChange={(event) => updatePublicWaitlistField('note', event.target.value)}
-                    disabled={waitlistRequestSubmitting}
-                  />
-                  <small>{waitlistRequestForm.note.length}/600</small>
-                </label>
-
-                <label className="seoul-waitlist-request-honeypot" aria-hidden="true">
-                  Sito
-                  <input
-                    type="text"
-                    tabIndex={-1}
-                    autoComplete="off"
-                    value={waitlistRequestForm.website}
-                    onChange={(event) => updatePublicWaitlistField('website', event.target.value)}
-                  />
-                </label>
-
-                {waitlistRequestError ? (
-                  <div className="seoul-waitlist-request-error" role="alert">
-                    <AlertCircle size={18} />
-                    <span>{waitlistRequestError}</span>
+                  <div className="seoul-waitlist-request-warning-card">
+                    <AlertCircle size={34} aria-hidden="true" />
+                    <div><strong>ATTENZIONE</strong><p>La lista d’attesa non garantisce che un posto si liberi né che venga proposto.</p></div>
                   </div>
-                ) : null}
+                </div>
+
+                <div className="seoul-waitlist-request-rules">
+                  <div><Clock3 size={28} aria-hidden="true" /><p><strong>Se si libera un posto:</strong> il sistema può proporlo alle persone in lista d’attesa secondo l’ordine e la gestione previsti.</p></div>
+                  <div><Landmark size={28} aria-hidden="true" /><p><strong>Quando viene proposto:</strong> il posto resta temporaneamente riservato alla persona contattata. Per accettarlo occorre allinearsi alle quote maturate fino a quel momento, comprese quelle già scadute.</p></div>
+                  <div><FileCheck2 size={28} aria-hidden="true" /><p><strong>Se la proposta decade:</strong> in caso di rifiuto, revoca o scadenza senza conferma, il posto può essere proposto al successivo avente diritto.</p></div>
+                </div>
+
+                <section className="seoul-waitlist-request-card">
+                  <div className="seoul-waitlist-request-card-head">
+                    <FileText size={34} aria-hidden="true" />
+                    <div>
+                      <h4>Richiesta di inserimento in lista d’attesa</h4>
+                      <p>Compila i dati sottostanti. Riceverai una email di conferma con il riepilogo della richiesta.</p>
+                    </div>
+                  </div>
+
+                  <div className="seoul-waitlist-request-card-body">
+                    <div className="seoul-waitlist-request-main-grid">
+                      <fieldset className="seoul-waitlist-request-choice" disabled={waitlistRequestSubmitting}>
+                        <legend>Tipologia richiesta *</legend>
+                        <label className={waitlistRequestForm.tipoRichiesta === 'SINGOLO' ? 'is-selected' : ''}>
+                          <input type="radio" name="waitlist-type" value="SINGOLO" checked={waitlistRequestForm.tipoRichiesta === 'SINGOLO'} onChange={() => updatePublicWaitlistField('tipoRichiesta', 'SINGOLO')} />
+                          <span>Singolo partecipante</span>
+                        </label>
+                        <label className={waitlistRequestForm.tipoRichiesta === 'COPPIA' ? 'is-selected' : ''}>
+                          <input type="radio" name="waitlist-type" value="COPPIA" checked={waitlistRequestForm.tipoRichiesta === 'COPPIA'} onChange={() => updatePublicWaitlistField('tipoRichiesta', 'COPPIA')} />
+                          <span>Coppia sposata</span>
+                        </label>
+                      </fieldset>
+
+                      <label className="seoul-waitlist-field">
+                        <span>Nome *</span>
+                        <div className="seoul-waitlist-input-wrap"><UserRound size={19} aria-hidden="true" /><input type="text" maxLength={120} autoComplete="given-name" placeholder="Inserisci il tuo nome" value={waitlistRequestForm.nome} onChange={(event) => updatePublicWaitlistField('nome', event.target.value)} disabled={waitlistRequestSubmitting} required /></div>
+                      </label>
+
+                      <label className="seoul-waitlist-field">
+                        <span>Cognome *</span>
+                        <div className="seoul-waitlist-input-wrap"><UserRound size={19} aria-hidden="true" /><input type="text" maxLength={120} autoComplete="family-name" placeholder="Inserisci il tuo cognome" value={waitlistRequestForm.cognome} onChange={(event) => updatePublicWaitlistField('cognome', event.target.value)} disabled={waitlistRequestSubmitting} required /></div>
+                      </label>
+                    </div>
+
+                    <div className="seoul-waitlist-request-second-grid">
+                      <label className="seoul-waitlist-field">
+                        <span>Email *</span>
+                        <div className="seoul-waitlist-input-wrap"><span className="seoul-waitlist-mail-symbol" aria-hidden="true">✉</span><input type="email" maxLength={254} autoComplete="email" placeholder="Inserisci la tua email" value={waitlistRequestForm.email} onChange={(event) => updatePublicWaitlistField('email', event.target.value)} disabled={waitlistRequestSubmitting} required /></div>
+                      </label>
+
+                      {waitlistRequestForm.tipoRichiesta === 'COPPIA' ? (
+                        <div className="seoul-waitlist-spouse-inline">
+                          <label className="seoul-waitlist-field"><span>Nome coniuge *</span><div className="seoul-waitlist-input-wrap"><UserRound size={19} aria-hidden="true" /><input type="text" maxLength={120} placeholder="Nome del coniuge" value={waitlistRequestForm.coniugeNome} onChange={(event) => updatePublicWaitlistField('coniugeNome', event.target.value)} disabled={waitlistRequestSubmitting} required /></div></label>
+                          <label className="seoul-waitlist-field"><span>Cognome coniuge *</span><div className="seoul-waitlist-input-wrap"><UserRound size={19} aria-hidden="true" /><input type="text" maxLength={120} placeholder="Cognome del coniuge" value={waitlistRequestForm.coniugeCognome} onChange={(event) => updatePublicWaitlistField('coniugeCognome', event.target.value)} disabled={waitlistRequestSubmitting} required /></div></label>
+                        </div>
+                      ) : (
+                        <div className="seoul-waitlist-spouse-placeholder"><span>Dati coniuge</span><small>Compariranno automaticamente selezionando “Coppia sposata”.</small></div>
+                      )}
+                    </div>
+
+                    <label className="seoul-waitlist-request-notes">
+                      <span>Note <em>(facoltativo)</em></span>
+                      <textarea maxLength={600} rows={3} placeholder="Eventuali informazioni utili (es. preferenze, esigenze particolari, note, ecc.)" value={waitlistRequestForm.note} onChange={(event) => updatePublicWaitlistField('note', event.target.value)} disabled={waitlistRequestSubmitting} />
+                      <small>{waitlistRequestForm.note.length}/600</small>
+                    </label>
+
+                    <div className="seoul-waitlist-request-important"><AlertCircle size={31} aria-hidden="true" /><strong>Importante</strong><span>L’inserimento in lista d’attesa <b>non costituisce iscrizione al pellegrinaggio.</b></span></div>
+                  </div>
+                </section>
+
+                <label className="seoul-waitlist-request-honeypot" aria-hidden="true">Sito<input type="text" tabIndex={-1} autoComplete="off" value={waitlistRequestForm.website} onChange={(event) => updatePublicWaitlistField('website', event.target.value)} /></label>
+
+                {waitlistRequestError ? <div className="seoul-waitlist-request-error" role="alert"><AlertCircle size={18} /><span>{waitlistRequestError}</span></div> : null}
 
                 <div className="seoul-waitlist-request-actions">
-                  <button type="button" onClick={closePublicWaitlistRequest} disabled={waitlistRequestSubmitting}>Annulla</button>
+                  <button type="button" onClick={closePublicWaitlistRequest} disabled={waitlistRequestSubmitting}>Chiudi</button>
                   <button type="submit" className="is-primary" disabled={waitlistRequestSubmitting}>
-                    {waitlistRequestSubmitting ? <Loader2 className="animate-spin" size={20} /> : null}
+                    {waitlistRequestSubmitting ? <Loader2 className="animate-spin" size={20} /> : <span aria-hidden="true">➤</span>}
                     <span>{waitlistRequestSubmitting ? 'Invio in corso…' : 'Invia richiesta'}</span>
                   </button>
                 </div>

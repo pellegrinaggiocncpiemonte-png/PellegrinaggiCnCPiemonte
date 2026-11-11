@@ -4452,72 +4452,6 @@ option {
   appearance: none;
   cursor: pointer;
   font-family: inherit;
-  position: relative;
-  overflow: hidden;
-  border: 2px solid rgba(255, 214, 102, .88);
-  background: linear-gradient(135deg, rgba(255, 214, 102, .22), rgba(255, 191, 63, .13) 52%, rgba(255,255,255,.06));
-  box-shadow: 0 0 0 1px rgba(255, 225, 139, .12) inset, 0 16px 34px rgba(4, 14, 30, .34), 0 0 26px rgba(245, 213, 120, .08);
-  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
-}
-
-.seoul-waitlist-details-mail::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,.16) 38%, transparent 72%);
-  opacity: .5;
-  pointer-events: none;
-}
-
-.seoul-waitlist-details-mail:hover,
-.seoul-waitlist-details-mail:focus-visible {
-  transform: translateY(-2px);
-  border-color: #ffe08a;
-  box-shadow: 0 0 0 1px rgba(255, 232, 164, .20) inset, 0 20px 42px rgba(4, 14, 30, .40), 0 0 34px rgba(245, 213, 120, .12);
-  background: linear-gradient(135deg, rgba(255, 214, 102, .28), rgba(255, 191, 63, .17) 52%, rgba(255,255,255,.07));
-}
-
-.seoul-waitlist-details-mail:focus-visible {
-  outline: 2px solid rgba(255, 225, 139, .65);
-  outline-offset: 3px;
-}
-
-.seoul-waitlist-details-mail > * {
-  position: relative;
-  z-index: 1;
-}
-
-.seoul-waitlist-details-mail-kicker {
-  color: #fff6d0 !important;
-  font-size: .72rem;
-  font-weight: 900;
-  letter-spacing: .10em;
-  text-transform: uppercase;
-}
-
-.seoul-waitlist-details-mail strong {
-  color: #ffd86e !important;
-  font-size: clamp(1rem, 2.7vw, 1.18rem) !important;
-  line-height: 1.18;
-  text-shadow: 0 1px 12px rgba(255, 216, 110, .12);
-}
-
-.seoul-waitlist-details-mail small {
-  display: block;
-  color: #fff4c6;
-  font-size: clamp(.76rem, 2.15vw, .92rem);
-  font-weight: 800;
-  line-height: 1.2;
-}
-
-@media (max-width: 640px) {
-  .seoul-waitlist-details-mail {
-    padding: .62rem .6rem;
-    border-radius: 12px;
-  }
-  .seoul-waitlist-details-mail-kicker { font-size: .54rem; }
-  .seoul-waitlist-details-mail strong { font-size: clamp(.78rem, 3.6vw, .94rem) !important; }
-  .seoul-waitlist-details-mail small { font-size: clamp(.64rem, 2.9vw, .74rem); }
 }
 
 .seoul-waitlist-request-layer {
@@ -4910,4 +4844,484 @@ option {
   .seoul-waitlist-request-actions { display: grid; grid-template-columns: 1fr 1.25fr; }
   .seoul-waitlist-request-actions button { width: 100%; padding-inline: 10px; }
   .seoul-waitlist-request-success { padding: 28px 17px 22px; }
+}
+
+/* V106 — Lista d'attesa: CTA evidenziata + modal richiesta grafico come anteprima */
+.seoul-waitlist-details-mail {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-height: 104px;
+  padding: 16px 20px;
+  border: 3px solid #ffe27d !important;
+  border-radius: 22px !important;
+  background: linear-gradient(135deg,#0d6ec6 0%,#0757a6 48%,#063e7c 100%) !important;
+  box-shadow: 0 0 0 4px rgba(255,226,125,.18),0 0 26px rgba(255,218,94,.28),0 14px 36px rgba(0,0,0,.25);
+  text-align: left;
+  overflow: hidden;
+}
+.seoul-waitlist-details-mail::before {
+  content:"";
+  position:absolute;inset:0;
+  background:linear-gradient(110deg,transparent 0%,rgba(255,255,255,.13) 42%,transparent 72%);
+  pointer-events:none;
+}
+.seoul-waitlist-details-mail-icon {font-size:2.15rem;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25));}
+.seoul-waitlist-details-mail-copy {display:grid;gap:4px;position:relative;z-index:1;}
+.seoul-waitlist-details-mail-copy strong {color:#fff !important;font-size:clamp(1rem,1.9vw,1.28rem) !important;line-height:1.15;font-weight:900;text-transform:none;}
+.seoul-waitlist-details-mail-copy b {color:#ffd65f;font-size:clamp(.88rem,1.55vw,1.06rem);font-weight:900;}
+.seoul-waitlist-details-mail-arrow {display:grid;place-items:center;width:36px;height:36px;border-radius:999px;background:#ffda65;color:#063760;line-height:1;position:relative;z-index:1;box-shadow:0 3px 10px rgba(0,0,0,.18);}
+.seoul-waitlist-details-mail:hover,.seoul-waitlist-details-mail:focus-visible {transform:translateY(-1px);box-shadow:0 0 0 4px rgba(255,226,125,.22),0 0 32px rgba(255,218,94,.38),0 18px 42px rgba(0,0,0,.3);}
+
+.seoul-waitlist-request-layer {padding:16px;}
+.seoul-waitlist-request-panel {
+  width:min(1160px,calc(100vw - 28px));
+  max-height:calc(100svh - 24px);
+  border:1px solid rgba(224,171,61,.85);
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 11% 16%,rgba(255,255,255,.13) 0 1.5px,transparent 2px),
+    radial-gradient(circle at 38% 13%,rgba(255,255,255,.12) 0 1.4px,transparent 2px),
+    radial-gradient(circle at 78% 15%,rgba(255,255,255,.10) 0 1.4px,transparent 2px),
+    linear-gradient(145deg,#041d38 0%,#07345c 47%,#071f3f 100%);
+  background-size:180px 180px,220px 220px,200px 200px,auto;
+  box-shadow:0 30px 90px rgba(0,0,0,.58);
+}
+.seoul-waitlist-request-head {
+  position:relative;
+  overflow:hidden;
+  min-height:110px;
+  padding:22px 80px 18px 28px;
+  background:linear-gradient(105deg,rgba(3,35,68,.95),rgba(6,80,132,.68));
+}
+.seoul-waitlist-request-head::after {
+  content:"";
+  position:absolute;
+  right:56px;
+  top:0;
+  bottom:0;
+  width:min(42%,420px);
+  opacity:.98;
+  background:url('/images/waitlist-seoul-header.jpg') right center / cover no-repeat;
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.35) 13%,#000 34%,#000 100%);
+  mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.35) 13%,#000 34%,#000 100%);
+  pointer-events:none;
+}
+.seoul-waitlist-request-head img {width:72px;height:72px;border-radius:18px;position:relative;z-index:1;}
+.seoul-waitlist-request-head > div {position:relative;z-index:1;max-width:68%;}
+.seoul-waitlist-request-head h3 {font-size:clamp(1.8rem,3.3vw,2.8rem);}
+.seoul-waitlist-request-head p {max-width:700px;}
+.seoul-waitlist-request-close {top:18px;right:18px;width:48px;height:48px;background:rgba(255,255,255,.09);}
+
+.seoul-waitlist-request-form {padding:18px 22px 22px;}
+.seoul-waitlist-request-introline {color:#fff;font-size:1rem;line-height:1.48;margin:0 0 15px;}
+.seoul-waitlist-request-toprow {display:grid;grid-template-columns:1.04fr .96fr;gap:14px;}
+.seoul-waitlist-request-banner {display:grid;grid-template-columns:auto 1fr;align-items:center;gap:18px;min-height:112px;padding:16px 22px;border:3px solid #ffe27d;border-radius:22px;background:linear-gradient(135deg,#0d6ec6,#0757a6 55%,#063e7c);box-shadow:0 0 0 4px rgba(255,226,125,.15),0 0 22px rgba(255,215,84,.22);}
+.seoul-waitlist-request-banner-icon {font-size:2.9rem;border-right:1px solid rgba(255,255,255,.72);padding-right:18px;}
+.seoul-waitlist-request-banner div {display:grid;gap:2px;}
+.seoul-waitlist-request-banner div>span {font-size:.84rem;color:#fff;font-weight:900;letter-spacing:.04em;}
+.seoul-waitlist-request-banner strong {font-size:clamp(1.7rem,3.4vw,2.55rem);line-height:1;color:#ffd65f;}
+.seoul-waitlist-request-banner b {display:inline-block;width:max-content;max-width:100%;margin-top:6px;padding:7px 18px;border-radius:999px;background:#fff1bd;color:#162c43;font-size:.86rem;}
+.seoul-waitlist-request-warning-card {display:flex;align-items:center;gap:16px;min-height:112px;padding:17px 20px;border:1px solid #d9416d;border-radius:22px;background:linear-gradient(135deg,rgba(93,24,67,.82),rgba(55,29,65,.88));}
+.seoul-waitlist-request-warning-card>svg {color:#ff9cae;flex:0 0 auto;}
+.seoul-waitlist-request-warning-card strong {color:#ffb7c1;font-size:1rem;letter-spacing:.05em;}
+.seoul-waitlist-request-warning-card p {margin:5px 0 0;color:#fff;font-weight:800;line-height:1.35;}
+
+.seoul-waitlist-request-rules {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0 16px;}
+.seoul-waitlist-request-rules>div {display:flex;gap:12px;align-items:flex-start;min-height:118px;padding:15px 16px;border:1px solid rgba(147,190,230,.28);border-radius:18px;background:linear-gradient(145deg,rgba(13,69,116,.72),rgba(10,47,83,.78));}
+.seoul-waitlist-request-rules svg {color:#a9d4ff;flex:0 0 auto;margin-top:2px;}
+.seoul-waitlist-request-rules p {margin:0;color:#f4f8fc;line-height:1.34;font-size:.9rem;}
+.seoul-waitlist-request-rules strong {color:#fff;font-size:.96rem;}
+
+.seoul-waitlist-request-card {overflow:hidden;border-radius:20px;background:#f9fbff;color:#0c2341;border:1px solid #d9e3ef;box-shadow:0 10px 28px rgba(0,0,0,.18);}
+.seoul-waitlist-request-card-head {display:flex;align-items:center;gap:13px;padding:14px 18px;background:linear-gradient(180deg,#f9fcff,#edf4fb);border-bottom:1px solid #d8e3ef;}
+.seoul-waitlist-request-card-head svg {color:#0d55a6;flex:0 0 auto;}
+.seoul-waitlist-request-card-head h4 {margin:0;color:#0e2e58;font-size:1.22rem;font-weight:900;}
+.seoul-waitlist-request-card-head p {margin:3px 0 0;color:#304b6b;font-size:.85rem;}
+.seoul-waitlist-request-card-body {padding:16px 18px 18px;}
+.seoul-waitlist-request-main-grid {display:grid;grid-template-columns:1.05fr 1fr 1fr;gap:14px;align-items:end;}
+.seoul-waitlist-request-second-grid {display:grid;grid-template-columns:1fr 1.45fr;gap:14px;margin-top:13px;align-items:end;}
+.seoul-waitlist-field {display:grid;gap:6px;min-width:0;}
+.seoul-waitlist-field>span,.seoul-waitlist-request-choice legend,.seoul-waitlist-request-notes>span {color:#0b2344;font-size:.84rem;font-weight:900;}
+.seoul-waitlist-field>span::first-letter {text-transform:uppercase;}
+.seoul-waitlist-input-wrap {display:flex;align-items:center;gap:8px;height:46px;padding:0 12px;border:1px solid #b8c9dc;border-radius:11px;background:#fff;box-shadow:0 2px 7px rgba(7,45,86,.05);}
+.seoul-waitlist-input-wrap svg,.seoul-waitlist-mail-symbol {color:#0d4d8c;flex:0 0 auto;font-size:1.1rem;}
+.seoul-waitlist-input-wrap input {width:100%;min-width:0;border:0 !important;outline:0 !important;background:transparent !important;color:#102744 !important;padding:0 !important;box-shadow:none !important;font:inherit;}
+.seoul-waitlist-input-wrap input::placeholder {color:#74879c;}
+
+.seoul-waitlist-request-card .seoul-waitlist-request-choice {display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:0;border:0;}
+.seoul-waitlist-request-card .seoul-waitlist-request-choice legend {grid-column:1/-1;margin:0 0 1px;}
+.seoul-waitlist-request-card .seoul-waitlist-request-choice label {min-height:46px;padding:8px 11px;border:1px solid #d8e2ed;border-radius:11px;background:#f1f5fa;color:#1b2f49;font-size:.82rem;}
+.seoul-waitlist-request-card .seoul-waitlist-request-choice label.is-selected {border-color:#7db9ff;background:#dcecff;color:#064999;}
+.seoul-waitlist-request-card .seoul-waitlist-request-choice input {accent-color:#1777f2;}
+.seoul-waitlist-spouse-inline {display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.seoul-waitlist-spouse-placeholder {display:grid;align-content:center;min-height:68px;padding:8px 13px;border:1px dashed #c9d6e4;border-radius:11px;background:#f7f9fc;color:#64778c;}
+.seoul-waitlist-spouse-placeholder span {font-weight:900;color:#304d6d;font-size:.83rem;}
+.seoul-waitlist-spouse-placeholder small {margin-top:3px;font-size:.73rem;}
+.seoul-waitlist-request-card .seoul-waitlist-request-notes {margin-top:13px;gap:6px;}
+.seoul-waitlist-request-card .seoul-waitlist-request-notes em {font-style:normal;font-weight:500;}
+.seoul-waitlist-request-card .seoul-waitlist-request-notes textarea {min-height:78px;border:1px solid #b8c9dc;border-radius:11px;background:#fff;color:#102744;padding:11px 13px;}
+.seoul-waitlist-request-card .seoul-waitlist-request-notes small {color:#718397;}
+.seoul-waitlist-request-important {display:flex;align-items:center;gap:12px;margin-top:14px;padding:13px 15px;border-radius:13px;background:linear-gradient(90deg,#fff2bd,#fff8dd);border:1px solid #ffe092;color:#2f3540;}
+.seoul-waitlist-request-important svg {color:#ef7900;flex:0 0 auto;}
+.seoul-waitlist-request-important>strong {color:#df6700;font-size:1rem;}
+.seoul-waitlist-request-important>span {font-size:.86rem;}
+
+.seoul-waitlist-request-actions {justify-content:space-between;margin-top:18px;}
+.seoul-waitlist-request-actions button {min-width:150px;min-height:52px;border-radius:15px;background:rgba(37,84,128,.35);border:1px solid #7095b9;color:#fff;}
+.seoul-waitlist-request-actions button.is-primary {min-width:260px;border-color:#51a2ff;background:linear-gradient(180deg,#2588ff,#0864dc);color:#fff;box-shadow:0 7px 18px rgba(0,96,230,.25);}
+.seoul-waitlist-request-error {margin:14px 0 0;}
+
+@media (max-width: 900px) {
+  .seoul-waitlist-request-toprow,.seoul-waitlist-request-rules,.seoul-waitlist-request-main-grid,.seoul-waitlist-request-second-grid {grid-template-columns:1fr;}
+  .seoul-waitlist-request-rules>div {min-height:auto;}
+  .seoul-waitlist-spouse-inline {grid-template-columns:1fr 1fr;}
+}
+@media (max-width: 640px) {
+  .seoul-waitlist-details-mail {min-height:82px;padding:12px 13px;gap:10px;border-width:2px !important;border-radius:16px !important;}
+  .seoul-waitlist-details-mail-icon {font-size:1.55rem;}
+  .seoul-waitlist-details-mail-copy strong {font-size:.82rem !important;}
+  .seoul-waitlist-details-mail-copy b {font-size:.72rem;}
+  .seoul-waitlist-details-mail-arrow {width:28px;height:28px;} .seoul-waitlist-details-mail-arrow svg{width:15px;height:15px;}
+  .seoul-waitlist-request-layer {padding:6px;}
+  .seoul-waitlist-request-panel {width:calc(100vw - 12px);max-height:calc(100svh - 12px);border-radius:20px;}
+  .seoul-waitlist-request-head {min-height:auto;padding:14px 54px 12px 13px;gap:10px;}
+  .seoul-waitlist-request-head::after {right:44px;width:42%;opacity:.72;background-position:right center;}
+  .seoul-waitlist-request-head > div {max-width:72%;}
+  .seoul-waitlist-request-head img {width:48px;height:48px;border-radius:13px;}
+  .seoul-waitlist-request-head h3 {font-size:1.35rem;}
+  .seoul-waitlist-request-head p {font-size:.73rem;line-height:1.3;}
+  .seoul-waitlist-request-head span {font-size:.6rem;}
+  .seoul-waitlist-request-form {padding:11px;}
+  .seoul-waitlist-request-introline {font-size:.78rem;line-height:1.34;margin-bottom:10px;}
+  .seoul-waitlist-request-banner {min-height:86px;padding:12px 13px;gap:10px;border-width:2px;border-radius:16px;}
+  .seoul-waitlist-request-banner-icon {font-size:2rem;padding-right:10px;}
+  .seoul-waitlist-request-banner div>span {font-size:.61rem;}
+  .seoul-waitlist-request-banner strong {font-size:1.55rem;}
+  .seoul-waitlist-request-banner b {font-size:.67rem;padding:5px 10px;}
+  .seoul-waitlist-request-warning-card {min-height:auto;padding:11px 12px;border-radius:16px;}
+  .seoul-waitlist-request-warning-card strong {font-size:.74rem;}
+  .seoul-waitlist-request-warning-card p {font-size:.73rem;}
+  .seoul-waitlist-request-rules {gap:8px;margin:9px 0 11px;}
+  .seoul-waitlist-request-rules>div {padding:10px 11px;border-radius:13px;}
+  .seoul-waitlist-request-rules p {font-size:.72rem;}
+  .seoul-waitlist-request-rules strong {font-size:.76rem;}
+  .seoul-waitlist-request-card {border-radius:15px;}
+  .seoul-waitlist-request-card-head {padding:10px 11px;gap:9px;}
+  .seoul-waitlist-request-card-head svg {width:25px;height:25px;}
+  .seoul-waitlist-request-card-head h4 {font-size:.92rem;}
+  .seoul-waitlist-request-card-head p {font-size:.68rem;}
+  .seoul-waitlist-request-card-body {padding:11px;}
+  .seoul-waitlist-request-main-grid,.seoul-waitlist-request-second-grid,.seoul-waitlist-spouse-inline {grid-template-columns:1fr;gap:9px;}
+  .seoul-waitlist-request-card .seoul-waitlist-request-choice {grid-template-columns:1fr 1fr;gap:6px;}
+  .seoul-waitlist-request-card .seoul-waitlist-request-choice label {min-height:41px;padding:7px 8px;font-size:.72rem;}
+  .seoul-waitlist-field>span,.seoul-waitlist-request-choice legend,.seoul-waitlist-request-notes>span {font-size:.72rem;}
+  .seoul-waitlist-input-wrap {height:42px;padding:0 10px;}
+  .seoul-waitlist-input-wrap input {font-size:.79rem;}
+  .seoul-waitlist-request-important {align-items:flex-start;gap:8px;padding:10px;}
+  .seoul-waitlist-request-important>strong {font-size:.82rem;}
+  .seoul-waitlist-request-important>span {font-size:.7rem;line-height:1.3;}
+  .seoul-waitlist-request-actions {display:grid;grid-template-columns:.8fr 1.4fr;gap:9px;}
+  .seoul-waitlist-request-actions button,.seoul-waitlist-request-actions button.is-primary {min-width:0;width:100%;min-height:46px;padding:8px 9px;font-size:.78rem;}
+}
+
+/* V108 — Testate lista d'attesa Seoul: grafica pulita ricavata dal riferimento approvato */
+.seoul-waitlist-details-head,
+.seoul-waitlist-request-head {
+  position: relative;
+  overflow: hidden;
+}
+
+.seoul-waitlist-details-head::after,
+.seoul-waitlist-request-head::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 50px;
+  bottom: 0;
+  width: min(34%, 390px);
+  background: url('/images/waitlist-seoul-header-clean.png') right center / contain no-repeat;
+  opacity: 1;
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.seoul-waitlist-details-head > img,
+.seoul-waitlist-details-head > div,
+.seoul-waitlist-request-head > img,
+.seoul-waitlist-request-head > div {
+  position: relative;
+  z-index: 2;
+}
+
+.seoul-waitlist-details-head > div,
+.seoul-waitlist-request-head > div {
+  max-width: 67%;
+}
+
+.seoul-waitlist-details-close,
+.seoul-waitlist-request-close {
+  z-index: 4;
+}
+
+@media (max-width: 760px) {
+  .seoul-waitlist-details-head::after,
+  .seoul-waitlist-request-head::after {
+    right: 36px;
+    width: 38%;
+    opacity: .88;
+    background-position: right center;
+  }
+  .seoul-waitlist-details-head > div,
+  .seoul-waitlist-request-head > div {
+    max-width: 72%;
+  }
+}
+
+@media (max-width: 520px) {
+  .seoul-waitlist-details-head::after,
+  .seoul-waitlist-request-head::after {
+    right: 28px;
+    width: 34%;
+    opacity: .58;
+  }
+  .seoul-waitlist-details-head > div,
+  .seoul-waitlist-request-head > div {
+    max-width: 78%;
+  }
+}
+
+/* V109 — Modal lista d'attesa (info + richiesta): testata full-bleed con grafica sfumata, layout unificato */
+.seoul-waitlist-details-head,
+.seoul-waitlist-request-head {
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  min-height: 118px;
+  gap: 18px;
+  padding: 22px 84px 20px 28px;
+  border-bottom: 1px solid rgba(147, 190, 230, .22);
+  background: linear-gradient(105deg, rgba(3, 35, 68, .55), rgba(6, 80, 132, .22));
+}
+.seoul-waitlist-details-head::after,
+.seoul-waitlist-request-head::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(46%, 470px);
+  background: url('/images/waitlist-seoul-header-v109.png') right center / auto 100% no-repeat;
+  -webkit-mask-image: none;
+  mask-image: none;
+  opacity: 1;
+  pointer-events: none;
+  z-index: 0;
+}
+.seoul-waitlist-details-head > img,
+.seoul-waitlist-request-head > img {
+  position: relative;
+  z-index: 2;
+  width: 74px;
+  height: 74px;
+  border-radius: 19px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .3);
+}
+.seoul-waitlist-details-head > div,
+.seoul-waitlist-request-head > div {
+  position: relative;
+  z-index: 2;
+  max-width: 62%;
+}
+.seoul-waitlist-details-head span,
+.seoul-waitlist-request-head span {
+  color: #ffd65f;
+  font-size: .8rem;
+  font-weight: 900;
+  letter-spacing: .1em;
+}
+.seoul-waitlist-details-head h3,
+.seoul-waitlist-request-head h3 {
+  margin: 4px 0 4px;
+  font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+  line-height: 1.02;
+  letter-spacing: -.035em;
+  font-weight: 900;
+}
+.seoul-waitlist-details-head p,
+.seoul-waitlist-request-head p {
+  margin: 4px 0 0;
+  font-size: .95rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, .78);
+}
+.seoul-waitlist-details-close,
+.seoul-waitlist-request-close {
+  z-index: 5;
+  top: 18px;
+  right: 18px;
+  width: 46px;
+  height: 46px;
+  background: rgba(6, 28, 54, .55);
+  border: 1px solid rgba(255, 255, 255, .32);
+  backdrop-filter: blur(4px);
+}
+
+/* Pannello informativo: stesso linguaggio grafico della richiesta */
+.seoul-waitlist-details-panel {
+  display: block;
+  width: min(1080px, calc(100vw - 28px));
+  max-height: calc(100svh - 24px);
+  overflow: auto;
+  padding: 0;
+  border: 1px solid rgba(224, 171, 61, .85);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 11% 16%, rgba(255,255,255,.13) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 78% 15%, rgba(255,255,255,.10) 0 1.4px, transparent 2px),
+    linear-gradient(145deg, #041d38 0%, #07345c 47%, #071f3f 100%);
+  background-size: 200px 200px, 220px 220px, auto;
+}
+.seoul-waitlist-details-content {
+  display: grid;
+  grid-template-columns: 1.04fr .96fr;
+  gap: 14px;
+  padding: 18px 24px 8px;
+  font-size: 1rem;
+  line-height: 1.48;
+  color: #fff;
+}
+.seoul-waitlist-details-intro { grid-column: 1 / -1; font-size: 1rem; }
+.seoul-waitlist-details-panel .seoul-waitlist-details-mail {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 18px;
+  min-height: 130px;
+  padding: 16px 22px;
+  border: 3px solid #ffe27d !important;
+  border-radius: 22px !important;
+  background: linear-gradient(135deg, #0d6ec6, #0757a6 55%, #063e7c) !important;
+  text-align: left;
+}
+.seoul-waitlist-details-panel .seoul-waitlist-details-mail-icon {
+  font-size: 2.9rem;
+  padding-right: 18px;
+  border-right: 1px solid rgba(255, 255, 255, .72);
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+}
+.seoul-waitlist-details-panel .seoul-waitlist-details-mail-copy { display: grid; gap: 2px; justify-items: start; }
+.seoul-waitlist-details-panel .seoul-waitlist-details-mail-eyebrow {
+  color: #fff; font-size: .84rem; font-weight: 900; letter-spacing: .04em;
+}
+.seoul-waitlist-details-panel .seoul-waitlist-details-mail-copy strong {
+  color: #ffd65f !important;
+  font-size: clamp(1.7rem, 3.2vw, 2.5rem) !important;
+  line-height: 1;
+  font-weight: 900;
+}
+.seoul-waitlist-details-panel .seoul-waitlist-details-mail-copy b {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 7px 18px;
+  border-radius: 999px;
+  background: #fff1bd;
+  color: #162c43;
+  font-size: .86rem;
+  font-weight: 800;
+}
+.seoul-waitlist-details-panel .seoul-waitlist-details-warning {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 130px;
+  padding: 17px 20px;
+  border: 1px solid #d9416d;
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(93,24,67,.82), rgba(55,29,65,.88));
+}
+.seoul-waitlist-details-warning > svg { color: #ff9cae; flex: 0 0 auto; }
+.seoul-waitlist-details-panel .seoul-waitlist-details-warning strong {
+  color: #ffb7c1; font-size: 1rem; letter-spacing: .08em; text-transform: uppercase;
+}
+.seoul-waitlist-details-panel .seoul-waitlist-details-warning p {
+  margin: 5px 0 0; color: #fff; font-weight: 800; font-size: 1.05rem; line-height: 1.35;
+}
+.seoul-waitlist-details-panel .seoul-waitlist-details-rules {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.seoul-waitlist-details-rules > div {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 15px 16px;
+  border: 1px solid rgba(147,190,230,.28);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(13,69,116,.72), rgba(10,47,83,.78));
+}
+.seoul-waitlist-details-rules > div > svg { color: #a9d4ff; flex: 0 0 auto; margin-top: 2px; }
+.seoul-waitlist-details-panel .seoul-waitlist-details-rules p {
+  margin: 0; padding: 0; border: 0; background: none; border-radius: 0;
+  font-size: .92rem; line-height: 1.38; color: #f4f8fc;
+}
+.seoul-waitlist-details-panel .seoul-waitlist-details-return {
+  display: block;
+  width: calc(100% - 48px);
+  margin: 12px 24px 22px;
+  padding: 13px 16px;
+  border: 1px solid #7095b9;
+  border-radius: 15px;
+  background: rgba(37, 84, 128, .35);
+  color: #fff;
+  font-size: .95rem;
+  font-weight: 900;
+}
+
+@media (max-width: 900px) {
+  .seoul-waitlist-details-content { grid-template-columns: 1fr; }
+  .seoul-waitlist-details-panel .seoul-waitlist-details-rules { grid-template-columns: 1fr; }
+  .seoul-waitlist-details-panel .seoul-waitlist-details-mail,
+  .seoul-waitlist-details-panel .seoul-waitlist-details-warning { min-height: 0; }
+}
+@media (max-width: 640px) {
+  .seoul-waitlist-details-head,
+  .seoul-waitlist-request-head { min-height: 0; gap: 11px; padding: 14px 52px 12px 13px; }
+  .seoul-waitlist-details-head::after,
+  .seoul-waitlist-request-head::after { width: 58%; opacity: .38; }
+  .seoul-waitlist-details-head > div,
+  .seoul-waitlist-request-head > div { max-width: 100%; }
+  .seoul-waitlist-details-head > img,
+  .seoul-waitlist-request-head > img { width: 48px; height: 48px; border-radius: 13px; }
+  .seoul-waitlist-details-head h3,
+  .seoul-waitlist-request-head h3 { font-size: 1.4rem; }
+  .seoul-waitlist-details-head p,
+  .seoul-waitlist-request-head p { font-size: .74rem; line-height: 1.3; }
+  .seoul-waitlist-details-head span,
+  .seoul-waitlist-request-head span { font-size: .6rem; }
+  .seoul-waitlist-details-close,
+  .seoul-waitlist-request-close { top: 10px; right: 10px; width: 36px; height: 36px; }
+  .seoul-waitlist-details-panel { width: calc(100vw - 12px); max-height: calc(100svh - 12px); border-radius: 20px; }
+  .seoul-waitlist-details-content { padding: 12px 12px 4px; gap: 9px; font-size: .8rem; }
+  .seoul-waitlist-details-intro { font-size: .8rem; }
+  .seoul-waitlist-details-panel .seoul-waitlist-details-mail { gap: 10px; padding: 12px 13px; border-width: 2px !important; border-radius: 16px !important; }
+  .seoul-waitlist-details-panel .seoul-waitlist-details-mail-icon { font-size: 2rem; padding-right: 10px; }
+  .seoul-waitlist-details-panel .seoul-waitlist-details-mail-eyebrow { font-size: .62rem; }
+  .seoul-waitlist-details-panel .seoul-waitlist-details-mail-copy strong { font-size: 1.5rem !important; }
+  .seoul-waitlist-details-panel .seoul-waitlist-details-mail-copy b { font-size: .68rem; padding: 5px 10px; }
+  .seoul-waitlist-details-panel .seoul-waitlist-details-warning { padding: 11px 12px; border-radius: 16px; gap: 11px; }
+  .seoul-waitlist-details-warning > svg { width: 26px; height: 26px; }
+  .seoul-waitlist-details-panel .seoul-waitlist-details-warning strong { font-size: .74rem; }
+  .seoul-waitlist-details-panel .seoul-waitlist-details-warning p { font-size: .78rem; }
+  .seoul-waitlist-details-rules > div { padding: 10px 11px; border-radius: 13px; gap: 9px; }
+  .seoul-waitlist-details-rules > div > svg { width: 22px; height: 22px; }
+  .seoul-waitlist-details-panel .seoul-waitlist-details-rules p { font-size: .74rem; }
+  .seoul-waitlist-details-panel .seoul-waitlist-details-return { width: calc(100% - 24px); margin: 8px 12px 14px; padding: 11px; font-size: .8rem; }
 }
