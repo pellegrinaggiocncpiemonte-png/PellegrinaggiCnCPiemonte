@@ -10,6 +10,9 @@ function doGet(e) {
   if (action === 'seoul' || action === 'seoul-status' || action === 'posti-seoul') {
     return getSeoulStatusResponse_(params);
   }
+  if (action === 'seoul-rates' || action === 'rate-seoul' || action === 'piano-rate-seoul') {
+    return getSeoulRatesResponse_(params);
+  }
   const namespace = sanitizeKey(params.ns || 'pellegrinaggi-cnc-piemonte-svizzera');
   const page = sanitizeKey(params.page || 'home');
 
@@ -199,6 +202,14 @@ function getSeoulStatusResponse_(params) {
       message = 'Ultimi posti disponibili.';
     }
 
+    let publicRatePlan = null;
+    try {
+      publicRatePlan = buildSeoulRatesData_({ pellegrinaggioId: status.pilgrimageId });
+    } catch (rateError) {
+      // Il conteggio posti deve continuare a funzionare anche se il piano rate non è disponibile.
+      publicRatePlan = null;
+    }
+
     const payload = {
       ok: true,
       action: 'seoul',
@@ -214,7 +225,8 @@ function getSeoulStatusResponse_(params) {
       avviso: !!message,
       messaggio: message,
       refreshSecondi: status.refreshSeconds,
-      ultimoAggiornamento: status.updatedAt
+      ultimoAggiornamento: status.updatedAt,
+      ratePlan: publicRatePlan
     };
 
     return createSeoulOutput_(payload, callback);
@@ -227,6 +239,116 @@ function getSeoulStatusResponse_(params) {
   } finally {
     try { lock.releaseLock(); } catch (ignore) {}
   }
+}
+
+/**
+ * Piano rate pubblico Korea 2027.
+ * Legge direttamente le righe ATTIVE del foglio PIANO_RATE_V42 usato dalla Web App.
+ * Non espone pagamenti, nominativi, ricevute o altre informazioni personali.
+ */
+function buildSeoulRatesData_(params) {
+  const pid = String((params && (params.pellegrinaggioId || params.pid)) || '2').trim() || '2';
+  const spreadsheet = SpreadsheetApp.openById(SEOUL_REGISTRATION_SPREADSHEET_ID);
+  const sheet = spreadsheet.getSheetByName('PIANO_RATE_V42');
+  if (!sheet) throw new Error('Foglio PIANO_RATE_V42 non trovato.');
+
+  const data = sheet.getDataRange().getValues();
+  if (!data.length) throw new Error('Piano rate non configurato.');
+
+  const headers = buildHeaderMap_(data[0] || []);
+  const installments = [];
+  let description = 'Pellegrinaggio Korea 2027';
+  let lastUpdated = null;
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const rowPid = stringCell_(row, headers, ['pellegrinaggioid', 'pellegrinaggio_id'], -1);
+    if (rowPid !== pid) continue;
+
+    const active = booleanValue_(valueCell_(row, headers, ['attiva'], -1), false);
+    if (!active) continue;
+
+    const numero = parseInt(valueCell_(row, headers, ['numerorata', 'numero_rata'], -1), 10) || 0;
+    if (!numero) continue;
+
+    const title = stringCell_(row, headers, ['titolorata', 'titolo_rata'], -1) || ('Rata ' + numero);
+    const detail = stringCell_(row, headers, ['descrizionerata', 'descrizione_rata'], -1);
+    const rawAmount = valueCell_(row, headers, ['importo'], -1);
+    const amount = seoulPublicMoney_(rawAmount);
+    const rawDate = valueCell_(row, headers, ['scadenza'], -1);
+    const dueDate = seoulPublicDateText_(rawDate);
+    const rowDescription = stringCell_(row, headers, ['descrizione'], -1);
+    const updated = valueCell_(row, headers, ['aggiornatoil', 'aggiornato_il'], -1);
+
+    if (rowDescription) description = rowDescription;
+    if (updated instanceof Date && !isNaN(updated.getTime()) && (!lastUpdated || updated > lastUpdated)) lastUpdated = updated;
+
+    installments.push({
+      numero: numero,
+      titolo: title,
+      descrizione: detail,
+      scadenza: dueDate,
+      importo: amount,
+      definita: amount > 0
+    });
+  }
+
+  installments.sort(function(a, b) { return a.numero - b.numero; });
+
+  const definedCount = installments.filter(function(x) { return x.definita; }).length;
+  const totalDefined = installments.reduce(function(sum, x) { return sum + (x.definita ? x.importo : 0); }, 0);
+  const now = new Date();
+  const zone = Session.getScriptTimeZone() || 'Europe/Rome';
+
+  return {
+    ok: true,
+    action: 'seoul-rates',
+    pellegrinaggioId: pid,
+    descrizione: description,
+    installments: installments,
+    totalCount: installments.length,
+    definedCount: definedCount,
+    undefinedCount: Math.max(0, installments.length - definedCount),
+    totalDefined: Math.round(totalDefined * 100) / 100,
+    pianoAggiornatoIl: lastUpdated ? Utilities.formatDate(lastUpdated, zone, 'dd/MM/yyyy HH:mm:ss') : '',
+    ultimoAggiornamento: Utilities.formatDate(now, zone, 'dd/MM/yyyy HH:mm:ss')
+  };
+}
+
+function getSeoulRatesResponse_(params) {
+  const callback = String((params && params.callback) || '').trim();
+  try {
+    return createSeoulOutput_(buildSeoulRatesData_(params), callback);
+  } catch (error) {
+    return createSeoulOutput_({
+      ok: false,
+      action: 'seoul-rates',
+      message: String(error && error.message ? error.message : error),
+      installments: []
+    }, callback);
+  }
+}
+
+function seoulPublicMoney_(value) {
+  if (typeof value === 'number') return isFinite(value) ? Math.round(value * 100) / 100 : 0;
+  let text = String(value == null ? '' : value).trim().replace(/\s/g, '').replace(/€/g, '');
+  if (!text) return 0;
+  if (text.indexOf(',') >= 0 && text.indexOf('.') >= 0) text = text.replace(/\./g, '').replace(',', '.');
+  else text = text.replace(',', '.');
+  const number = parseFloat(text);
+  return isNaN(number) ? 0 : Math.round(number * 100) / 100;
+}
+
+function seoulPublicDateText_(value) {
+  const zone = Session.getScriptTimeZone() || 'Europe/Rome';
+  if (value instanceof Date && !isNaN(value.getTime())) return Utilities.formatDate(value, zone, 'dd/MM/yyyy');
+  const raw = String(value == null ? '' : value).trim();
+  if (!raw) return '';
+  const italian = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (italian) return String(italian[1]).padStart(2, '0') + '/' + String(italian[2]).padStart(2, '0') + '/' + italian[3];
+  const iso = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (iso) return String(iso[3]).padStart(2, '0') + '/' + String(iso[2]).padStart(2, '0') + '/' + iso[1];
+  return raw;
 }
 
 function ensureSeoulSheet_() {

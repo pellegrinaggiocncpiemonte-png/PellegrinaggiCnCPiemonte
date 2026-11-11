@@ -62,10 +62,13 @@ const Navigation = () => {
         ],
       },
       {
-        id: 'donazioni',
-        label: 'Versamenti',
-        type: 'link',
-        items: [{ id: 'donazioni', label: 'Versamenti e donazioni', badge: 'updated' }],
+        id: 'rate',
+        label: 'Rate',
+        type: 'dropdown',
+        items: [
+          { id: 'donazioni', label: 'Versamenti', badge: 'updated' },
+          { id: 'rate-pellegrinaggio', label: 'Rateizzo', badge: 'updated' },
+        ],
         badge: 'updated',
       },
     ],

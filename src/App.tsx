@@ -1,6 +1,7 @@
 import Navigation from './components/Navigation';
 import { AlertCircle, Bell, CheckCircle2, ChevronDown, Clock3, FileCheck2, FileText, Landmark, Loader2, Play, Search, Smartphone, UploadCloud, UserRound, X } from 'lucide-react';
 import { type FormEvent, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import FlipCountdown from './components/FlipCountdown';
 import { SITE_CONFIG } from './config/siteConfig';
 import { RESERVED_AREA_GUIDE_ITEMS, RESERVED_AREA_GUIDE_TITLE } from './config/reservedAreaGuide';
@@ -34,6 +35,7 @@ const getGoogleDrivePreviewUrl = (url: string) => {
 
 type SeoulAvailability = {
   ok?: boolean;
+  ratePlan?: SeoulRatesPayload;
   totalePosti?: number;
   postiRimanenti?: number;
   blocco?: boolean;
@@ -45,6 +47,75 @@ type SeoulAvailability = {
 
 const SEOUL_AVAILABILITY_URL = 'https://script.google.com/macros/s/AKfycbz2py2LldK05Lm9jVmnDfQuKUFViwY_pxfiYnCcVyaseKgejBPyqEtf4mBP3xNqo7Rv/exec';
 const SEOUL_AVAILABILITY_PROXY_URL = '/api/seoul-availability';
+
+
+const KOREA_RATE_CALENDAR_ID = '3db8f997d6faad49c19e0428127660210a62d012477ec682d99c3d114334f680@group.calendar.google.com';
+const KOREA_RATE_CALENDAR_APPLE_URL = 'webcal://calendar.google.com/calendar/ical/3db8f997d6faad49c19e0428127660210a62d012477ec682d99c3d114334f680%40group.calendar.google.com/public/basic.ics';
+const KOREA_RATE_CALENDAR_GOOGLE_URL = `https://calendar.google.com/calendar/render?cid=${encodeURIComponent(KOREA_RATE_CALENDAR_ID)}`;
+
+type PublicInstallment = {
+  numero: number;
+  titolo: string;
+  descrizione?: string;
+  scadenza: string;
+  importo: number;
+  definita: boolean;
+};
+
+type SeoulRatesPayload = {
+  ok?: boolean;
+  pellegrinaggioId?: string;
+  descrizione?: string;
+  installments?: PublicInstallment[];
+  totalDefined?: number;
+  definedCount?: number;
+  undefinedCount?: number;
+  totalCount?: number;
+  ultimoAggiornamento?: string;
+  message?: string;
+};
+
+const SEOUL_RATES_PROXY_URL = '/api/seoul-rates';
+const SEOUL_RATES_CACHE_KEY = 'seoul-rates:last-valid-v1';
+
+const formatEuro = (value: number) => new Intl.NumberFormat('it-IT', {
+  style: 'currency',
+  currency: 'EUR',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+}).format(value);
+
+const parseItalianRateDate = (value: string) => {
+  const match = String(value || '').trim().match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);
+  if (!match) return null;
+  const date = new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
+  date.setHours(0, 0, 0, 0);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const isValidSeoulRates = (payload: SeoulRatesPayload | null | undefined) => Boolean(
+  payload?.ok && Array.isArray(payload.installments)
+);
+
+const readCachedSeoulRates = (): SeoulRatesPayload | null => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(SEOUL_RATES_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as SeoulRatesPayload;
+    return isValidSeoulRates(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
+const saveCachedSeoulRates = (payload: SeoulRatesPayload) => {
+  try {
+    window.localStorage.setItem(SEOUL_RATES_CACHE_KEY, JSON.stringify(payload));
+  } catch {
+    // Cache non indispensabile: il sito continua a usare il dato corrente.
+  }
+};
 
 const SEOUL_AVAILABILITY_CACHE_KEY = 'seoul-availability:last-valid-v1';
 
@@ -101,6 +172,294 @@ const formatSeoulCountdown = (ms: number, mode: 'compact' | 'full' = 'compact') 
   if (hours > 0) return `${hh}h ${mm}m ${ss}s`;
   return `${mm}m ${ss}s`;
 };
+
+function KoreaRatesSection() {
+  const cachedRef = useRef<SeoulRatesPayload | null>(readCachedSeoulRates());
+  const [data, setData] = useState<SeoulRatesPayload | null>(cachedRef.current);
+  const [loading, setLoading] = useState(!cachedRef.current);
+  const [failed, setFailed] = useState(false);
+  const [firstRateInfoOpen, setFirstRateInfoOpen] = useState(false);
+
+  useEffect(() => {
+    if (!firstRateInfoOpen) return;
+    const timer = window.setTimeout(() => setFirstRateInfoOpen(false), 15000);
+    return () => window.clearTimeout(timer);
+  }, [firstRateInfoOpen]);
+
+  useEffect(() => {
+    let disposed = false;
+    let refreshTimer: number | undefined;
+    let activeController: AbortController | null = null;
+
+    const loadRates = async () => {
+      activeController?.abort();
+      const controller = new AbortController();
+      activeController = controller;
+      try {
+        let validPayload: SeoulRatesPayload | null = null;
+
+        // 1) Percorso principale: stesso endpoint già collaudato per i posti Korea.
+        try {
+          const availabilityResponse = await fetch(`${SEOUL_AVAILABILITY_PROXY_URL}?_=${Date.now()}`, {
+            method: 'GET',
+            cache: 'no-store',
+            signal: controller.signal,
+            headers: { Accept: 'application/json' },
+          });
+          if (availabilityResponse.ok) {
+            const availabilityPayload = await availabilityResponse.json() as SeoulAvailability;
+            if (isValidSeoulRates(availabilityPayload?.ratePlan)) validPayload = availabilityPayload.ratePlan ?? null;
+          }
+        } catch (error) {
+          if (controller.signal.aborted) throw error;
+        }
+
+        // 2) Compatibilità con la V94: prova anche l'endpoint dedicato.
+        if (!validPayload) {
+          try {
+            const response = await fetch(`${SEOUL_RATES_PROXY_URL}?_=${Date.now()}`, {
+              method: 'GET',
+              cache: 'no-store',
+              signal: controller.signal,
+              headers: { Accept: 'application/json' },
+            });
+            if (response.ok) {
+              const payload = await response.json() as SeoulRatesPayload;
+              if (isValidSeoulRates(payload)) validPayload = payload;
+            }
+          } catch (error) {
+            if (controller.signal.aborted) throw error;
+          }
+        }
+
+        // 3) Ultimo fallback: JSONP diretto verso Apps Script, senza dipendere dalla nuova route Vercel.
+        if (!validPayload) {
+          validPayload = await new Promise<SeoulRatesPayload | null>((resolve) => {
+            const callbackName = `__seoulRates_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+            const win = window as unknown as Record<string, unknown>;
+            const script = document.createElement('script');
+            let finished = false;
+            const cleanup = () => {
+              if (finished) return;
+              finished = true;
+              window.clearTimeout(timeoutId);
+              script.remove();
+              try { delete win[callbackName]; } catch { win[callbackName] = undefined; }
+            };
+            win[callbackName] = (payload: SeoulRatesPayload) => {
+              const result = isValidSeoulRates(payload) ? payload : null;
+              cleanup();
+              resolve(result);
+            };
+            const timeoutId = window.setTimeout(() => { cleanup(); resolve(null); }, 9000);
+            script.onerror = () => { cleanup(); resolve(null); };
+            script.src = `${SEOUL_AVAILABILITY_URL}?action=seoul-rates&pellegrinaggioId=2&callback=${encodeURIComponent(callbackName)}&_=${Date.now()}`;
+            document.head.appendChild(script);
+          });
+        }
+
+        if (!validPayload) throw new Error('Rate non disponibili');
+        if (disposed) return;
+        setData(validPayload);
+        setFailed(false);
+        saveCachedSeoulRates(validPayload);
+      } catch (error) {
+        if (controller.signal.aborted || disposed) return;
+        setFailed(true);
+      } finally {
+        if (!disposed) setLoading(false);
+      }
+    };
+
+    void loadRates();
+    refreshTimer = window.setInterval(() => { void loadRates(); }, 30000);
+
+    return () => {
+      disposed = true;
+      activeController?.abort();
+      if (refreshTimer) window.clearInterval(refreshTimer);
+    };
+  }, []);
+
+  const installments = data?.installments ?? [];
+  const totalCount = Number(data?.totalCount ?? installments.length);
+  const definedCount = Number(data?.definedCount ?? installments.filter((rata) => rata.definita).length);
+  const undefinedCount = Number(data?.undefinedCount ?? Math.max(0, totalCount - definedCount));
+  const totalDefined = Number(data?.totalDefined ?? installments.reduce((sum, rata) => sum + (rata.definita ? Number(rata.importo || 0) : 0), 0));
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const currentInstallment = installments
+    .filter((rata) => rata.definita)
+    .map((rata) => ({ rata, date: parseItalianRateDate(rata.scadenza) }))
+    .filter((entry) => entry.date && entry.date >= today)
+    .sort((a, b) => (a.date?.getTime() ?? 0) - (b.date?.getTime() ?? 0))[0]?.rata;
+
+  return (
+    <>
+    <section id="rate-pellegrinaggio" data-page="versamenti" className="page-section content-section py-16 md:py-20 bg-slate-950 relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.14),transparent_42%)]" aria-hidden="true" />
+      <div className="container relative mx-auto px-4">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center">
+            <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-amber-400">Korea 2027 · Piemonte e Svizzera</p>
+            <h2 className="mt-2 text-3xl font-serif font-bold tracking-wide text-white md:text-5xl">Rate del pellegrinaggio</h2>
+            <div className="mx-auto mt-4 h-1 w-32 bg-amber-500" />
+            <p className="mx-auto mt-5 max-w-3xl text-base leading-relaxed text-white/80 md:text-lg">
+              Le stesse rate e scadenze sono disponibili anche nella tua <strong className="text-white">Area personale</strong>, nelle sezioni <strong className="text-white">Rateizzo e situazione economica</strong> e <strong className="text-white">Calendario rate</strong>.
+            </p>
+          </div>
+
+          <div className="mt-8 rounded-3xl border border-sky-400/40 bg-sky-950/60 p-5 shadow-xl sm:p-7">
+            <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div>
+                <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-sky-300">Calendario ufficiale delle scadenze</p>
+                <h3 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Attiva il calendario delle rate</h3>
+                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-sky-100/85 sm:text-base">
+                  Aggiungi il calendario al telefono per avere le scadenze pubblicate e i successivi aggiornamenti direttamente nel tuo calendario personale.
+                </p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[360px]">
+                <a href={KOREA_RATE_CALENDAR_APPLE_URL} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white px-5 py-3.5 font-extrabold text-slate-950 shadow-lg transition hover:bg-slate-100">
+                  <span aria-hidden="true"></span> iPhone / iOS
+                </a>
+                <a href={KOREA_RATE_CALENDAR_GOOGLE_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-2xl bg-sky-500 px-5 py-3.5 font-extrabold text-white shadow-lg transition hover:bg-sky-400">
+                  <span aria-hidden="true">📅</span> Android / Google
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {loading && !data ? (
+            <div className="mt-8 flex items-center justify-center gap-3 rounded-3xl border border-white/10 bg-white/5 px-5 py-10 text-white/80">
+              <Loader2 className="h-5 w-5 animate-spin" /> Aggiornamento delle rate…
+            </div>
+          ) : installments.length > 0 ? (
+            <>
+              <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-center">
+                  <p className="text-3xl font-extrabold text-white">{totalCount}</p>
+                  <p className="mt-1 text-sm font-bold uppercase tracking-wide text-white/65">Rate previste</p>
+                </div>
+                <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-4 text-center">
+                  <p className="text-3xl font-extrabold text-emerald-300">{definedCount}</p>
+                  <p className="mt-1 text-sm font-bold uppercase tracking-wide text-emerald-100/80">Importi definiti</p>
+                </div>
+                <div className="rounded-2xl border border-sky-400/30 bg-sky-500/10 px-4 py-4 text-center">
+                  <p className="text-3xl font-extrabold text-sky-300">{undefinedCount}</p>
+                  <p className="mt-1 text-sm font-bold uppercase tracking-wide text-sky-100/80">Rate da definire</p>
+                </div>
+              </div>
+
+              <div className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-white shadow-2xl">
+                <div className="grid grid-cols-[72px_1fr_auto] items-center gap-3 border-b border-slate-200 bg-slate-100 px-4 py-3 text-xs font-extrabold uppercase tracking-wide text-slate-500 sm:grid-cols-[90px_1fr_180px] sm:px-6">
+                  <span>Rata</span><span>Scadenza</span><span className="text-right">Importo</span>
+                </div>
+                <div className="divide-y divide-slate-200">
+                  {installments.map((rata) => {
+                    const dueDate = parseItalianRateDate(rata.scadenza);
+                    const expired = Boolean(rata.definita && dueDate && dueDate < today);
+                    const current = Boolean(rata.definita && currentInstallment && rata.numero === currentInstallment.numero);
+                    const rowStyle = current
+                      ? 'border-y-2 border-amber-400 bg-amber-50 shadow-[inset_5px_0_0_#f59e0b]'
+                      : expired
+                        ? 'bg-red-50 shadow-[inset_5px_0_0_#dc2626]'
+                        : rata.definita
+                          ? 'bg-white'
+                          : 'bg-sky-50';
+                    const numberStyle = current
+                      ? 'bg-amber-500 text-slate-950'
+                      : expired
+                        ? 'bg-red-700 text-white'
+                        : rata.definita
+                          ? 'bg-slate-950 text-white'
+                          : 'bg-sky-700 text-white';
+                    return (
+                      <div key={`${rata.numero}-${rata.scadenza}`} className={`grid grid-cols-[72px_1fr_auto] items-center gap-3 px-4 py-4 sm:grid-cols-[90px_1fr_180px] sm:px-6 ${rowStyle} ${current ? 'animate-pulse' : ''}`}>
+                        <span className={`inline-flex h-10 w-14 items-center justify-center rounded-xl text-sm font-extrabold ${numberStyle}`}>{rata.numero}</span>
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="font-extrabold text-slate-950">{rata.titolo || `Rata ${rata.numero}`}</p>
+                            {current ? <span className="rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-slate-950">Rata in corso</span> : null}
+                            {expired ? <span className="rounded-full bg-red-700 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">Scaduta</span> : null}
+                          </div>
+                          <p className={`mt-0.5 text-sm ${expired ? 'font-bold text-red-800' : current ? 'font-bold text-amber-900' : 'text-slate-600'}`}>{rata.scadenza}</p>
+                          {expired ? <p className="mt-1 text-xs font-bold text-red-700">Se non ancora saldata, resta dovuta e deve essere versata.</p> : null}
+                          {rata.numero === 1 ? (
+                            <button
+                              type="button"
+                              onClick={() => setFirstRateInfoOpen(true)}
+                              aria-haspopup="dialog"
+                              aria-expanded={firstRateInfoOpen}
+                              className="mt-3 inline-flex cursor-pointer items-center justify-center rounded-lg bg-red-700 px-3 py-1.5 text-[11px] font-black uppercase tracking-wide text-white shadow-sm transition hover:bg-red-800 sm:text-xs"
+                            >
+                              INFO
+                            </button>
+                          ) : rata.descrizione ? <p className="mt-1 text-xs text-slate-500">{rata.descrizione}</p> : null}
+                        </div>
+                        <div className="text-right">
+                          <span className={`inline-flex rounded-full px-3 py-1.5 text-sm font-extrabold ${current ? 'bg-amber-500 text-slate-950' : expired ? 'bg-red-100 text-red-900' : rata.definita ? 'bg-amber-100 text-amber-950' : 'bg-sky-100 text-sky-900'}`}>
+                            {rata.definita ? formatEuro(Number(rata.importo || 0)) : 'Da definire'}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-2xl border border-amber-400/50 bg-amber-500/10 px-5 py-4 text-amber-50 sm:px-6">
+                <p className="font-extrabold">Somma delle rate attualmente definite: {formatEuro(totalDefined)}{undefinedCount > 0 ? ` · ${undefinedCount} ${undefinedCount === 1 ? 'rata ancora da definire' : 'rate ancora da definire'}.` : '.'}</p>
+                <p className="mt-1 text-sm font-bold leading-relaxed text-amber-50 sm:text-base">La quota totale di partecipazione non è ancora definita.</p>
+              </div>
+            </>
+          ) : (
+            <div className="mt-8 rounded-3xl border border-amber-400/30 bg-amber-500/10 px-5 py-8 text-center text-amber-50">
+              <p className="font-extrabold">Le rate non sono ancora disponibili.</p>
+              <p className="mt-2 text-sm text-amber-50/75">Riprova tra poco: questa pagina si aggiorna automaticamente quando vengono pubblicate o modificate le rate.</p>
+            </div>
+          )}
+
+          {failed && data ? (
+            <p className="mt-3 text-center text-xs text-white/45">Connessione temporaneamente non disponibile: è mostrato l&apos;ultimo elenco delle rate ricevuto correttamente.</p>
+          ) : null}
+        </div>
+      </div>
+    </section>
+    {firstRateInfoOpen && typeof document !== 'undefined'
+      ? createPortal(
+          <div
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-[2px]"
+            role="presentation"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) setFirstRateInfoOpen(false);
+            }}
+          >
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="first-rate-info-title"
+              className="relative w-full max-w-2xl rounded-3xl border border-red-200 bg-white p-5 text-slate-700 shadow-2xl sm:p-7"
+            >
+              <button
+                type="button"
+                onClick={() => setFirstRateInfoOpen(false)}
+                aria-label="Chiudi informazioni"
+                className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-700 transition hover:bg-slate-200"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <p id="first-rate-info-title" className="pr-12 text-lg font-extrabold text-red-800 sm:text-xl">Informazioni sulla prima rata</p>
+              <p className="mt-4 text-sm font-medium leading-relaxed sm:text-base">
+                La prima rata è indispensabile per rendere effettiva l’iscrizione del singolo partecipante e per confermare il relativo posto sul volo. L’iscrizione si considera quindi ufficialmente confermata solo al ricevimento della quota richiesta. La scadenza indicata per il versamento è tassativa e inderogabile: entro tale data il pagamento deve risultare effettivamente ricevuto. Questo aspetto è particolarmente importante per la prenotazione dei voli, poiché le richieste di posti sono molto numerose e la disponibilità è limitata. Eventuali ritardi nel pagamento potrebbero comportare la perdita del posto sul volo e l’impossibilità di garantire la tariffa o la sistemazione prevista.
+              </p>
+            </div>
+          </div>,
+          document.body
+        )
+      : null}
+    </>
+  );
+}
 
 function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
   const cachedAvailabilityRef = useRef<SeoulAvailability | null>(readCachedSeoulAvailability());
@@ -1310,7 +1669,7 @@ function App() {
               ['Area Riservata', 'Profilo, iscrizione, documenti e versamenti personali', 'area-riservata', null],
               ['Installa la web app', 'Icona sul cellulare, tutorial e notifiche push', 'installa-app', null],
               ['Canti 2027', 'Audio, testi, accordi e video karaoke', 'canti-in-coreano', 'new'],
-              ['Versamenti', 'Codice bonifico, dati bancari e caricamento ricevute', 'donazioni', 'updated'],
+              ['Rate', 'Versamenti, scadenze, importi e rateizzo del pellegrinaggio', 'donazioni', 'updated'],
             ] as Array<[string, string, string, StatusBadgeType | null]>).map(([title, description, target, badge], index) => (
               <button
                 key={target}
@@ -1446,9 +1805,9 @@ function App() {
                         </p>
                       </div>
                       <div className="rounded-xl border-2 border-red-400 bg-red-50 px-4 py-4">
-                        <p className="text-xs font-bold uppercase tracking-wider text-red-800">Prima rata richiesta</p>
-                        <p className="mt-1 text-2xl font-extrabold text-red-950">400,00 € <span className="text-sm font-bold">per partecipante</span></p>
-                        <p className="mt-1 text-sm font-extrabold leading-relaxed text-red-900">ENTRO E NON OLTRE IL 20 OTTOBRE 2026</p>
+                        <p className="text-xs font-bold uppercase tracking-wider text-red-800">Prima rata</p>
+                        <p className="mt-1 text-base font-extrabold leading-relaxed text-red-950">Condizione necessaria per confermare il posto</p>
+                        <p className="mt-1 text-sm font-semibold leading-relaxed text-red-900">Importo e scadenza aggiornati sono indicati in Rate → Rateizzo.</p>
                       </div>
                     </div>
                     <div className="rounded-xl border-2 border-sky-400 bg-sky-50 px-4 py-4 text-sky-950 shadow-sm">
@@ -1483,19 +1842,14 @@ function App() {
                     </div>
 
                     <div className="rounded-xl border-2 border-red-500 bg-red-50 px-4 py-4 text-red-950 shadow-sm">
-                      <p className="text-base font-extrabold sm:text-lg">Prima rata per confermare iscrizione e volo</p>
-                      <p className="mt-2 text-sm leading-relaxed sm:text-base">
-                        Come annunciato all&apos;incontro del <span className="font-bold">04/10/2026</span>, per confermare economicamente l&apos;iscrizione è necessario versare <span className="font-extrabold">400,00 € per ogni partecipante</span> entro e non oltre il <span className="font-extrabold">20 ottobre 2026</span>.
-                      </p>
+                      <p className="text-base font-extrabold sm:text-lg">Prima rata: condizione necessaria per confermare il posto</p>
                       <p className="mt-2 text-sm font-semibold leading-relaxed sm:text-base">
-                        La data è inderogabile e la quota serve a bloccare il posto sul volo. Senza il versamento entro la scadenza l&apos;iscrizione non può essere considerata completa.
-                      </p>
-                      <p className="mt-2 rounded-lg border border-red-300 bg-white/70 px-3 py-2 text-sm font-bold leading-relaxed text-red-950 sm:text-base">
-                        Prima di effettuare il bonifico entra nell&apos;Area Riservata e segui la procedura guidata in <span className="font-extrabold">“Bonifici e versamenti”</span>. Genera prima <span className="font-extrabold">Codice Bonifico e distinta di pagamento</span> inserendo partecipanti e quote; il codice deve comparire nella causale esattamente come generato. Dopo il pagamento torna nella stessa sezione, carica la ricevuta e conferma partecipanti e quote. Non inviare la ricevuta via email o WhatsApp.
+                        Chi non ha versato la prima rata non ha il posto garantito. Il versamento della prima rata è una condizione necessaria e non negoziabile per confermare il posto.
                       </p>
                       <p className="mt-2 text-sm leading-relaxed sm:text-base">
-                        Il costo complessivo del pellegrinaggio e il piano completo delle rate non sono ancora definitivi. Le rate successive saranno comunicate prossimamente.
+                        Per importi e scadenze aggiornati consulta <span className="font-extrabold">Rate → Rateizzo</span>. Le rate già scadute, se non ancora saldate, restano dovute.
                       </p>
+                      <p className="mt-2 text-sm font-bold leading-relaxed sm:text-base">La quota totale di partecipazione non è ancora definita.</p>
                     </div>
                   </div>
                 </details>
@@ -2673,16 +3027,14 @@ function App() {
               </div>
 
               <div className="rounded-2xl border-2 border-red-400 bg-red-500/10 px-4 py-4 text-left">
-                <p className="font-extrabold text-red-200">PRIMA RATA JMJ SEOUL 2027 — 400,00 € PER PARTECIPANTE</p>
-                <p className="mt-2 text-white/95">
-                  Da versare entro e non oltre il <span className="font-extrabold text-white">20 ottobre 2026</span>. La scadenza è inderogabile: la quota serve a bloccare il posto sul volo e senza il versamento l&apos;iscrizione non può essere considerata completa.
+                <p className="font-extrabold text-red-200">PRIMA RATA — CONDIZIONE NECESSARIA PER CONFERMARE IL POSTO</p>
+                <p className="mt-2 font-semibold text-white/95">
+                  Chi non ha versato la prima rata non ha il posto garantito. La prima rata è necessaria per confermare il posto ed è una condizione non negoziabile.
                 </p>
-                <p className="mt-3 rounded-xl border border-amber-300/60 bg-amber-300/10 px-3 py-3 font-bold leading-relaxed text-amber-100">
-                  Prima del pagamento passa obbligatoriamente dalla sezione <span className="font-extrabold text-white">“Bonifici e versamenti”</span> dell&apos;Area Riservata, genera il Codice Bonifico e la distinta con partecipanti e quote, quindi inserisci il codice nella causale. Dopo il bonifico salva la ricevuta: <span className="font-extrabold text-white">non inviarla via email o WhatsApp</span>. Torna nella stessa sezione, riprendi il versamento creato, carica la ricevuta e conferma partecipanti e quote.
+                <p className="mt-2 text-sm text-white/85">
+                  Le rate già scadute, se non ancora saldate, restano dovute. Consulta <span className="font-extrabold text-white">Rate → Rateizzo</span> per importi e scadenze aggiornati.
                 </p>
-                <p className="mt-2 text-sm text-white/80">
-                  Il costo complessivo e il piano completo delle rate sono ancora in definizione. Le rate successive saranno comunicate prossimamente.
-                </p>
+                <p className="mt-2 text-sm font-bold text-amber-100">La quota totale di partecipazione non è ancora definita.</p>
               </div>
             </div>
 
@@ -2916,6 +3268,8 @@ function App() {
         </div>
       ) : null}
 
+      <KoreaRatesSection />
+
       <footer className="site-footer bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-6 mb-8">
@@ -2923,7 +3277,8 @@ function App() {
             <a href="#wyd-seul" className="hover:text-amber-500 transition-colors">WYD Seoul 2027</a>
             <a href="#gmg-2027-iscrizione" className="hover:text-amber-500 transition-colors">Iscrizione pellegrinaggio vocazionale</a>
             <a href="#installa-app" className="hover:text-amber-500 transition-colors">App sul cellulare</a>
-            <a href="#donazioni" className="hover:text-amber-500 transition-colors">Versamenti e Donazioni</a>
+            <a href="#donazioni" className="hover:text-amber-500 transition-colors">Versamenti</a>
+            <a href="#rate-pellegrinaggio" className="hover:text-amber-500 transition-colors">Rateizzo</a>
           </div>
 
           <div className="text-center text-sm text-gray-400 space-y-2">

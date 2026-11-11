@@ -23,6 +23,7 @@ export const SECTION_PAGE: Record<string, SitePage> = {
   home: 'home',
   'giorni-alla-partenza': 'home',
   'gmg-2027-iscrizione': 'pellegrinaggio',
+  'rate-pellegrinaggio': 'versamenti',
   'invito-santo-padre': 'pellegrinaggio',
   'wyd-seul': 'pellegrinaggio',
   'incontro-vocazionale': 'pellegrinaggio',
@@ -69,9 +70,9 @@ export const PAGE_META: Record<Exclude<SitePage, 'home'>, { eyebrow: string; tit
     intro: 'Audio, testi, accordi e video karaoke raccolti in un’unica pagina ordinata e facile da consultare.',
   },
   versamenti: {
-    eyebrow: 'Quote e ricevute',
-    title: 'Versamenti e donazioni',
-    intro: 'Segui la procedura guidata in Area Riservata → Bonifici e versamenti: genera Codice Bonifico e distinta prima del pagamento, poi torna nella stessa sezione per caricare la ricevuta.',
+    eyebrow: 'Quote e scadenze',
+    title: 'Rate',
+    intro: 'Consulta i versamenti e il rateizzo del pellegrinaggio: dati bancari, procedura bonifici, scadenze e importi pubblicati.',
   },
 };
 
