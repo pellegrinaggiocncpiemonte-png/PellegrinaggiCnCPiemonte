@@ -1062,7 +1062,6 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
               <div>
                 <span>PELLEGRINAGGIO KOREA 2027</span>
                 <h3 id="seoul-waitlist-request-title">Richiesta lista d'attesa</h3>
-                <p>Inserisci i dati. Data e ora della richiesta verranno registrate automaticamente dal sistema.</p>
               </div>
             </div>
 
@@ -1171,7 +1170,7 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
 
                     <label className="seoul-waitlist-request-notes">
                       <span>Note <em>(facoltativo)</em></span>
-                      <textarea maxLength={600} rows={3} placeholder="Eventuali informazioni utili (es. preferenze, esigenze particolari, note, ecc.)" value={waitlistRequestForm.note} onChange={(event) => updatePublicWaitlistField('note', event.target.value)} disabled={waitlistRequestSubmitting} />
+                      <textarea maxLength={600} rows={3} placeholder="Indica comunità, cellulare e data di nascita" value={waitlistRequestForm.note} onChange={(event) => updatePublicWaitlistField('note', event.target.value)} disabled={waitlistRequestSubmitting} />
                       <small>{waitlistRequestForm.note.length}/600</small>
                     </label>
 
