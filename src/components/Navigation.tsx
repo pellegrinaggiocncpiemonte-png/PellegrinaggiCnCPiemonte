@@ -41,6 +41,7 @@ const Navigation = () => {
           { id: 'invito-santo-padre', label: 'Invito del Santo Padre', badge: 'new' },
           { id: 'wyd-seul', label: 'GMG Seoul 2027' },
           { id: 'incontro-vocazionale', label: 'Incontro vocazionale · 9 agosto', badge: 'new' },
+          { id: 'luogo-veglia', label: 'Luogo della Veglia con il Papa · 7-8 agosto', badge: 'new' },
         ],
       },
       {

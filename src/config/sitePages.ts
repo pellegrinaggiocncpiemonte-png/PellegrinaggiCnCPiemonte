@@ -27,6 +27,7 @@ export const SECTION_PAGE: Record<string, SitePage> = {
   'invito-santo-padre': 'pellegrinaggio',
   'wyd-seul': 'pellegrinaggio',
   'incontro-vocazionale': 'pellegrinaggio',
+  'luogo-veglia': 'pellegrinaggio',
   passaporti: 'documenti',
   'visti-passaporti': 'documenti',
   'area-riservata': 'area-riservata',

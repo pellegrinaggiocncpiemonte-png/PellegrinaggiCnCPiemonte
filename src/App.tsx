@@ -1,5 +1,5 @@
 import Navigation from './components/Navigation';
-import { AlertCircle, Bell, CheckCircle2, ChevronDown, ChevronRight, Clock3, FileCheck2, FileText, Landmark, Loader2, Play, Search, Smartphone, UploadCloud, UserRound, X } from 'lucide-react';
+import { AlertCircle, ArrowRight, Bell, CheckCircle2, ChevronDown, ChevronRight, Clock3, ExternalLink, FileCheck2, FileText, KeyRound, Landmark, Loader2, Play, Search, Smartphone, UploadCloud, UserRound, X } from 'lucide-react';
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import FlipCountdown from './components/FlipCountdown';
@@ -1669,7 +1669,7 @@ const RESERVED_AREA_READING_STEPS = [
   },
   {
     title: '4. Bonifico: genera prima il codice',
-    text: 'Prima di effettuare qualsiasi bonifico è necessario entrare nell’Area Riservata e seguire la procedura guidata in “Bonifici e versamenti”. Scegli Korea 2027, premi “Genera codice bonifico”, inserisci i partecipanti e le relative quote, quindi genera e salva la distinta di pagamento. Il Codice Bonifico deve comparire nella causale esattamente come generato; dopo il codice puoi aggiungere altro testo. Dopo il pagamento, chi ha generato il codice deve tornare nella stessa sezione, riprendere il versamento creato, caricare la ricevuta e confermare partecipanti e quote. Non inviare la ricevuta via email o WhatsApp. La procedura consente all’organizzazione di collegare automaticamente pagamento, codice, distinta, ricevuta ed estratto conto, come nella GMG internazionale.',
+    text: 'Prima di effettuare qualsiasi bonifico è necessario entrare nell’Area Riservata e seguire la procedura guidata in “Bonifici e versamenti”. Scegli Korea 2027, premi “Genera codice bonifico”, inserisci i partecipanti e le relative quote, quindi genera e salva la distinta di pagamento. Il Codice Bonifico deve comparire nella causale esattamente come generato; dopo il codice puoi aggiungere altro testo. Dopo il pagamento, chi ha generato il codice torna in “Bonifici e versamenti” e sceglie “Ho già effettuato bonifico” → “Con codice”: il sistema recupera le distinte con partecipanti e quote già associati. Basta selezionare quella corretta, inserire la data e allegare la ricevuta bancaria; non inviarla via email o WhatsApp. È la stessa procedura della GMG internazionale, adottata per migliaia di pellegrini: serve a evitare all’organizzazione ore e ore di controlli manuali. Vi chiediamo per favore di seguirla con responsabilità.',
   },
 ];
 
@@ -1685,6 +1685,45 @@ const StatusBadge = ({ type }: { type: StatusBadgeType }) => {
     </span>
   );
 };
+
+// Un solo elenco di istruzioni per la pagina e il pannello di approfondimento.
+const KOREA_PAYMENT_STEPS = [
+  {
+    number: 1,
+    Icon: UserRound,
+    title: 'Entra nell’Area Riservata',
+    short: 'Accedi con il profilo che gestisce il pagamento.',
+    detail: 'Accedi con il profilo che gestisce il versamento, anche quando paghi per i tuoi figli o per altre persone.',
+  },
+  {
+    number: 2,
+    Icon: FileText,
+    title: 'Apri “Bonifici e versamenti”',
+    short: 'Seleziona il pellegrinaggio Korea 2027.',
+    detail: 'Seleziona il pellegrinaggio Korea 2027 e apri la procedura “Genera codice bonifico”.',
+  },
+  {
+    number: 3,
+    Icon: KeyRound,
+    title: 'Genera codice e distinta',
+    short: 'Inserisci tutti i partecipanti e le quote. Salva la distinta.',
+    detail: 'Inserisci tutti i partecipanti a cui è destinato il pagamento, con l’importo di ciascuno. Genera il Codice Bonifico univoco e salva la distinta: serve anche per pagamenti di famiglie, comunità o gruppi.',
+  },
+  {
+    number: 4,
+    Icon: Landmark,
+    title: 'Esegui il bonifico',
+    short: 'Scrivi il codice esatto all’inizio della causale.',
+    detail: 'Esegui il bonifico usando i dati bancari. Nella causale inserisci per primo il Codice Bonifico esattamente come generato, senza modificarlo. Dopo il codice puoi aggiungere altro testo.',
+  },
+  {
+    number: 5,
+    Icon: UploadCloud,
+    title: 'Carica la ricevuta',
+    short: 'Apri “Ho già effettuato bonifico” → “Con codice”. Inserisci data e ricevuta.',
+    detail: 'Dopo il pagamento, chi ha generato il codice torna nell’Area Riservata, apre “Bonifici e versamenti”, seleziona “Ho già effettuato bonifico” e poi “Con codice”. Il sistema recupera le distinte e i partecipanti con le quote già associate al codice: basta scegliere la distinta corretta, indicare la data del bonifico e allegare la ricevuta bancaria. Non occorre reinserire i partecipanti. Non inviare la ricevuta via email o WhatsApp.',
+  },
+] as const;
 
 function App() {
   const [currentPage, setCurrentPage] = useState<SitePage>(() => getSitePageFromPath());
@@ -2450,7 +2489,7 @@ function App() {
                       Prima di effettuare qualsiasi bonifico apri nell&apos;Area Riservata <span className="font-extrabold text-white">“Bonifici e versamenti”</span>, scegli Korea 2027 e premi <span className="font-extrabold text-white">“Genera codice bonifico”</span>. Inserisci partecipanti e quote, genera e salva la distinta di pagamento; il Codice Bonifico deve comparire nella causale esattamente come generato. Dopo il codice puoi aggiungere altre indicazioni.
                     </p>
                     <p className="mt-2 font-bold leading-relaxed text-amber-200">
-                      La procedura vale per versamenti singoli e per pagamenti di famiglie, comunità o gruppi di persone. Dopo il bonifico, chi ha generato il codice deve tornare nella stessa sezione, riprendere il versamento creato, caricare la ricevuta e confermare partecipanti e quote. <span className="font-extrabold text-white">Non inviare la ricevuta via email o WhatsApp.</span> Questo collegamento permette di automatizzare la riconciliazione e i controlli, con una procedura analoga a quella utilizzata dalla GMG internazionale.
+                      La procedura vale per versamenti singoli e di famiglie, comunità o gruppi. Dopo il bonifico, torna in <span className="font-extrabold text-white">“Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”</span>: il sistema trova le distinte con partecipanti e quote già associati. Seleziona quella corretta, inserisci la data e allega la ricevuta bancaria. <span className="font-extrabold text-white">Non inviarla via email o WhatsApp.</span> È la stessa procedura della GMG internazionale: vi chiediamo di seguirla con responsabilità per non obbligarci a ore di controlli manuali dopo il lavoro.
                     </p>
                   </article>
                 </div>
@@ -2742,6 +2781,63 @@ function App() {
               </div>
               <p className="mt-3 text-center text-sm text-slate-500">Il video resta in pausa finché non premi Play.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Luogo della Veglia GMG Seoul 2027: posizione, significato e mappa. Nessun video o immagine della struttura. */}
+      <section id="luogo-veglia" data-page="pellegrinaggio" className="page-section content-section bg-slate-950 py-16 text-white md:py-20">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-8 text-center md:mb-10">
+              <p className="mb-3 text-sm font-extrabold uppercase tracking-[0.18em] text-amber-300">
+                GMG Seoul 2027 · 7 e 8 agosto
+              </p>
+              <h2 className="text-3xl font-serif font-bold leading-tight sm:text-4xl md:text-5xl">
+                Il luogo della Veglia con il Papa
+              </h2>
+              <div className="mx-auto mt-5 h-1 w-28 rounded-full bg-amber-500" />
+              <p className="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-slate-200 sm:text-lg">
+                La <strong className="text-white">Veglia con Papa Leone XIV</strong> del <strong className="text-white">7 agosto 2027</strong> e
+                la <strong className="text-white">Messa conclusiva</strong> dell&apos;<strong className="text-white">8 agosto</strong> si terranno
+                nell&apos;area del <strong className="text-white">Seoul Airport, a Seongnam</strong>, a sud-est del centro di Seoul.
+              </p>
+            </div>
+
+            <div className="mb-7 grid gap-4 md:grid-cols-2">
+              <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-5 sm:p-6">
+                <h3 className="mb-3 text-xl font-bold text-amber-300">Dove si trova?</h3>
+                <p className="text-base leading-relaxed text-slate-200">
+                  Il luogo scelto è a <strong className="text-white">Seongnam</strong>, nell&apos;area metropolitana di Seoul.
+                  Si trova a <strong className="text-white">sud-est del centro città</strong>, mentre
+                  l&apos;<strong className="text-white">aeroporto internazionale di Incheon (ICN)</strong> si trova molto più a ovest.
+                  Sono due luoghi diversi.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-amber-500/40 bg-amber-950/25 p-5 sm:p-6">
+                <h3 className="mb-3 text-xl font-bold text-amber-300">Perché è stato scelto?</h3>
+                <p className="text-base leading-relaxed text-slate-200">
+                  Per <strong className="text-white">accogliere in sicurezza un grandissimo numero di pellegrini</strong>
+                  durante la Veglia e la Messa, organizzando meglio gli spazi e gli spostamenti
+                  e cercando di <strong className="text-white">limitare i disagi alla vita e al traffico della città</strong>.
+                </p>
+              </div>
+            </div>
+
+            <div className="overflow-hidden rounded-3xl border border-slate-600 bg-white shadow-2xl">
+              <div className="bg-slate-50 px-4 py-4 text-slate-900 sm:px-6">
+                <h3 className="text-lg font-extrabold">Cartina della zona della Veglia</h3>
+              </div>
+              <iframe
+                src="https://maps.google.com/maps?hl=it&q=37.44583%2C127.11417&z=11&output=embed"
+                title="Google Maps: luogo della Veglia con il Papa a Seongnam, vicino a Seoul"
+                className="block h-[400px] w-full border-0 bg-slate-100 sm:h-[480px] md:h-[540px]"
+                loading="eager"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
+            </div>
+
           </div>
         </div>
       </section>
@@ -3282,73 +3378,120 @@ function App() {
             <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
           </div>
 
-          <div className="max-w-4xl mx-auto rounded-3xl border border-white/15 bg-white/10 p-6 text-white shadow-2xl backdrop-blur-sm sm:p-8 md:p-10">
-            <div className="space-y-4 text-base leading-relaxed text-white/90 sm:text-lg">
-              <p>
-                In questa sezione trovi i dati bancari e le indicazioni per i versamenti del pellegrinaggio Korea 2027. Prima di effettuare qualsiasi bonifico è però necessario seguire la procedura guidata nell&apos;Area Riservata.
-              </p>
-              <p>
-                La procedura operativa si trova nella tua Area Riservata, nella sezione <span className="font-semibold text-white">“Bonifici e versamenti”</span>: entra con il profilo che gestisce il pagamento, scegli Korea 2027 e segui il percorso guidato. Prima del bonifico il sistema genera il Codice Bonifico e la distinta di pagamento; dopo il pagamento devi tornare nella stessa sezione per caricare la ricevuta.
-              </p>
+          <div className="mx-auto max-w-5xl rounded-3xl border border-white/15 bg-white/10 p-4 text-white shadow-2xl backdrop-blur-sm sm:p-7 md:p-9">
+            {/* L'avviso deve precedere i dati bancari per evitare bonifici senza codice. */}
+            <div className="flex items-start gap-3 rounded-2xl border-2 border-amber-300 bg-amber-100 px-4 py-4 text-amber-950 shadow-lg sm:items-center sm:px-5">
+              <AlertCircle className="mt-0.5 h-8 w-8 shrink-0 text-red-800 sm:mt-0" aria-hidden="true" />
+              <div>
+                <h3 className="text-lg font-extrabold leading-snug text-red-900 sm:text-2xl">
+                  Attenzione: non fare bonifici senza Codice Bonifico.
+                </h3>
+                <p className="mt-1 text-sm leading-relaxed sm:text-base">
+                  <strong>Il solo nome nella causale non basta.</strong> Prima di pagare devi generare il tuo codice nell&apos;Area Riservata.
+                </p>
+              </div>
+            </div>
 
-              <div className="rounded-2xl border-2 border-amber-300 bg-amber-300/10 px-4 py-5 text-left shadow-lg shadow-amber-400/10">
-                <p className="font-extrabold text-amber-200">PRIMA DI PAGARE — GENERA IL CODICE BONIFICO</p>
-                <p className="mt-2 text-white/95">
-                  <span className="font-extrabold text-white">Non effettuare il bonifico direttamente utilizzando soltanto i dati bancari.</span> Entra prima nella tua Area Riservata, apri <span className="font-extrabold text-white">“Bonifici e versamenti”</span>, scegli il pellegrinaggio Korea 2027 e premi <span className="font-extrabold text-white">“Genera codice bonifico”</span>. Segui le indicazioni, inserisci i partecipanti e le relative quote, quindi genera e salva la distinta di pagamento da utilizzare per effettuare il bonifico.
-                </p>
-                <p className="mt-2 font-semibold text-amber-100">
-                  Il <span className="font-extrabold text-white">Codice Bonifico generato deve comparire obbligatoriamente nella causale</span>. Scrivi prima il codice, senza modificarlo; dopo puoi aggiungere ciò che ritieni utile. La procedura vale per <span className="font-extrabold text-white">versamenti singoli, famiglie, comunità e gruppi di persone</span>.
-                </p>
-                <div className="mt-3 rounded-xl border border-amber-200/50 bg-black/25 px-3 py-3 text-center">
-                  <p className="text-xs font-bold uppercase tracking-[0.12em] text-amber-200">Esempio di Codice Bonifico generato dal sistema</p>
-                  <p className="mt-1 break-all font-mono text-lg font-extrabold tracking-wide text-white sm:text-xl">GMG2027-PHX7ZD3G</p>
-                  <p className="mt-1 text-sm text-white/75">Esempio causale: <span className="font-mono font-bold text-white">GMG2027-PHX7ZD3G ROSSI MARIO</span></p>
+            <p className="mt-5 text-base leading-relaxed text-white/90 sm:text-lg">
+              I dati bancari restano disponibili, ma <strong className="text-white">non vanno utilizzati per fare un bonifico senza aver prima creato il pagamento</strong> nella sezione “Bonifici e versamenti” dell&apos;Area Riservata.
+            </p>
+
+            <div className="mt-5 rounded-2xl border border-white/20 bg-slate-950/55 p-4 sm:p-6">
+              <h3 className="text-xl font-extrabold text-amber-200 sm:text-2xl">La procedura corretta in 5 passi</h3>
+              <p className="mt-1 text-sm text-white/75 sm:text-base">Vale per chi paga per sé, per i figli, per una famiglia o per un gruppo.</p>
+              <ol className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5" aria-label="Cinque passi per effettuare un bonifico corretto">
+                {KOREA_PAYMENT_STEPS.map(({ number, Icon, title, short }) => (
+                  <li key={number} className="relative rounded-2xl border border-white/20 bg-white px-3 pb-4 pt-5 text-slate-950 shadow-md">
+                    <span className="absolute -top-3 left-3 inline-flex h-7 w-7 items-center justify-center rounded-full bg-amber-400 text-sm font-black text-black shadow" aria-label={`Passo ${number}`}>{number}</span>
+                    <Icon className="mb-3 h-8 w-8 text-amber-700" aria-hidden="true" />
+                    <p className="text-sm font-extrabold leading-snug sm:text-base">{title}</p>
+                    <p className="mt-2 text-xs leading-relaxed text-slate-700 sm:text-sm">{short}</p>
+                  </li>
+                ))}
+              </ol>
+
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                <div className="rounded-2xl border border-amber-300/75 bg-black/35 px-4 py-5 text-center">
+                  <p className="text-xs font-bold uppercase tracking-wide text-amber-200 sm:text-sm">Esempio di Codice Bonifico</p>
+                  <p className="mt-1 text-xs font-semibold text-white/80">Solo un esempio: non usare questo codice per pagare.</p>
+                  <p className="mt-3 break-all font-mono text-xl font-extrabold tracking-wide text-white sm:text-2xl">GMG2027-PHX7ZD3G</p>
+                  <div className="mt-4 border-t border-white/20 pt-3">
+                    <p className="text-xs text-white/75">Esempio di causale corretta:</p>
+                    <p className="mt-1 break-words font-mono text-sm font-bold text-white sm:text-base">GMG2027-PHX7ZD3G ROSSI MARIO</p>
+                    <p className="mt-2 text-xs text-amber-100">Inserisci per primo il TUO codice, identico a quello generato dal sistema.</p>
+                  </div>
                 </div>
-                <p className="mt-2 text-white/95">
-                  Dopo il bonifico, <span className="font-extrabold text-white">chi ha generato il codice deve tornare nella stessa sezione</span>, riprendere il versamento creato, allegare la ricevuta e confermare tutti i partecipanti con le relative quote. <span className="font-extrabold text-white">Non inviare la ricevuta via email o WhatsApp.</span> In questo modo il sistema può collegare automaticamente pagamento, Codice Bonifico, distinta, ricevuta ed estratto conto, riducendo gli abbinamenti manuali. È una procedura analoga a quella utilizzata dalla GMG internazionale.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setIsPaymentInstructionsOpen(true)}
-                  className="mt-3 inline-flex items-center justify-center gap-2 rounded-lg bg-amber-400 px-4 py-2.5 text-sm font-extrabold text-black shadow transition hover:bg-amber-300"
+                <div className="rounded-2xl border border-amber-200/30 bg-amber-100/10 px-4 py-5">
+                  <h4 className="text-lg font-extrabold text-amber-200 sm:text-xl">Perché il codice è obbligatorio?</h4>
+                  <ul className="mt-3 space-y-3 text-sm leading-relaxed sm:text-base">
+                    {[
+                      'Identifica a chi appartiene il pagamento, anche se paga un genitore o un’altra persona.',
+                      'Indica come ripartire l’importo fra i partecipanti e le rispettive rate.',
+                      'Permette di collegare codice, distinta, ricevuta e accredito dell’estratto conto.',
+                      'Ci risparmia ore di controlli manuali dopo il lavoro e la sera: il sistema può fare automaticamente ciò che altrimenti dobbiamo ricostruire noi.',
+                    ].map((reason) => (
+                      <li key={reason} className="flex items-start gap-2">
+                        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" aria-hidden="true" />
+                        <span>{reason}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-4 border-t border-amber-200/20 pt-3 text-sm leading-relaxed text-white/90 sm:text-base"><strong className="text-amber-200">È la stessa procedura della GMG internazionale, utilizzata per migliaia di pellegrini.</strong> Per favore, leggete e rispettate i passaggi: anche un solo bonifico senza codice ci costringe a controlli manuali evitabili. La vostra collaborazione ci aiuta davvero.</p>
+                </div>
+              </div>
+
+              <div className="mt-4 flex items-start gap-3 rounded-2xl border border-red-200/80 bg-white px-4 py-4 text-red-900 sm:items-center">
+                <AlertCircle className="mt-0.5 h-7 w-7 shrink-0 sm:mt-0" aria-hidden="true" />
+                <div>
+                  <p className="font-extrabold sm:text-lg">Non inviare la ricevuta via email o WhatsApp.</p>
+                  <p className="mt-1 text-sm leading-relaxed text-slate-800 sm:text-base">Chi ha generato il codice deve aprire nell&apos;Area Riservata <strong>“Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”</strong>: il sistema recupera le distinte con i partecipanti e le quote. Basta <strong>selezionare la distinta, inserire la data e allegare la ricevuta bancaria.</strong></p>
+                </div>
+              </div>
+
+              <div className="mt-6 flex flex-col items-center gap-3">
+                <a
+                  href={SITE_CONFIG.reservedAreaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded-xl bg-amber-400 px-5 py-4 text-center text-base font-extrabold text-black shadow-lg shadow-amber-400/10 transition-colors hover:bg-amber-300 sm:w-auto sm:min-w-[410px]"
                 >
-                  <FileText size={17} />
-                  Vedi procedura codice bonifico
-                </button>
-              </div>
-
-              <div className="rounded-2xl border-2 border-red-400 bg-red-500/10 px-4 py-4 text-left">
-                <p className="font-extrabold text-red-200">PRIMA RATA — CONDIZIONE NECESSARIA PER CONFERMARE IL POSTO</p>
-                <p className="mt-2 font-semibold text-white/95">
-                  Chi non ha versato la prima rata non ha il posto garantito. La prima rata è necessaria per confermare il posto ed è una condizione non negoziabile.
-                </p>
-                <p className="mt-2 text-sm text-white/85">
-                  Le rate già scadute, se non ancora saldate, restano dovute. Consulta <span className="font-extrabold text-white">Rate → Rateizzo</span> per importi e scadenze aggiornati.
-                </p>
-                <p className="mt-2 text-sm font-bold text-amber-100">La quota totale di partecipazione non è ancora definita.</p>
+                  <ExternalLink className="h-5 w-5 shrink-0" aria-hidden="true" />
+                  Vai all&apos;Area Riservata e genera il codice
+                  <ArrowRight className="hidden h-5 w-5 shrink-0 sm:block" aria-hidden="true" />
+                </a>
+                <div className="grid w-full gap-3 sm:max-w-[620px] sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsBankDetailsOpen(true)}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white px-4 py-3 font-bold text-slate-950 transition-colors hover:bg-gray-100"
+                  >
+                    <Landmark className="h-5 w-5" aria-hidden="true" />
+                    Vedi dati bancari
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsPaymentInstructionsOpen(true)}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-3 font-extrabold text-black transition-colors hover:bg-amber-400"
+                  >
+                    <FileText className="h-5 w-5" aria-hidden="true" />
+                    Apri guida completa
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <button
-                type="button"
-                onClick={() => setIsBankDetailsOpen(true)}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3.5 font-semibold text-black transition-colors hover:bg-gray-100"
-              >
-                <Landmark size={19} />
-                Dati bancari
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsPaymentInstructionsOpen(true)}
-                className="inline-flex animate-pulse items-center justify-center gap-2 rounded-lg bg-amber-500 px-6 py-3.5 font-extrabold text-black shadow-lg shadow-amber-500/20 transition-colors hover:bg-amber-400"
-              >
-                <FileText size={19} />
-                Procedura codice bonifico
-              </button>
+            <div className="mt-6 rounded-2xl border-2 border-red-300/75 bg-red-500/10 px-4 py-4 text-left sm:px-5">
+              <h3 className="font-extrabold text-red-200">PRIMA RATA — CONDIZIONE NECESSARIA PER CONFERMARE IL POSTO</h3>
+              <p className="mt-2 font-semibold leading-relaxed text-white/95">
+                Chi non ha versato la prima rata non ha il posto garantito. La prima rata è necessaria per confermare il posto ed è una condizione non negoziabile.
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-white/85">
+                Le rate già scadute, se non ancora saldate, restano dovute. Consulta <strong className="text-white">Rate → Rateizzo</strong> per importi e scadenze aggiornati.
+              </p>
+              <p className="mt-2 text-sm font-bold text-amber-100">La quota totale di partecipazione non è ancora definita.</p>
             </div>
 
-            <div className="mt-7 overflow-hidden rounded-2xl border border-amber-400/40 bg-amber-100/10 text-sm leading-relaxed text-white/90 sm:text-base">
+            <div className="mt-6 overflow-hidden rounded-2xl border border-amber-400/40 bg-amber-100/10 text-sm leading-relaxed text-white/90 sm:text-base">
               <button
                 type="button"
                 onClick={() => setIsPaymentNoticeOpen((prev) => !prev)}
@@ -3357,31 +3500,19 @@ function App() {
                 aria-controls="payment-important-notice"
               >
                 <span className="font-bold text-amber-200">Importante per i bonifici dalla Svizzera</span>
-                <ChevronDown className={`h-5 w-5 shrink-0 transition-transform duration-300 ${isPaymentNoticeOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`h-5 w-5 shrink-0 transition-transform duration-300 ${isPaymentNoticeOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
               </button>
               <div
                 id="payment-important-notice"
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${isPaymentNoticeOpen ? 'max-h-[520px] opacity-100' : 'max-h-0 opacity-0'}`}
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${isPaymentNoticeOpen ? 'max-h-[850px] opacity-100' : 'max-h-0 opacity-0'}`}
               >
                 <div className="space-y-3 border-t border-amber-400/25 px-4 py-4 sm:px-5">
-                  <p>
-                    Per i bonifici dalla Svizzera aggiungere 8,50 € di commissioni per ogni operazione.
-                  </p>
-                  <p>
-                    Se il pagamento parte da un conto in franchi svizzeri (CHF) e l&apos;importo viene convertito in euro, considerare anche 5,00 € per il cambio valuta: in questo caso la cifra complessiva da aggiungere è quindi di <strong>13,50 €</strong> (8,50 € + 5,00 €).
-                  </p>
-                  <p>
-                    Verificare comunque con la propria banca, prima di eseguire il bonifico, eventuali commissioni o costi aggiuntivi applicati.
-                  </p>
-                  <p className="font-semibold text-amber-100">
-                    È importante che l&apos;importo netto effettivamente accreditato sul conto del Comitato corrisponda esattamente alla quota richiesta.
-                  </p>
-                  <p>
-                    Anche per i bonifici dalla Svizzera è obbligatorio passare prima dalla sezione “Bonifici e versamenti” dell&apos;Area Riservata, generare il <strong>Codice Bonifico</strong> e la distinta con partecipanti e quote, quindi inserire il codice nella causale. Dopo il bonifico salva la ricevuta. <strong>Non deve essere inviata via email o WhatsApp.</strong> Torna nella stessa sezione, riprendi il versamento creato, carica la ricevuta e segui le indicazioni per confermare partecipanti e quote.
-                  </p>
-                  <p>
-                    Per problemi tecnici con il bonifico o per richiedere informazioni sulla consegna delle quote in contanti, contattare l&apos;organizzazione.
-                  </p>
+                  <p>Per i bonifici dalla Svizzera aggiungere 8,50 € di commissioni per ogni operazione.</p>
+                  <p>Se il pagamento parte da un conto in franchi svizzeri (CHF) e l&apos;importo viene convertito in euro, considerare anche 5,00 € per il cambio valuta: in questo caso la cifra complessiva da aggiungere è quindi di <strong>13,50 €</strong> (8,50 € + 5,00 €).</p>
+                  <p>Verificare comunque con la propria banca, prima di eseguire il bonifico, eventuali commissioni o costi aggiuntivi applicati.</p>
+                  <p className="font-semibold text-amber-100">È importante che l&apos;importo netto effettivamente accreditato sul conto del Comitato corrisponda esattamente alla quota richiesta.</p>
+                  <p>Anche dalla Svizzera, prima di pagare, è obbligatorio generare Codice Bonifico e distinta nell&apos;Area Riservata, indicando partecipanti e quote. Dopo il bonifico usa “Ho già effettuato bonifico” → “Con codice”, seleziona la distinta recuperata dal sistema, inserisci la data e allega la ricevuta bancaria. Non inviarla via email o WhatsApp.</p>
+                  <p>Per problemi tecnici con il bonifico o per richiedere informazioni sulla consegna delle quote in contanti, contattare l&apos;organizzazione.</p>
                 </div>
               </div>
             </div>
@@ -3461,9 +3592,8 @@ function App() {
             </div>
             <div className="max-h-[calc(100dvh-7rem)] overflow-y-auto p-4 sm:p-5">
               <div className="mb-4 rounded-xl border-2 border-amber-400 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950 sm:text-base">
-                <p className="font-extrabold">Prima di utilizzare questi dati bancari</p>
-                <p className="mt-1">Entra nell&apos;Area Riservata → <strong>Bonifici e versamenti</strong>, genera <strong>Codice Bonifico e distinta di pagamento</strong> con partecipanti e quote, quindi inserisci il codice nella causale esattamente come generato. Dopo il bonifico torna nella stessa sezione, carica la ricevuta e completa la procedura. <strong>Non inviarla via email o WhatsApp.</strong></p>
-                <p className="mt-2 text-xs font-bold uppercase tracking-wide sm:text-sm">Esempio codice: <span className="font-mono">GMG2027-PHX7ZD3G</span></p>
+                <p className="font-extrabold text-red-900">ATTENZIONE — NON EFFETTUARE BONIFICI SENZA CODICE</p>
+                <p className="mt-1">Queste coordinate bancarie servono <strong>solo dopo</strong> aver creato il versamento nell&apos;Area Riservata → <strong>Bonifici e versamenti</strong>. Genera il tuo <strong>Codice Bonifico</strong>, indica partecipanti e quote nella distinta e riporta <strong>il codice esatto all&apos;inizio della causale</strong>. Dopo il pagamento torna in <strong>“Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”</strong>: seleziona la distinta che il sistema recupera, inserisci la data e allega la ricevuta bancaria. <strong>Non inviarla via email o WhatsApp.</strong></p>
               </div>
               <img src="/images/banca-sella-coordinate.png" alt="Banca Sella" className="mx-auto mb-4 hidden w-full rounded border border-gray-200 sm:block" />
               <div className="space-y-3 text-sm sm:text-base">
@@ -3513,46 +3643,61 @@ function App() {
               </button>
             </div>
 
-            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3 sm:p-5">
-              <div className="space-y-3 rounded-xl border-2 border-amber-300 bg-amber-50 px-3 py-4 text-sm leading-relaxed text-amber-950 sm:px-4 sm:text-base">
-                <p className="font-extrabold">PRIMA GENERA IL CODICE — POI EFFETTUA IL BONIFICO</p>
-                <p>
-                  I dati bancari restano disponibili sul sito, ma <span className="font-extrabold">prima di effettuare qualsiasi bonifico devi seguire la procedura guidata nella sezione “Bonifici e versamenti” dell&apos;Area Riservata</span>. Il sistema genera un Codice Bonifico univoco e una distinta di pagamento con partecipanti e quote. Il Codice Bonifico deve comparire nella causale esattamente come generato; dopo il codice puoi aggiungere altro testo.
-                </p>
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-3 sm:p-5">
+              <div className="rounded-xl border-2 border-amber-400 bg-amber-50 px-4 py-4 text-amber-950">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="mt-1 h-6 w-6 shrink-0 text-red-800" aria-hidden="true" />
+                  <div>
+                    <p className="text-base font-extrabold text-red-900 sm:text-lg">Non fare bonifici senza il Codice Bonifico.</p>
+                    <p className="mt-1 text-sm leading-relaxed sm:text-base">Il nome e cognome nella causale non bastano: il sistema deve riconoscere <strong>i partecipanti e gli importi</strong> della distinta. Prima genera il codice, poi esegui il bonifico.</p>
+                  </div>
+                </div>
               </div>
 
-              <div className="rounded-xl border border-slate-300 bg-slate-950 px-3 py-3 text-center text-white sm:px-4">
-                <p className="text-xs font-bold uppercase tracking-[0.12em] text-amber-300">Esempio Codice Bonifico</p>
-                <p className="mt-1 font-mono text-lg font-extrabold tracking-wide sm:text-xl">GMG2027-PHX7ZD3G</p>
-                <p className="mt-1 text-xs text-white/70 sm:text-sm">Nella causale deve essere presente questo codice; dopo puoi aggiungere altro testo.</p>
+              <h4 className="text-lg font-extrabold text-slate-950 sm:text-xl">Come si fa: tutti i 5 passaggi</h4>
+              <ol className="space-y-3">
+                {KOREA_PAYMENT_STEPS.map(({ number, Icon, title, detail }) => (
+                  <li key={number} className="flex items-start gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3 sm:p-4">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-400 font-extrabold text-black" aria-hidden="true">{number}</span>
+                    <div className="min-w-0">
+                      <h5 className="flex items-center gap-2 font-extrabold text-slate-950"><Icon className="h-5 w-5 shrink-0 text-amber-700" aria-hidden="true" />{title}</h5>
+                      <p className="mt-1 text-sm leading-relaxed text-slate-800 sm:text-base">{detail}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+
+              <div className="rounded-xl border border-slate-300 bg-slate-950 p-4 text-center text-white">
+                <p className="text-xs font-extrabold uppercase tracking-wide text-amber-300">Codice di esempio — non utilizzarlo per pagare</p>
+                <p className="mt-2 break-all font-mono text-lg font-extrabold sm:text-xl">GMG2027-PHX7ZD3G</p>
+                <p className="mt-2 text-sm text-white/90">Esempio di causale: <strong className="font-mono">GMG2027-PHX7ZD3G ROSSI MARIO</strong></p>
+                <p className="mt-1 text-xs text-white/70">Ogni pagamento deve usare il proprio codice generato nell&apos;Area Riservata.</p>
               </div>
 
-              {[
-                ['1. Entra nell’Area Riservata', 'Accedi con il profilo con cui devi gestire il pagamento.'],
-                ['2. Apri “Bonifici e versamenti”', 'Scegli il pellegrinaggio Korea 2027 e premi “Genera codice bonifico”. Segui le indicazioni per generare la distinta di pagamento inserendo i nomi dei partecipanti e le relative quote. Salva la distinta e utilizzala per effettuare il bonifico.'],
-                ['3. Inserisci il codice nella causale', 'Il Codice Bonifico deve comparire nella causale esattamente come generato. Dopo il codice puoi aggiungere altro testo. La procedura vale per versamenti singoli e per pagamenti di famiglie, comunità o gruppi di persone.'],
-                ['4. Esegui il bonifico e salva la ricevuta', 'Conserva il file o la foto della ricevuta. Non inviarla via email o WhatsApp.'],
-                ['5. Torna nella stessa sezione e carica la ricevuta', 'Chi ha generato il Codice Bonifico deve tornare in “Bonifici e versamenti”, riprendere il versamento creato, allegare la ricevuta e seguire le indicazioni per confermare tutti i partecipanti con le relative quote. In questo modo il sistema può collegare automaticamente pagamento, Codice Bonifico, distinta, ricevuta ed estratto conto.'],
-              ].map(([title, text]) => (
-                <article key={title} className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 sm:px-4 sm:py-4">
-                  <h4 className="font-bold text-black">{title}</h4>
-                  <p className="mt-1.5 text-sm leading-relaxed text-gray-800 sm:text-base">{text}</p>
-                </article>
-              ))}
+              <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm leading-relaxed text-amber-950 sm:text-base">
+                <h4 className="font-extrabold">Perché è necessario?</h4>
+                <p className="mt-2">È la <strong>stessa procedura adottata dalla GMG internazionale, che gestisce migliaia di pellegrini</strong>. L&apos;abbiamo adattata al nostro pellegrinaggio per collegare automaticamente codice, distinta, partecipanti, quote, ricevuta e accredito bancario.</p>
+                <p className="mt-2"><strong>Quando il bonifico arriva senza codice, anche se contiene nome e cognome, dobbiamo ricostruire manualmente a chi e a quali rate appartiene.</strong> Sono ore e ore di verifiche che svolgiamo dopo il lavoro, la sera e talvolta di notte, mentre il sistema potrebbe farle automaticamente.</p>
+                <p className="mt-2 font-semibold">Vi chiediamo per favore di aiutarci con responsabilità: leggete le istruzioni e seguite la procedura completa, per ogni bonifico, anche se pagate per più persone. Così evitiamo controlli inutili e possiamo dedicare il nostro tempo all&apos;organizzazione del pellegrinaggio.</p>
+              </div>
+
+              <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm leading-relaxed text-red-950 sm:text-base">
+                <p><strong>Ricevuta: non inviarla via email o WhatsApp.</strong> Dopo aver pagato, chi ha generato il codice entra in <strong>“Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”</strong>. Il sistema ritrova la distinta con i partecipanti e gli importi già associati: <strong>è sufficiente selezionarla, inserire la data del bonifico e allegare la ricevuta bancaria.</strong></p>
+              </div>
 
               <a
                 href={SITE_CONFIG.reservedAreaUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center rounded-xl bg-black px-5 py-3.5 text-sm font-extrabold text-white transition hover:bg-gray-800 sm:text-base"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 py-3.5 text-center text-sm font-extrabold text-black transition hover:bg-amber-300 sm:text-base"
               >
-                Entra nell&apos;Area Riservata e genera il codice
+                <ExternalLink className="h-5 w-5 shrink-0" aria-hidden="true" />
+                Vai all&apos;Area Riservata e genera il tuo codice
               </a>
 
-              <div className="space-y-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-3 text-sm leading-relaxed text-amber-950 sm:px-4 sm:py-4 sm:text-base">
-                <p><span className="font-bold">Bonifici dalla Svizzera:</span> aggiungere 8,50 € di commissioni per ogni operazione. Se il pagamento parte da un conto in franchi svizzeri (CHF) e viene convertito in euro, considerare anche 5,00 € per il cambio valuta: in questo caso la cifra complessiva da aggiungere è <span className="font-bold">13,50 €</span> (8,50 € + 5,00 €). Verificare comunque con la propria banca, prima di eseguire il bonifico, eventuali commissioni o costi aggiuntivi. <span className="font-bold">È importante che l&apos;importo netto effettivamente accreditato sul conto del Comitato corrisponda esattamente alla quota richiesta.</span></p>
-                <p><span className="font-bold">Ricevute:</span> dopo ogni bonifico, salvarle. <span className="font-bold">Non inviarle via email o WhatsApp.</span> Chi ha generato il Codice Bonifico deve tornare nella stessa sezione <span className="font-bold">“Bonifici e versamenti”</span>, riprendere il versamento creato, allegare la ricevuta e seguire le indicazioni per confermare partecipanti e quote.</p>
-                <p><span className="font-bold">Contanti:</span> per problemi tecnici con il bonifico e per ricevere informazioni, contattare l&apos;organizzazione.</p>
+              <div className="space-y-2 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm leading-relaxed text-amber-950 sm:text-base">
+                <p><strong>Bonifici dalla Svizzera:</strong> aggiungere 8,50 € di commissioni per ogni operazione. Se il pagamento parte da un conto in franchi svizzeri (CHF) e viene convertito in euro, considerare anche 5,00 € per il cambio valuta: in questo caso la cifra complessiva da aggiungere è <strong>13,50 €</strong> (8,50 € + 5,00 €). Verificare con la propria banca eventuali costi ulteriori. L&apos;importo netto accreditato sul conto del Comitato deve corrispondere alla quota richiesta.</p>
+                <p><strong>Contanti:</strong> per problemi tecnici con il bonifico o informazioni sulla consegna di quote in contanti, contattare l&apos;organizzazione.</p>
               </div>
             </div>
           </div>
@@ -3578,7 +3723,7 @@ function App() {
           </div>
         </div>
       </footer>
-      <SeoulAvailabilityFloating page={currentPage} />
+      {currentPage === 'home' ? <SeoulAvailabilityFloating page={currentPage} /> : null}
       <FloatingAssistance />
       <VisitCounterBadge />
     </div>
