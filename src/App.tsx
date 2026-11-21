@@ -1,5 +1,5 @@
 import Navigation from './components/Navigation';
-import { AlertCircle, ArrowRight, Bell, CheckCircle2, ChevronDown, ChevronRight, Clock3, ExternalLink, FileCheck2, FileText, KeyRound, Landmark, Loader2, Play, Search, Smartphone, UploadCloud, UserRound, X } from 'lucide-react';
+import { AlertCircle, ArrowRight, Bell, CheckCircle2, ChevronDown, ChevronRight, Clock3, ExternalLink, FileCheck2, FileText, HeartHandshake, KeyRound, Landmark, Loader2, Play, Search, Smartphone, UploadCloud, UserRound, X } from 'lucide-react';
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import FlipCountdown from './components/FlipCountdown';
@@ -1669,7 +1669,7 @@ const RESERVED_AREA_READING_STEPS = [
   },
   {
     title: '4. Bonifico: genera prima il codice',
-    text: 'Prima di effettuare qualsiasi bonifico è necessario entrare nell’Area Riservata e seguire la procedura guidata in “Bonifici e versamenti”. Scegli Korea 2027, premi “Genera codice bonifico”, inserisci i partecipanti e le relative quote, quindi genera e salva la distinta di pagamento. Il Codice Bonifico deve comparire nella causale esattamente come generato; dopo il codice puoi aggiungere altro testo. Dopo il pagamento, chi ha generato il codice torna in “Bonifici e versamenti” e sceglie “Ho già effettuato bonifico” → “Con codice”: il sistema recupera le distinte con partecipanti e quote già associati. Basta selezionare quella corretta, inserire la data e allegare la ricevuta bancaria; non inviarla via email o WhatsApp. È la stessa procedura della GMG internazionale, adottata per migliaia di pellegrini: serve a evitare all’organizzazione ore e ore di controlli manuali. Vi chiediamo per favore di seguirla con responsabilità.',
+    text: 'Per ogni bonifico destinato alle quote di un partecipante è necessario entrare nell’Area Riservata e seguire la procedura guidata in “Bonifici e versamenti”. Scegli Korea 2027, premi “Genera codice bonifico”, inserisci i partecipanti e le relative quote, quindi genera e salva la distinta di pagamento. Il Codice Bonifico deve comparire nella causale esattamente come generato; dopo il codice puoi aggiungere altro testo. Dopo il pagamento, chi ha generato il codice torna in “Bonifici e versamenti” e sceglie “Ho già effettuato bonifico” → “Con codice”: il sistema recupera le distinte con partecipanti e quote già associati. Basta selezionare quella corretta, inserire la data e allegare la ricevuta bancaria; non inviarla via email o WhatsApp. È la stessa procedura della GMG internazionale, adottata per migliaia di pellegrini: serve a evitare all’organizzazione ore e ore di controlli manuali. Vi chiediamo per favore di seguirla con responsabilità.',
   },
 ];
 
@@ -1731,6 +1731,8 @@ function App() {
   const [isReservedReadingOpen, setIsReservedReadingOpen] = useState(false);
   const [reservedReadingStep, setReservedReadingStep] = useState(0);
   const [isBankDetailsOpen, setIsBankDetailsOpen] = useState(false);
+  const [bankDetailsPurpose, setBankDetailsPurpose] = useState<'quote' | 'donazione'>('quote');
+  const [isDonationInfoOpen, setIsDonationInfoOpen] = useState(false);
   const [isPaymentInstructionsOpen, setIsPaymentInstructionsOpen] = useState(false);
   const [isPaymentNoticeOpen, setIsPaymentNoticeOpen] = useState(false);
   const [openVideoId, setOpenVideoId] = useState<number | null>(1);
@@ -2486,7 +2488,7 @@ function App() {
                   <article className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 px-4 py-5">
                     <p className="text-lg font-extrabold text-amber-200">4. Genera il codice bonifico prima di pagare</p>
                     <p className="mt-2 text-white/90 leading-relaxed">
-                      Prima di effettuare qualsiasi bonifico apri nell&apos;Area Riservata <span className="font-extrabold text-white">“Bonifici e versamenti”</span>, scegli Korea 2027 e premi <span className="font-extrabold text-white">“Genera codice bonifico”</span>. Inserisci partecipanti e quote, genera e salva la distinta di pagamento; il Codice Bonifico deve comparire nella causale esattamente come generato. Dopo il codice puoi aggiungere altre indicazioni.
+                      Prima di effettuare un bonifico per le quote del pellegrinaggio apri nell&apos;Area Riservata <span className="font-extrabold text-white">“Bonifici e versamenti”</span>, scegli Korea 2027 e premi <span className="font-extrabold text-white">“Genera codice bonifico”</span>. Inserisci partecipanti e quote, genera e salva la distinta di pagamento; il Codice Bonifico deve comparire nella causale esattamente come generato. Dopo il codice puoi aggiungere altre indicazioni.
                     </p>
                     <p className="mt-2 font-bold leading-relaxed text-amber-200">
                       La procedura vale per versamenti singoli e di famiglie, comunità o gruppi. Dopo il bonifico, torna in <span className="font-extrabold text-white">“Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”</span>: il sistema trova le distinte con partecipanti e quote già associati. Seleziona quella corretta, inserisci la data e allega la ricevuta bancaria. <span className="font-extrabold text-white">Non inviarla via email o WhatsApp.</span> È la stessa procedura della GMG internazionale: vi chiediamo di seguirla con responsabilità per non obbligarci a ore di controlli manuali dopo il lavoro.
@@ -3378,26 +3380,111 @@ function App() {
             <div className="w-32 h-1 bg-amber-600 mx-auto mt-4"></div>
           </div>
 
+          <div className="mx-auto mb-6 grid max-w-5xl items-stretch gap-4 md:grid-cols-2">
+            {/* Quote in primo piano: i due riquadri hanno sempre la stessa altezza. */}
+            <article className="relative flex h-full flex-col overflow-hidden rounded-2xl border-2 border-amber-300/85 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 px-5 py-6 text-white shadow-[0_16px_42px_rgba(245,158,11,0.16)] sm:px-7">
+              <span className="absolute inset-x-0 top-0 h-1 bg-amber-300" aria-hidden="true" />
+              <div className="flex items-center gap-3.5">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-300 text-slate-950">
+                  <KeyRound className="h-6 w-6" aria-hidden="true" />
+                </span>
+                <div>
+                  <h3 className="text-xl font-extrabold leading-tight text-white sm:text-2xl">Quote di partecipazione e rate</h3>
+                  <p className="mt-1 text-sm font-extrabold text-amber-200">Codice Bonifico obbligatorio</p>
+                </div>
+              </div>
+              <p className="mt-5 text-sm leading-relaxed text-white/90 sm:text-base">
+                Per iscrizioni, rate e pagamenti destinati a uno o più partecipanti, <strong className="text-white">genera prima il Codice Bonifico e la distinta nell&apos;Area Riservata.</strong>
+              </p>
+              <div className="mt-auto pt-5">
+                <button
+                  type="button"
+                  onClick={() => setIsPaymentInstructionsOpen(true)}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-amber-300 px-4 py-3 text-sm font-extrabold text-slate-950 shadow-lg transition hover:bg-amber-200 active:scale-[0.99] sm:w-auto"
+                >
+                  <FileText className="h-5 w-5" aria-hidden="true" />
+                  Come effettuare un versamento
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
+            </article>
+
+            {/* Riepilogo compatto: il dettaglio delle donazioni è chiuso per impostazione iniziale. */}
+            <article className="relative flex h-full flex-col rounded-2xl border border-emerald-400/35 bg-slate-900/70 px-5 py-6 text-white shadow-xl sm:px-7">
+              <div className="flex items-center gap-3.5">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-emerald-300/35 bg-emerald-400/10 text-emerald-200">
+                  <HeartHandshake className="h-6 w-6" aria-hidden="true" />
+                </span>
+                <div>
+                  <h3 className="text-xl font-extrabold leading-tight text-white sm:text-2xl">Donazioni libere al Comitato</h3>
+                  <p className="mt-1 text-sm font-semibold text-emerald-200">Senza Codice Bonifico</p>
+                </div>
+              </div>
+              <p className="mt-5 text-sm leading-relaxed text-white/80 sm:text-base">
+                Un contributo libero per <strong className="font-semibold text-white">sostenere chi ha difficoltà economiche</strong> a partecipare ai pellegrinaggi.
+              </p>
+              <div className="mt-auto pt-5">
+                <button
+                  type="button"
+                  onClick={() => setIsDonationInfoOpen((wasOpen) => !wasOpen)}
+                  aria-expanded={isDonationInfoOpen}
+                  aria-controls="informazioni-donazioni-libere"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-300/45 bg-emerald-400/10 px-4 py-3 text-sm font-bold text-emerald-100 transition hover:border-emerald-200 hover:bg-emerald-400/20 active:scale-[0.99] sm:w-auto"
+                >
+                  {isDonationInfoOpen ? 'Chiudi informazioni' : 'Scopri come donare'}
+                  <ChevronDown className={`h-5 w-5 transition-transform duration-200 ${isDonationInfoOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+                </button>
+              </div>
+            </article>
+
+            {isDonationInfoOpen ? (
+              <div id="informazioni-donazioni-libere" className="rounded-2xl border border-emerald-300/35 bg-emerald-950/70 px-5 py-5 text-white shadow-xl sm:px-7 md:col-span-2">
+                <div className="flex items-center gap-3">
+                  <HeartHandshake className="h-6 w-6 shrink-0 text-emerald-200" aria-hidden="true" />
+                  <h4 className="text-lg font-extrabold text-white">Come fare una donazione libera</h4>
+                </div>
+                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                  <p className="text-sm leading-relaxed text-white/90 sm:text-base">
+                    Puoi effettuare un normale bonifico <strong>senza Codice Bonifico e senza distinta</strong>. La donazione contribuisce a sostenere chi ne ha bisogno, senza indicare il nome di chi riceverà l&apos;aiuto.
+                  </p>
+                  <div className="rounded-xl border border-emerald-300/25 bg-black/25 px-4 py-3 text-sm leading-relaxed sm:text-base">
+                    <p className="text-emerald-200">Causale da scrivere:</p>
+                    <p className="mt-1 font-mono font-extrabold tracking-wide text-white">DONAZIONE LIBERA</p>
+                    <p className="mt-2 text-xs text-white/75 sm:text-sm">Per il pagamento della quota di uno specifico partecipante resta necessaria la procedura ordinaria con codice e distinta.</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setBankDetailsPurpose('donazione'); setIsBankDetailsOpen(true); }}
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-200 px-4 py-3 text-sm font-extrabold text-emerald-950 transition hover:bg-emerald-100 active:scale-[0.99] sm:w-auto"
+                >
+                  <Landmark className="h-5 w-5" aria-hidden="true" />
+                  Dati bancari per una donazione
+                </button>
+              </div>
+            ) : null}
+          </div>
+
           <div className="mx-auto max-w-5xl rounded-3xl border border-white/15 bg-white/10 p-4 text-white shadow-2xl backdrop-blur-sm sm:p-7 md:p-9">
-            {/* L'avviso deve precedere i dati bancari per evitare bonifici senza codice. */}
+            {/* L'obbligo del codice vale per le quote; le donazioni libere sono escluse. */}
             <div className="flex items-start gap-3 rounded-2xl border-2 border-amber-300 bg-amber-100 px-4 py-4 text-amber-950 shadow-lg sm:items-center sm:px-5">
               <AlertCircle className="mt-0.5 h-8 w-8 shrink-0 text-red-800 sm:mt-0" aria-hidden="true" />
               <div>
                 <h3 className="text-lg font-extrabold leading-snug text-red-900 sm:text-2xl">
-                  Attenzione: non fare bonifici senza Codice Bonifico.
+                  Attenzione: per le quote il Codice Bonifico è obbligatorio.
                 </h3>
                 <p className="mt-1 text-sm leading-relaxed sm:text-base">
-                  <strong>Il solo nome nella causale non basta.</strong> Prima di pagare devi generare il tuo codice nell&apos;Area Riservata.
+                  <strong>Il solo nome nella causale non basta per pagare le quote.</strong> Prima di versare rate o iscrizioni devi generare il codice nell&apos;Area Riservata. <strong>Le donazioni libere sono escluse.</strong>
                 </p>
               </div>
             </div>
 
             <p className="mt-5 text-base leading-relaxed text-white/90 sm:text-lg">
-              I dati bancari restano disponibili, ma <strong className="text-white">non vanno utilizzati per fare un bonifico senza aver prima creato il pagamento</strong> nella sezione “Bonifici e versamenti” dell&apos;Area Riservata.
+              Per pagare quote e rate, <strong className="text-white">non utilizzare i dati bancari prima di aver creato il pagamento</strong> nella sezione “Bonifici e versamenti” dell&apos;Area Riservata. <strong className="text-white">Le donazioni libere, anche per sostenere chi ha bisogno, si fanno senza codice.</strong>
             </p>
 
             <div className="mt-5 rounded-2xl border border-white/20 bg-slate-950/55 p-4 sm:p-6">
-              <h3 className="text-xl font-extrabold text-amber-200 sm:text-2xl">La procedura corretta in 5 passi</h3>
+              <h3 className="text-xl font-extrabold text-amber-200 sm:text-2xl">Quote e rate: la procedura corretta in 5 passi</h3>
               <p className="mt-1 text-sm text-white/75 sm:text-base">Vale per chi paga per sé, per i figli, per una famiglia o per un gruppo.</p>
               <ol className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5" aria-label="Cinque passi per effettuare un bonifico corretto">
                 {KOREA_PAYMENT_STEPS.map(({ number, Icon, title, short }) => (
@@ -3422,7 +3509,7 @@ function App() {
                   </div>
                 </div>
                 <div className="rounded-2xl border border-amber-200/30 bg-amber-100/10 px-4 py-5">
-                  <h4 className="text-lg font-extrabold text-amber-200 sm:text-xl">Perché il codice è obbligatorio?</h4>
+                  <h4 className="text-lg font-extrabold text-amber-200 sm:text-xl">Perché il codice è obbligatorio per le quote?</h4>
                   <ul className="mt-3 space-y-3 text-sm leading-relaxed sm:text-base">
                     {[
                       'Identifica a chi appartiene il pagamento, anche se paga un genitore o un’altra persona.',
@@ -3436,7 +3523,7 @@ function App() {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-4 border-t border-amber-200/20 pt-3 text-sm leading-relaxed text-white/90 sm:text-base"><strong className="text-amber-200">È la stessa procedura della GMG internazionale, utilizzata per migliaia di pellegrini.</strong> Per favore, leggete e rispettate i passaggi: anche un solo bonifico senza codice ci costringe a controlli manuali evitabili. La vostra collaborazione ci aiuta davvero.</p>
+                  <p className="mt-4 border-t border-amber-200/20 pt-3 text-sm leading-relaxed text-white/90 sm:text-base"><strong className="text-amber-200">È la stessa procedura della GMG internazionale, utilizzata per migliaia di pellegrini.</strong> Per favore, leggete e rispettate i passaggi: anche un solo bonifico per le quote senza codice ci costringe a controlli manuali evitabili. La vostra collaborazione ci aiuta davvero.</p>
                 </div>
               </div>
 
@@ -3462,11 +3549,11 @@ function App() {
                 <div className="grid w-full gap-3 sm:max-w-[620px] sm:grid-cols-2">
                   <button
                     type="button"
-                    onClick={() => setIsBankDetailsOpen(true)}
+                    onClick={() => { setBankDetailsPurpose('quote'); setIsBankDetailsOpen(true); }}
                     className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white px-4 py-3 font-bold text-slate-950 transition-colors hover:bg-gray-100"
                   >
                     <Landmark className="h-5 w-5" aria-hidden="true" />
-                    Vedi dati bancari
+                    Vedi dati bancari per le quote
                   </button>
                   <button
                     type="button"
@@ -3511,7 +3598,7 @@ function App() {
                   <p>Se il pagamento parte da un conto in franchi svizzeri (CHF) e l&apos;importo viene convertito in euro, considerare anche 5,00 € per il cambio valuta: in questo caso la cifra complessiva da aggiungere è quindi di <strong>13,50 €</strong> (8,50 € + 5,00 €).</p>
                   <p>Verificare comunque con la propria banca, prima di eseguire il bonifico, eventuali commissioni o costi aggiuntivi applicati.</p>
                   <p className="font-semibold text-amber-100">È importante che l&apos;importo netto effettivamente accreditato sul conto del Comitato corrisponda esattamente alla quota richiesta.</p>
-                  <p>Anche dalla Svizzera, prima di pagare, è obbligatorio generare Codice Bonifico e distinta nell&apos;Area Riservata, indicando partecipanti e quote. Dopo il bonifico usa “Ho già effettuato bonifico” → “Con codice”, seleziona la distinta recuperata dal sistema, inserisci la data e allega la ricevuta bancaria. Non inviarla via email o WhatsApp.</p>
+                  <p>Anche dalla Svizzera, per il pagamento delle quote, è obbligatorio generare Codice Bonifico e distinta nell&apos;Area Riservata, indicando partecipanti e quote. Dopo il bonifico usa “Ho già effettuato bonifico” → “Con codice”, seleziona la distinta recuperata dal sistema, inserisci la data e allega la ricevuta bancaria. Non inviarla via email o WhatsApp.</p>
                   <p>Per problemi tecnici con il bonifico o per richiedere informazioni sulla consegna delle quote in contanti, contattare l&apos;organizzazione.</p>
                 </div>
               </div>
@@ -3579,7 +3666,7 @@ function App() {
             <div className="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-4 sm:px-5">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-gray-500">JMJ Seoul 2027</p>
-                <h3 className="text-xl font-serif font-bold sm:text-2xl">Dati bancari</h3>
+                <h3 className="text-xl font-serif font-bold sm:text-2xl">{bankDetailsPurpose === 'donazione' ? 'Dati bancari per donazioni' : 'Dati bancari per le quote'}</h3>
               </div>
               <button
                 type="button"
@@ -3591,10 +3678,20 @@ function App() {
               </button>
             </div>
             <div className="max-h-[calc(100dvh-7rem)] overflow-y-auto p-4 sm:p-5">
-              <div className="mb-4 rounded-xl border-2 border-amber-400 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950 sm:text-base">
-                <p className="font-extrabold text-red-900">ATTENZIONE — NON EFFETTUARE BONIFICI SENZA CODICE</p>
-                <p className="mt-1">Queste coordinate bancarie servono <strong>solo dopo</strong> aver creato il versamento nell&apos;Area Riservata → <strong>Bonifici e versamenti</strong>. Genera il tuo <strong>Codice Bonifico</strong>, indica partecipanti e quote nella distinta e riporta <strong>il codice esatto all&apos;inizio della causale</strong>. Dopo il pagamento torna in <strong>“Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”</strong>: seleziona la distinta che il sistema recupera, inserisci la data e allega la ricevuta bancaria. <strong>Non inviarla via email o WhatsApp.</strong></p>
-              </div>
+              {bankDetailsPurpose === 'donazione' ? (
+                <div className="mb-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 px-4 py-3 text-sm leading-relaxed text-emerald-950 sm:text-base">
+                  <p className="font-extrabold">DONAZIONE LIBERA — NESSUN CODICE BONIFICO NECESSARIO</p>
+                  <p className="mt-1">Le donazioni libere servono ad <strong>aiutare chi è in difficoltà economica a partecipare ai pellegrinaggi</strong>. Puoi donare direttamente con le coordinate qui sotto, <strong>senza generare codice o distinta nell&apos;Area Riservata</strong> e senza indicare il nome di chi riceverà l&apos;aiuto.</p>
+                  <p className="mt-3">Causale: <strong className="font-mono">DONAZIONE LIBERA</strong></p>
+                  <p className="mt-2 font-semibold">Se invece stai pagando la quota di iscrizione o una rata per uno specifico partecipante, devi seguire la procedura ordinaria con Codice Bonifico e distinta.</p>
+                </div>
+              ) : (
+                <div className="mb-4 rounded-xl border-2 border-amber-400 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950 sm:text-base">
+                  <p className="font-extrabold text-red-900">ATTENZIONE — PER LE QUOTE IL CODICE È OBBLIGATORIO</p>
+                  <p className="mt-1">Per le quote di partecipazione, usa queste coordinate bancarie <strong>solo dopo</strong> aver creato il versamento nell&apos;Area Riservata → <strong>Bonifici e versamenti</strong>. Genera il tuo <strong>Codice Bonifico</strong>, indica partecipanti e quote nella distinta e riporta <strong>il codice esatto all&apos;inizio della causale</strong>. Dopo il pagamento torna in <strong>“Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”</strong>: seleziona la distinta, inserisci la data e allega la ricevuta bancaria. <strong>Non inviarla via email o WhatsApp.</strong></p>
+                  <p className="mt-2 font-semibold">Per le donazioni libere destinate ad aiutare chi è in difficoltà, il codice non è necessario.</p>
+                </div>
+              )}
               <img src="/images/banca-sella-coordinate.png" alt="Banca Sella" className="mx-auto mb-4 hidden w-full rounded border border-gray-200 sm:block" />
               <div className="space-y-3 text-sm sm:text-base">
                 <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
@@ -3648,7 +3745,7 @@ function App() {
                 <div className="flex items-start gap-3">
                   <AlertCircle className="mt-1 h-6 w-6 shrink-0 text-red-800" aria-hidden="true" />
                   <div>
-                    <p className="text-base font-extrabold text-red-900 sm:text-lg">Non fare bonifici senza il Codice Bonifico.</p>
+                    <p className="text-base font-extrabold text-red-900 sm:text-lg">Non fare bonifici per le quote senza il Codice Bonifico.</p>
                     <p className="mt-1 text-sm leading-relaxed sm:text-base">Il nome e cognome nella causale non bastano: il sistema deve riconoscere <strong>i partecipanti e gli importi</strong> della distinta. Prima genera il codice, poi esegui il bonifico.</p>
                   </div>
                 </div>
@@ -3671,14 +3768,14 @@ function App() {
                 <p className="text-xs font-extrabold uppercase tracking-wide text-amber-300">Codice di esempio — non utilizzarlo per pagare</p>
                 <p className="mt-2 break-all font-mono text-lg font-extrabold sm:text-xl">GMG2027-PHX7ZD3G</p>
                 <p className="mt-2 text-sm text-white/90">Esempio di causale: <strong className="font-mono">GMG2027-PHX7ZD3G ROSSI MARIO</strong></p>
-                <p className="mt-1 text-xs text-white/70">Ogni pagamento deve usare il proprio codice generato nell&apos;Area Riservata.</p>
+                <p className="mt-1 text-xs text-white/70">Ogni pagamento di quote o rate deve usare il proprio codice generato nell&apos;Area Riservata. Le donazioni libere sono escluse.</p>
               </div>
 
               <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm leading-relaxed text-amber-950 sm:text-base">
                 <h4 className="font-extrabold">Perché è necessario?</h4>
                 <p className="mt-2">È la <strong>stessa procedura adottata dalla GMG internazionale, che gestisce migliaia di pellegrini</strong>. L&apos;abbiamo adattata al nostro pellegrinaggio per collegare automaticamente codice, distinta, partecipanti, quote, ricevuta e accredito bancario.</p>
-                <p className="mt-2"><strong>Quando il bonifico arriva senza codice, anche se contiene nome e cognome, dobbiamo ricostruire manualmente a chi e a quali rate appartiene.</strong> Sono ore e ore di verifiche che svolgiamo dopo il lavoro, la sera e talvolta di notte, mentre il sistema potrebbe farle automaticamente.</p>
-                <p className="mt-2 font-semibold">Vi chiediamo per favore di aiutarci con responsabilità: leggete le istruzioni e seguite la procedura completa, per ogni bonifico, anche se pagate per più persone. Così evitiamo controlli inutili e possiamo dedicare il nostro tempo all&apos;organizzazione del pellegrinaggio.</p>
+                <p className="mt-2"><strong>Quando un bonifico per le quote arriva senza codice, anche se contiene nome e cognome, dobbiamo ricostruire manualmente a chi e a quali rate appartiene.</strong> Sono ore e ore di verifiche che svolgiamo dopo il lavoro, la sera e talvolta di notte, mentre il sistema potrebbe farle automaticamente.</p>
+                <p className="mt-2 font-semibold">Vi chiediamo per favore di aiutarci con responsabilità: leggete le istruzioni e seguite la procedura completa, per ogni bonifico destinato alle quote, anche se pagate per più persone. Così evitiamo controlli inutili e possiamo dedicare il nostro tempo all&apos;organizzazione del pellegrinaggio.</p>
               </div>
 
               <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm leading-relaxed text-red-950 sm:text-base">
