@@ -5458,3 +5458,17 @@ option {
     line-height: 1.26;
   }
 }
+
+/* V119 — centratura testo della prima frase nel box piccolo su mobile.
+   Intervento limitato al trigger compatto: il modal grande non cambia. */
+@media (max-width: 640px) {
+  .seoul-floating-trigger-waitlist-copy {
+    align-items: center;
+  }
+
+  .seoul-floating-trigger-waitlist-copy > strong {
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+}
