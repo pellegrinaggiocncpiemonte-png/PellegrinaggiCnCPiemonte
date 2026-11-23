@@ -5297,3 +5297,164 @@ option {
   .seoul-waitlist-details-mail-arrow svg { width:15px; height:15px; }
   .seoul-waitlist-request-banner { grid-template-columns:auto minmax(0,1fr) !important; }
 }
+
+
+/* V119 — miglioramento leggibilità box piccolo lista d'attesa home */
+.seoul-floating-trigger-waitlist {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: .42rem;
+  width: 100%;
+  padding: .34rem .5rem .24rem;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(11, 110, 141, .35) 0%, rgba(6, 54, 80, .48) 100%);
+  border: 1px solid rgba(135, 243, 255, .58);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06), 0 8px 18px rgba(0, 0, 0, .16);
+  white-space: normal;
+  flex-wrap: nowrap;
+  row-gap: 0;
+  color: #fff2bc;
+  font-size: .66rem;
+  line-height: 1.12;
+  text-align: left;
+}
+
+.seoul-floating-trigger-waitlist-icon {
+  display: grid;
+  place-items: center;
+  width: 1.56rem;
+  height: 1.56rem;
+  border-radius: .42rem;
+  background: linear-gradient(180deg, rgba(221, 238, 255, .95), rgba(133, 171, 211, .88));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 6px 14px rgba(0, 0, 0, .18);
+  font-size: .95rem;
+  flex: 0 0 auto;
+}
+
+.seoul-floating-trigger-waitlist-copy {
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: .08rem;
+}
+
+.seoul-floating-trigger-waitlist strong {
+  display: block;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: .76rem;
+  line-height: 1.14;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+
+.seoul-floating-trigger-waitlist-action {
+  display: block;
+  align-self: center;
+  text-align: center;
+  color: #ffd95f;
+  font-weight: 850;
+  font-size: .69rem;
+  line-height: 1.15;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  text-wrap: balance;
+}
+
+.seoul-floating-trigger:hover .seoul-floating-trigger-waitlist-action {
+  color: #fff0a6;
+}
+
+@media (max-width: 640px) {
+  .seoul-floating-trigger-waitlist {
+    gap: .34rem;
+    padding: .28rem .34rem .2rem;
+    border-radius: 14px;
+  }
+
+  .seoul-floating-trigger-waitlist-icon {
+    width: 1.34rem;
+    height: 1.34rem;
+    font-size: .84rem;
+    border-radius: .36rem;
+  }
+
+  .seoul-floating-trigger-waitlist-copy {
+    gap: .06rem;
+  }
+
+  .seoul-floating-trigger-waitlist strong {
+    font-size: .7rem;
+    line-height: 1.12;
+  }
+
+  .seoul-floating-trigger-waitlist-action {
+    font-size: .68rem;
+    line-height: 1.12;
+  }
+}
+
+@media (max-width: 420px) {
+  .seoul-floating-trigger-waitlist {
+    gap: .28rem;
+    padding: .24rem .3rem .18rem;
+  }
+
+  .seoul-floating-trigger-waitlist strong {
+    font-size: .63rem;
+  }
+
+  .seoul-floating-trigger-waitlist-action {
+    font-size: .61rem;
+  }
+}
+
+
+/* V119 — modal grande lista d'attesa leggibile (anteprima approvata) */
+/* ANTEPRIMA: solo le due righe del pulsante lista d'attesa nel MODAL GRANDE */
+.seoul-floating-waitlist-link {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: .32rem;
+  padding: .9rem .9rem;
+}
+.seoul-floating-waitlist-link > span {
+  display: block;
+  width: 100%;
+  color: #f9e9bd;
+  font-size: 1.06rem;
+  font-weight: 800;
+  line-height: 1.28;
+  text-align: center;
+}
+.seoul-floating-waitlist-link > strong {
+  display: block;
+  width: 100%;
+  color: #ffda70;
+  font-size: 1.1rem;
+  font-weight: 900;
+  line-height: 1.26;
+  text-align: center;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+@media (max-width: 640px) {
+  .seoul-floating-waitlist-link {
+    gap: .22rem;
+    padding: .72rem .52rem;
+  }
+  .seoul-floating-waitlist-link > span {
+    font-size: .90rem;
+    line-height: 1.27;
+  }
+  .seoul-floating-waitlist-link > strong {
+    font-size: .94rem;
+    line-height: 1.26;
+  }
+}

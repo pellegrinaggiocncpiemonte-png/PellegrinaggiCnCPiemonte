@@ -874,9 +874,11 @@ function SeoulAvailabilityFloating({ page }: { page: SitePage }) {
             aria-haspopup="dialog"
             aria-label="Apri direttamente le informazioni sulla lista d'attesa"
           >
-            <span aria-hidden="true">ℹ️</span>
-            <strong>Vuoi partecipare se si libera un posto?</strong>
-            <span className="seoul-floating-trigger-waitlist-action">Info e richiesta lista d'attesa</span>
+            <span aria-hidden="true" className="seoul-floating-trigger-waitlist-icon">ℹ️</span>
+            <span className="seoul-floating-trigger-waitlist-copy">
+              <strong>Vuoi partecipare se si libera un posto?</strong>
+              <span className="seoul-floating-trigger-waitlist-action">Info e richiesta lista d'attesa</span>
+            </span>
           </button>
         ) : null}
       </div>
