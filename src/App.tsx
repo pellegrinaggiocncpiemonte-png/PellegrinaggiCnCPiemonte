@@ -1663,15 +1663,15 @@ const RESERVED_AREA_READING_STEPS = [
   },
   {
     title: '2. Iscriviti al pellegrinaggio',
-    text: 'Dopo aver creato o aperto il profilo, vai nella sezione “Iscrizione Pellegrinaggi”, scegli Korea 2027 e completa l’iscrizione.',
+    text: 'Dopo aver creato o aperto il profilo, vai nella sezione “Iscrizione Pellegrinaggi”. Se Korea 2027 è l’unico pellegrinaggio disponibile, la selezione avviene automaticamente: completa comunque tutti i passaggi dell’iscrizione.',
   },
   {
     title: '3. Documenti',
     text: 'I documenti richiesti sono necessari e vanno caricati nella sezione dedicata. Se al momento non li hai disponibili, puoi aggiungerli successivamente: non fermarti per questo e completa comunque l’iscrizione al pellegrinaggio.',
   },
   {
-    title: '4. Bonifico: genera prima il codice',
-    text: 'Per ogni bonifico destinato alle quote di un partecipante è necessario entrare nell’Area Riservata e seguire la procedura guidata in “Bonifici e versamenti”. Scegli Korea 2027, premi “Genera codice bonifico”, inserisci i partecipanti e le relative quote, quindi genera e salva la distinta di pagamento. Il Codice Bonifico deve comparire nella causale esattamente come generato; dopo il codice puoi aggiungere altro testo. Dopo il pagamento, chi ha generato il codice torna in “Bonifici e versamenti” e sceglie “Ho già effettuato bonifico” → “Con codice”: il sistema recupera le distinte con partecipanti e quote già associati. Basta selezionare quella corretta, inserire la data e allegare la ricevuta bancaria; non inviarla via email o WhatsApp. È la stessa procedura della GMG internazionale, adottata per migliaia di pellegrini: serve a evitare all’organizzazione ore e ore di controlli manuali. Vi chiediamo per favore di seguirla con responsabilità.',
+    title: '4. Bonifico: prima la distinta, poi il pagamento',
+    text: 'Per quote e rate entra in “Bonifici e versamenti” nell’Area Riservata: Korea 2027 è già selezionato automaticamente. Prima di effettuare il pagamento genera il Codice Bonifico e salva la distinta con le quote. Il partecipante ordinario associa soltanto la propria quota. Eccezione per DUE partecipanti con profili separati: ciascuno salva prima la propria distinta, poi uno dei due può effettuare un solo bonifico indicando ENTRAMBI i codici nella causale; il sistema gestisce automaticamente anche questa modalità. Per una distinta unica con più quote serve invece un profilo abilitato (genitore, accompagnatore, responsabile o coniuge partecipante, nei limiti delle persone associate). Dopo il bonifico torna in “Ho già effettuato bonifico” → “Con codice”, recupera la distinta, indica la data e carica la ricevuta bancaria ufficiale, non uno screenshot. Il codice deve essere identico nella causale. I bonifici senza codice sono riservati soltanto alle donazioni libere. Compilare e caricare quanto richiesto spetta a chi versa: così si evitano controlli manuali dell’amministrazione.',
   },
 ];
 
@@ -1694,36 +1694,36 @@ const KOREA_PAYMENT_STEPS = [
     number: 1,
     Icon: UserRound,
     title: 'Entra nell’Area Riservata',
-    short: 'Accedi con il profilo che gestisce il pagamento.',
-    detail: 'Accedi con il profilo che gestisce il versamento, anche quando paghi per i tuoi figli o per altre persone.',
+    short: 'Controlla se puoi pagare solo per te o per più persone.',
+    detail: 'Accedi con il tuo profilo. Il partecipante ordinario prepara la distinta solo per sé. Se due persone (fratelli, amici o fidanzati) desiderano un unico bonifico, ciascuna prepara la propria distinta; il bonifico con due codici è una modalità distinta dal pagamento multiplo con profilo abilitato. Un genitore, accompagnatore o responsabile abilitato può includere le persone associate; un coniuge partecipante può includere l’altro coniuge se consentito.',
   },
   {
     number: 2,
     Icon: FileText,
     title: 'Apri “Bonifici e versamenti”',
-    short: 'Seleziona il pellegrinaggio Korea 2027.',
-    detail: 'Seleziona il pellegrinaggio Korea 2027 e apri la procedura “Genera codice bonifico”.',
+    short: 'Korea 2027 è già selezionato: non devi sceglierlo.',
+    detail: 'Apri “Bonifici e versamenti” e scegli “Devo ancora fare il bonifico”. Poiché è attivo un solo pellegrinaggio, Korea 2027 viene selezionato automaticamente.',
   },
   {
     number: 3,
     Icon: KeyRound,
     title: 'Genera codice e distinta',
-    short: 'Inserisci tutti i partecipanti e le quote. Salva la distinta.',
-    detail: 'Inserisci tutti i partecipanti a cui è destinato il pagamento, con l’importo di ciascuno. Genera il Codice Bonifico univoco e salva la distinta: serve anche per pagamenti di famiglie, comunità o gruppi.',
+    short: 'Prima del bonifico, indica le quote consentite e salva la distinta.',
+    detail: 'Se paghi per te, associa la tua quota. Per due partecipanti con profili separati, OGNUNO genera e salva la PROPRIA distinta e ottiene il proprio codice, prima che uno dei due effettui un unico bonifico. Se hai un profilo abilitato ai pagamenti multipli, puoi invece creare UNA distinta, selezionare ogni partecipante autorizzato e indicare l’importo di ciascuno. Un unico codice creato per un singolo non ripartisce somme fra altre persone.',
   },
   {
     number: 4,
     Icon: Landmark,
     title: 'Esegui il bonifico',
-    short: 'Scrivi il codice esatto all’inizio della causale.',
-    detail: 'Esegui il bonifico usando i dati bancari. Nella causale inserisci per primo il Codice Bonifico esattamente come generato, senza modificarlo. Dopo il codice puoi aggiungere altro testo.',
+    short: 'Solo ora paga: codice esatto nella causale bancaria.',
+    detail: 'Solo dopo aver salvato le distinte esegui il bonifico. Normalmente riporta il codice esatto della distinta. Nel caso di DUE persone con due distinte personali, una sola può effettuare il bonifico della somma riportando nella causale TUTTI E DUE i codici, separati da uno spazio: NON basta il codice di chi paga. Il sistema riconosce automaticamente entrambi i codici nella causale. Per quote e rate non usare la procedura senza codice, riservata alle donazioni libere.',
   },
   {
     number: 5,
     Icon: UploadCloud,
     title: 'Carica la ricevuta',
-    short: 'Apri “Ho già effettuato bonifico” → “Con codice”. Inserisci data e ricevuta.',
-    detail: 'Dopo il pagamento, chi ha generato il codice torna nell’Area Riservata, apre “Bonifici e versamenti”, seleziona “Ho già effettuato bonifico” e poi “Con codice”. Il sistema recupera le distinte e i partecipanti con le quote già associate al codice: basta scegliere la distinta corretta, indicare la data del bonifico e allegare la ricevuta bancaria. Non occorre reinserire i partecipanti. Non inviare la ricevuta via email o WhatsApp.',
+    short: 'Dal tuo profilo recupera la distinta e carica la ricevuta bancaria, non screenshot.',
+    detail: 'Dopo il pagamento torna in “Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”. Seleziona la distinta già salvata, indica la data e carica la ricevuta ufficiale rilasciata dalla banca (preferibilmente PDF), non uno screenshot. Se il bonifico riguarda due partecipanti con due codici, ciascuno accede al proprio profilo e carica la stessa ricevuta bancaria, associandola alla propria distinta personale. Non inviare la ricevuta via email o WhatsApp. Quando l’amministrazione importerà l’estratto conto, i codici permetteranno il riscontro delle quote e la segnalazione delle anomalie.',
   },
 ] as const;
 
@@ -2475,7 +2475,7 @@ function App() {
                   <article className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 px-4 py-5 shadow-lg">
                     <p className="text-xl font-extrabold text-amber-200">2. ISCRIVITI AL PELLEGRINAGGIO</p>
                     <p className="mt-2 text-white leading-relaxed">
-                      Questa è l&apos;operazione fondamentale. Nell&apos;Area Riservata apri <span className="font-extrabold">“Iscrizione Pellegrinaggi”</span>, seleziona <span className="font-extrabold">Korea 2027</span> e completa la procedura.
+                      Questa è l&apos;operazione fondamentale. Nell&apos;Area Riservata apri <span className="font-extrabold">“Iscrizione Pellegrinaggi”</span>: quando è presente solo Korea 2027, il pellegrinaggio è già selezionato. Completa tutti i passaggi della procedura.
                     </p>
                     <p className="mt-2 font-bold text-red-200">Se non fai questo passaggio, non risulti iscritto al pellegrinaggio.</p>
                   </article>
@@ -2490,10 +2490,10 @@ function App() {
                   <article className="rounded-2xl border-2 border-amber-400 bg-amber-400/10 px-4 py-5">
                     <p className="text-lg font-extrabold text-amber-200">4. Genera il codice bonifico prima di pagare</p>
                     <p className="mt-2 text-white/90 leading-relaxed">
-                      Prima di effettuare un bonifico per le quote del pellegrinaggio apri nell&apos;Area Riservata <span className="font-extrabold text-white">“Bonifici e versamenti”</span>, scegli Korea 2027 e premi <span className="font-extrabold text-white">“Genera codice bonifico”</span>. Inserisci partecipanti e quote, genera e salva la distinta di pagamento; il Codice Bonifico deve comparire nella causale esattamente come generato. Dopo il codice puoi aggiungere altre indicazioni.
+                      Prima del bonifico apri <span className="font-extrabold text-white">“Bonifici e versamenti”</span>: Korea 2027 viene selezionato automaticamente. Premi <span className="font-extrabold text-white">“Devo ancora fare il bonifico”</span> e <strong>salva la distinta con le quote autorizzate</strong> dal tuo profilo. Riporta il codice esatto nella causale. <strong>I bonifici senza codice sono riservati alle donazioni libere.</strong>
                     </p>
                     <p className="mt-2 font-bold leading-relaxed text-amber-200">
-                      La procedura vale per versamenti singoli e di famiglie, comunità o gruppi. Dopo il bonifico, torna in <span className="font-extrabold text-white">“Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”</span>: il sistema trova le distinte con partecipanti e quote già associati. Seleziona quella corretta, inserisci la data e allega la ricevuta bancaria. <span className="font-extrabold text-white">Non inviarla via email o WhatsApp.</span> È la stessa procedura della GMG internazionale: vi chiediamo di seguirla con responsabilità per non obbligarci a ore di controlli manuali dopo il lavoro.
+                      Il partecipante ordinario associa solo la propria quota. Due partecipanti con profili separati possono preparare ciascuno la propria distinta; uno dei due può versare la somma in un solo bonifico con entrambi i codici nella causale. Dopo il pagamento, ciascuno carica la ricevuta dal proprio profilo. Genitori, accompagnatori, responsabili e coniugi partecipanti possono invece creare una distinta multipla nei limiti dei propri permessi. Dopo il bonifico, in <span className="font-extrabold text-white">“Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”</span>, seleziona la distinta già salvata, indica la data e carica la <strong>ricevuta bancaria ufficiale, non uno screenshot</strong>. <span className="font-extrabold text-white">Non inviarla via email o WhatsApp.</span> Il grosso della procedura spetta a chi versa, per evitare controlli manuali all&apos;amministrazione.
                     </p>
                   </article>
                 </div>
@@ -3396,7 +3396,7 @@ function App() {
                 </div>
               </div>
               <p className="mt-5 text-sm leading-relaxed text-white/90 sm:text-base">
-                Per iscrizioni, rate e pagamenti destinati a uno o più partecipanti, <strong className="text-white">genera prima il Codice Bonifico e la distinta nell&apos;Area Riservata.</strong>
+                <strong className="text-white">Prima la distinta, poi il bonifico.</strong> Il codice è indispensabile per quote e rate. <span className="font-semibold text-amber-200">Senza codice si possono effettuare solo donazioni libere.</span>
               </p>
               <div className="mt-auto pt-5">
                 <button
@@ -3447,7 +3447,7 @@ function App() {
                 </div>
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
                   <p className="text-sm leading-relaxed text-white/90 sm:text-base">
-                    Puoi effettuare un normale bonifico <strong>senza Codice Bonifico e senza distinta</strong>. La donazione contribuisce a sostenere chi ne ha bisogno, senza indicare il nome di chi riceverà l&apos;aiuto.
+                    Solo per una <strong>donazione libera</strong> puoi fare un bonifico <strong>senza Codice Bonifico e senza distinta</strong>. La donazione contribuisce a sostenere chi ne ha bisogno, senza indicare chi riceverà l&apos;aiuto. <strong>Non utilizzare questa modalità per quote o rate.</strong>
                   </p>
                   <div className="rounded-xl border border-emerald-300/25 bg-black/25 px-4 py-3 text-sm leading-relaxed sm:text-base">
                     <p className="text-emerald-200">Causale da scrivere:</p>
@@ -3473,21 +3473,48 @@ function App() {
               <AlertCircle className="mt-0.5 h-8 w-8 shrink-0 text-red-800 sm:mt-0" aria-hidden="true" />
               <div>
                 <h3 className="text-lg font-extrabold leading-snug text-red-900 sm:text-2xl">
-                  Attenzione: per le quote il Codice Bonifico è obbligatorio.
+                  Per le quote, non fare più bonifici senza codice.
                 </h3>
                 <p className="mt-1 text-sm leading-relaxed sm:text-base">
-                  <strong>Il solo nome nella causale non basta per pagare le quote.</strong> Prima di versare rate o iscrizioni devi generare il codice nell&apos;Area Riservata. <strong>Le donazioni libere sono escluse.</strong>
+                  <strong>Salva prima la distinta, poi fai il bonifico con il codice esatto nella causale.</strong> I bonifici senza codice sono previsti <strong>soltanto per le donazioni libere</strong>. Nome e cognome da soli non consentono l&apos;associazione automatica.
                 </p>
               </div>
             </div>
 
             <p className="mt-5 text-base leading-relaxed text-white/90 sm:text-lg">
-              Per pagare quote e rate, <strong className="text-white">non utilizzare i dati bancari prima di aver creato il pagamento</strong> nella sezione “Bonifici e versamenti” dell&apos;Area Riservata. <strong className="text-white">Le donazioni libere, anche per sostenere chi ha bisogno, si fanno senza codice.</strong>
+              Per pagare quote e rate, <strong className="text-white">ogni utente deve creare e salvare la distinta prima del bonifico</strong>, indicando partecipanti e importi consentiti dal proprio profilo. Korea 2027 è selezionato automaticamente. <strong className="text-white">Le sole donazioni libere si fanno senza codice.</strong>
             </p>
+
+            <div className="mt-5 grid gap-3 md:grid-cols-2" aria-label="Versamenti singoli e versamenti multipli">
+              <article className="rounded-2xl border border-sky-300/45 bg-sky-950/55 p-4 sm:p-5">
+                <h3 className="text-lg font-extrabold text-white sm:text-xl">Pago per me</h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/90 sm:text-base">Con un normale profilo <strong>partecipante</strong> genera la distinta per <strong>la tua quota</strong> e poi fai il relativo bonifico. <strong>Non usare il tuo solo codice per versare anche la quota di un altro:</strong> per due partecipanti devono esistere due distinte e due codici distinti.</p>
+                <p className="mt-2 text-sm font-semibold text-sky-100 sm:text-base">Se siete in due, potete già preparare due distinte personali e fare un unico bonifico, scrivendo entrambi i codici nella causale.</p>
+              </article>
+              <article className="rounded-2xl border border-amber-300/45 bg-amber-300/10 p-4 sm:p-5">
+                <h3 className="text-lg font-extrabold text-white sm:text-xl">Unica distinta per più persone</h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/90 sm:text-base">Puoi creare <strong>una sola distinta con più quote</strong> e fare un bonifico unico <strong>solo con un profilo abilitato</strong>: genitore, accompagnatore, responsabile o coniuge partecipante per l&apos;altro coniuge, nei limiti dei collegamenti e dei permessi disponibili.</p>
+                <p className="mt-2 text-sm font-semibold text-amber-100 sm:text-base">Prima di pagare, seleziona ogni persona e assegna a ciascuna il suo importo nella distinta. Salva la distinta completa. Questa modalità è diversa dalle due distinte personali con due codici.</p>
+              </article>
+            </div>
+
+            <article className="mt-3 rounded-2xl border-2 border-cyan-300/70 bg-cyan-950/65 p-4 text-white sm:p-6" aria-label="Bonifico unico con due codici personali">
+              <h3 className="text-lg font-extrabold text-white sm:text-xl">Siamo in due: fratelli, amici o fidanzati</h3>
+              <p className="mt-2 text-sm leading-relaxed text-white/95 sm:text-base">Anche senza un profilo che gestisca altre persone, <strong>due partecipanti al massimo</strong> possono preparare ciascuno <strong>la propria distinta e il proprio codice</strong>. Una sola persona può poi effettuare <strong>un bonifico pari alla somma delle due quote</strong>, inserendo <strong>entrambi i codici</strong> nella causale. Non basta indicare il codice di chi effettua il bonifico.</p>
+              <div className="mt-3 rounded-xl border border-cyan-200/45 bg-black/25 px-3 py-3 text-sm leading-relaxed sm:text-base">
+                <p className="font-extrabold text-cyan-100">Ordine dei passaggi</p>
+                <ol className="mt-2 list-decimal space-y-2 pl-5">
+                  <li><strong>Ogni partecipante</strong>, dal proprio profilo utente, crea e salva la propria distinta con il codice bonifico e l’importo desiderato.</li>
+                  <li><strong>Uno dei due partecipanti</strong> effettua un unico bonifico per la somma delle due quote, inserendo <strong>entrambi i codici bonifico nella causale</strong>.</li>
+                  <li><strong>Dopo il bonifico, ciascun partecipante</strong> torna nel proprio profilo, recupera la propria distinta e carica la <strong>stessa ricevuta bancaria</strong> del bonifico unico. Il sistema la associa alla distinta personale e riconosce automaticamente i due codici.</li>
+                </ol>
+                <p className="mt-2 text-xs font-semibold text-amber-200 sm:text-sm">La procedura con due codici è già attiva: il sistema può riconoscere entrambe le distinte e associare le quote, purché i due codici siano riportati correttamente nella causale.</p>
+              </div>
+            </article>
 
             <div className="mt-5 rounded-2xl border border-white/20 bg-slate-950/55 p-4 sm:p-6">
               <h3 className="text-xl font-extrabold text-amber-200 sm:text-2xl">Quote e rate: la procedura corretta in 5 passi</h3>
-              <p className="mt-1 text-sm text-white/75 sm:text-base">Vale per chi paga per sé, per i figli, per una famiglia o per un gruppo.</p>
+              <p className="mt-1 text-sm text-white/75 sm:text-base">Una distinta multipla richiede un profilo autorizzato. In alternativa, due partecipanti possono già utilizzare due distinte e due codici nello stesso bonifico. Le distinte vanno sempre salvate prima di pagare.</p>
               <ol className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5" aria-label="Cinque passi per effettuare un bonifico corretto">
                 {KOREA_PAYMENT_STEPS.map(({ number, Icon, title, short }) => (
                   <li key={number} className="relative rounded-2xl border border-white/20 bg-white px-3 pb-4 pt-5 text-slate-950 shadow-md">
@@ -3507,7 +3534,7 @@ function App() {
                   <div className="mt-4 border-t border-white/20 pt-3">
                     <p className="text-xs text-white/75">Esempio di causale corretta:</p>
                     <p className="mt-1 break-words font-mono text-sm font-bold text-white sm:text-base">GMG2027-PHX7ZD3G ROSSI MARIO</p>
-                    <p className="mt-2 text-xs text-amber-100">Inserisci per primo il TUO codice, identico a quello generato dal sistema.</p>
+                    <p className="mt-2 text-xs text-amber-100">Per un pagamento normale inserisci il codice esatto della distinta. Per due distinte personali inserisci entrambi i codici nella stessa causale.</p>
                   </div>
                 </div>
                 <div className="rounded-2xl border border-amber-200/30 bg-amber-100/10 px-4 py-5">
@@ -3517,7 +3544,8 @@ function App() {
                       'Identifica a chi appartiene il pagamento, anche se paga un genitore o un’altra persona.',
                       'Indica come ripartire l’importo fra i partecipanti e le rispettive rate.',
                       'Permette di collegare codice, distinta, ricevuta e accredito dell’estratto conto.',
-                      'Ci risparmia ore di controlli manuali dopo il lavoro e la sera: il sistema può fare automaticamente ciò che altrimenti dobbiamo ricostruire noi.',
+                      'Quando l’amministrazione importa l’estratto conto, il codice bancario permette di confrontarlo con distinta, quote e ricevuta, segnalando anomalie.',
+                      'Evita all’amministrazione verifiche e ripartizioni manuali che spettano a chi prepara il versamento.',
                     ].map((reason) => (
                       <li key={reason} className="flex items-start gap-2">
                         <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" aria-hidden="true" />
@@ -3525,7 +3553,7 @@ function App() {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-4 border-t border-amber-200/20 pt-3 text-sm leading-relaxed text-white/90 sm:text-base"><strong className="text-amber-200">È la stessa procedura della GMG internazionale, utilizzata per migliaia di pellegrini.</strong> Per favore, leggete e rispettate i passaggi: anche un solo bonifico per le quote senza codice ci costringe a controlli manuali evitabili. La vostra collaborazione ci aiuta davvero.</p>
+                  <p className="mt-4 border-t border-amber-200/20 pt-3 text-sm leading-relaxed text-white/90 sm:text-base"><strong className="text-amber-200">Il principio è lo stesso della procedura della GMG internazionale.</strong> Il grosso del lavoro di compilazione deve essere svolto da chi paga: codice, distinta, quote e ricevuta. L&apos;amministrazione ha già molte altre attività; leggere e rispettare questi passaggi è un aiuto concreto e molto gradito.</p>
                 </div>
               </div>
 
@@ -3533,7 +3561,7 @@ function App() {
                 <AlertCircle className="mt-0.5 h-7 w-7 shrink-0 sm:mt-0" aria-hidden="true" />
                 <div>
                   <p className="font-extrabold sm:text-lg">Non inviare la ricevuta via email o WhatsApp.</p>
-                  <p className="mt-1 text-sm leading-relaxed text-slate-800 sm:text-base">Chi ha generato il codice deve aprire nell&apos;Area Riservata <strong>“Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”</strong>: il sistema recupera le distinte con i partecipanti e le quote. Basta <strong>selezionare la distinta, inserire la data e allegare la ricevuta bancaria.</strong></p>
+                  <p className="mt-1 text-sm leading-relaxed text-slate-800 sm:text-base">Apri <strong>“Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”</strong>: seleziona la distinta già creata, indica la data e carica la <strong>ricevuta bancaria ufficiale (preferibilmente PDF), non uno screenshot dello smartphone o della conferma dell&apos;operazione</strong></p>
                 </div>
               </div>
 
@@ -3600,7 +3628,7 @@ function App() {
                   <p>Se il pagamento parte da un conto in franchi svizzeri (CHF) e l&apos;importo viene convertito in euro, considerare anche 5,00 € per il cambio valuta: in questo caso la cifra complessiva da aggiungere è quindi di <strong>13,50 €</strong> (8,50 € + 5,00 €).</p>
                   <p>Verificare comunque con la propria banca, prima di eseguire il bonifico, eventuali commissioni o costi aggiuntivi applicati.</p>
                   <p className="font-semibold text-amber-100">È importante che l&apos;importo netto effettivamente accreditato sul conto del Comitato corrisponda esattamente alla quota richiesta.</p>
-                  <p>Anche dalla Svizzera, per il pagamento delle quote, è obbligatorio generare Codice Bonifico e distinta nell&apos;Area Riservata, indicando partecipanti e quote. Dopo il bonifico usa “Ho già effettuato bonifico” → “Con codice”, seleziona la distinta recuperata dal sistema, inserisci la data e allega la ricevuta bancaria. Non inviarla via email o WhatsApp.</p>
+                  <p>Anche dalla Svizzera, per le quote salva prima la distinta con il codice (Korea 2027 viene selezionato automaticamente). Una sola distinta con più quote richiede un profilo abilitato; due profili partecipante possono invece usare già due codici in un bonifico unico. Dopo il bonifico, in “Ho già effettuato bonifico” → “Con codice”, scegli la distinta, indica la data e carica la ricevuta bancaria ufficiale, non uno screenshot. Senza codice sono possibili solo le donazioni libere.</p>
                   <p>Per problemi tecnici con il bonifico o per richiedere informazioni sulla consegna delle quote in contanti, contattare l&apos;organizzazione.</p>
                 </div>
               </div>
@@ -3690,7 +3718,7 @@ function App() {
               ) : (
                 <div className="mb-4 rounded-xl border-2 border-amber-400 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950 sm:text-base">
                   <p className="font-extrabold text-red-900">ATTENZIONE — PER LE QUOTE IL CODICE È OBBLIGATORIO</p>
-                  <p className="mt-1">Per le quote di partecipazione, usa queste coordinate bancarie <strong>solo dopo</strong> aver creato il versamento nell&apos;Area Riservata → <strong>Bonifici e versamenti</strong>. Genera il tuo <strong>Codice Bonifico</strong>, indica partecipanti e quote nella distinta e riporta <strong>il codice esatto all&apos;inizio della causale</strong>. Dopo il pagamento torna in <strong>“Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”</strong>: seleziona la distinta, inserisci la data e allega la ricevuta bancaria. <strong>Non inviarla via email o WhatsApp.</strong></p>
+                  <p className="mt-1">Per le quote usa queste coordinate <strong>solo dopo</strong> aver salvato la distinta in <strong>Area Riservata → Bonifici e versamenti</strong>. Korea 2027 è selezionato automaticamente. Indica solo le quote consentite dal tuo profilo e riporta <strong>il codice esatto nella causale</strong>. Dopo il bonifico seleziona la distinta in <strong>“Ho già effettuato bonifico” → “Con codice”</strong> e allega la <strong>ricevuta bancaria ufficiale (preferibilmente PDF), non uno screenshot</strong>. <strong>Non inviarla via email o WhatsApp.</strong></p>
                   <p className="mt-2 font-semibold">Per le donazioni libere destinate ad aiutare chi è in difficoltà, il codice non è necessario.</p>
                 </div>
               )}
@@ -3748,9 +3776,26 @@ function App() {
                   <AlertCircle className="mt-1 h-6 w-6 shrink-0 text-red-800" aria-hidden="true" />
                   <div>
                     <p className="text-base font-extrabold text-red-900 sm:text-lg">Non fare bonifici per le quote senza il Codice Bonifico.</p>
-                    <p className="mt-1 text-sm leading-relaxed sm:text-base">Il nome e cognome nella causale non bastano: il sistema deve riconoscere <strong>i partecipanti e gli importi</strong> della distinta. Prima genera il codice, poi esegui il bonifico.</p>
+                    <p className="mt-1 text-sm leading-relaxed sm:text-base">Per quote e rate non fare bonifici senza codice: <strong>sono previsti soltanto per le donazioni libere</strong>. Nome e cognome non bastano: salva prima la distinta con le quote consentite dal tuo profilo e riporta il codice esatto nella causale.</p>
                   </div>
                 </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl border border-sky-200 bg-sky-50 p-3 sm:p-4">
+                  <p className="font-extrabold text-sky-950">Partecipante: pago per me</p>
+                  <p className="mt-1 text-sm leading-relaxed text-slate-800">Il partecipante ordinario prepara la distinta per la propria quota. Un codice generato per una persona non associa automaticamente i pagamenti degli altri.</p>
+                </div>
+                <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 sm:p-4">
+                  <p className="font-extrabold text-amber-950">Profilo abilitato: una distinta con più quote</p>
+                  <p className="mt-1 text-sm leading-relaxed text-slate-800">Genitore, accompagnatore, responsabile o coniuge partecipante: nei limiti dei permessi e delle persone collegate, associa ogni quota <strong>prima</strong> di salvare la distinta.</p>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-cyan-300 bg-cyan-50 p-3 text-sm leading-relaxed text-slate-900 sm:p-4 sm:text-base">
+                <p className="font-extrabold text-cyan-950">Due partecipanti, due distinte, un unico bonifico</p>
+                <p className="mt-1">Fratelli, amici o fidanzati: ciascuno prepara e salva la propria distinta e ottiene il proprio codice. Uno solo effettua il bonifico per la somma delle due quote, riportando <strong>entrambi i codici nella causale</strong>. Dopo il bonifico, ciascuno accede al proprio profilo e carica la stessa ricevuta bancaria, che viene associata alla propria distinta.</p>
+                <p className="mt-2 font-bold text-amber-900">Questa modalità è già attiva: i due codici consentono l’associazione automatica delle quote alle rispettive distinte.</p>
               </div>
 
               <h4 className="text-lg font-extrabold text-slate-950 sm:text-xl">Come si fa: tutti i 5 passaggi</h4>
@@ -3770,18 +3815,18 @@ function App() {
                 <p className="text-xs font-extrabold uppercase tracking-wide text-amber-300">Codice di esempio — non utilizzarlo per pagare</p>
                 <p className="mt-2 break-all font-mono text-lg font-extrabold sm:text-xl">GMG2027-PHX7ZD3G</p>
                 <p className="mt-2 text-sm text-white/90">Esempio di causale: <strong className="font-mono">GMG2027-PHX7ZD3G ROSSI MARIO</strong></p>
-                <p className="mt-1 text-xs text-white/70">Ogni pagamento di quote o rate deve usare il proprio codice generato nell&apos;Area Riservata. Le donazioni libere sono escluse.</p>
+                <p className="mt-1 text-xs text-white/70">Esempio di pagamento singolo. Se si usano due distinte personali per un solo bonifico, nella causale devono comparire entrambi i codici. Le donazioni libere sono escluse.</p>
               </div>
 
               <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm leading-relaxed text-amber-950 sm:text-base">
                 <h4 className="font-extrabold">Perché è necessario?</h4>
-                <p className="mt-2">È la <strong>stessa procedura adottata dalla GMG internazionale, che gestisce migliaia di pellegrini</strong>. L&apos;abbiamo adattata al nostro pellegrinaggio per collegare automaticamente codice, distinta, partecipanti, quote, ricevuta e accredito bancario.</p>
-                <p className="mt-2"><strong>Quando un bonifico per le quote arriva senza codice, anche se contiene nome e cognome, dobbiamo ricostruire manualmente a chi e a quali rate appartiene.</strong> Sono ore e ore di verifiche che svolgiamo dopo il lavoro, la sera e talvolta di notte, mentre il sistema potrebbe farle automaticamente.</p>
-                <p className="mt-2 font-semibold">Vi chiediamo per favore di aiutarci con responsabilità: leggete le istruzioni e seguite la procedura completa, per ogni bonifico destinato alle quote, anche se pagate per più persone. Così evitiamo controlli inutili e possiamo dedicare il nostro tempo all&apos;organizzazione del pellegrinaggio.</p>
+                <p className="mt-2">È basata sullo <strong>stesso principio della GMG internazionale</strong>: chi paga prepara la distinta e carica la ricevuta bancaria ufficiale. Quando l&apos;amministrazione importa l&apos;estratto conto, il codice nella causale consente il riscontro automatico con le quote o la segnalazione di anomalie.</p>
+                <p className="mt-2"><strong>Un bonifico senza codice o con un solo codice personale usato per due quote non permette la corretta ripartizione.</strong> Nel caso di due distinte personali, entrambi i codici devono essere presenti nella causale, poiché la funzione è già attiva. Ciò evita verifiche manuali.</p>
+                <p className="mt-2 font-semibold">La compilazione della distinta e il caricamento della ricevuta spettano a ciascun partecipante dal proprio profilo; chi effettua il bonifico unico per due persone deve indicare entrambi i codici nella causale. L&apos;amministrazione ha già molti altri aspetti del pellegrinaggio da seguire: la vostra collaborazione è necessaria e molto gradita.</p>
               </div>
 
               <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm leading-relaxed text-red-950 sm:text-base">
-                <p><strong>Ricevuta: non inviarla via email o WhatsApp.</strong> Dopo aver pagato, chi ha generato il codice entra in <strong>“Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”</strong>. Il sistema ritrova la distinta con i partecipanti e gli importi già associati: <strong>è sufficiente selezionarla, inserire la data del bonifico e allegare la ricevuta bancaria.</strong></p>
+                <p><strong>Ricevuta: non inviarla via email o WhatsApp.</strong> In <strong>“Bonifici e versamenti” → “Ho già effettuato bonifico” → “Con codice”</strong> ritrovi la distinta salvata. Selezionala, indica la data e <strong>carica la ricevuta bancaria ufficiale, preferibilmente in PDF. Non caricare screenshot dell&apos;app o della schermata di conferma.</strong></p>
               </div>
 
               <a
